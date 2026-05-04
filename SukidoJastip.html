@@ -524,8 +524,8 @@ select.si option{background:#fff;color:var(--txt);}
 .kd-empty svg{width:48px;height:48px;stroke:var(--t3);fill:none;stroke-width:1;opacity:.35;margin-bottom:16px;stroke-linecap:round;stroke-linejoin:round;}
 .kd-empty p{font-size:15px;font-weight:700;color:var(--t2);margin-bottom:5px;}
 .kd-empty small{font-size:13px;}
-.kd-inner{padding:20px 24px;display:flex;flex-direction:column;gap:14px;}
-.kd-header-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:20px 22px;margin-bottom:0;box-shadow:var(--sh);}
+.kd-inner{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.kd-header-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);}
 .kd-body-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:18px 22px;box-shadow:var(--sh);}
 .kd-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
 .kd-title{font-size:20px;font-weight:800;letter-spacing:-.4px;}
@@ -653,7 +653,7 @@ select.si option{background:#fff;color:var(--txt);}
       <div class="card-ttl"><div class="ct-ico i3"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>Status Pembayaran</div>
       <div class="g2"><div class="fl"><label>Status Bayar</label><select id="f-sbayar"><option value="Unpaid">⏳ Unpaid</option><option value="Paid">✅ Paid</option><option value="Down Payment">💰 Down Payment</option><option value="Hold Tokopedia">🔒 Hold Tokopedia</option><option value="Hold Shopee">🔒 Hold Shopee</option></select></div><div class="fl"><label>DP/Jumlah Bayar (Rp)</label><input type="number" id="f-dp" placeholder="0"/></div></div>
     </div>
-    <button class="sbtn" onclick="addOrder()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Pesanan</button>
+    <button class="sbtn" onclick="showPreview()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Preview & Simpan</button>
   </div>
 
   <!-- KLOTER -->
@@ -813,6 +813,24 @@ select.si option{background:#fff;color:var(--txt);}
   </div>
 </div>
 
+<!-- PREVIEW CONFIRM MODAL -->
+<div class="mov" id="previewmod" style="display:none" onclick="if(event.target===this)closePreview()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:480px">
+    <div class="mhdr">
+      <span class="mtit">📋 Konfirmasi Pesanan</span>
+      <button class="mclose" onclick="closePreview()">✕</button>
+    </div>
+    <div id="preview-content"></div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button onclick="closePreview()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bor2)';this.style.color='var(--t2)'">✕ Batal</button>
+      <button onclick="confirmSave()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
+        Konfirmasi & Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 
@@ -953,6 +971,116 @@ function calc(){
 }
 
 // ═══════════════ ORDERS CRUD ═══════════════
+// ── PREVIEW CONFIRM ──
+let _pendingOrder = null;
+
+function closePreview(){
+  _pendingOrder=null;
+  document.getElementById('previewmod').style.display='none';
+}
+
+function showPreview(){
+  const cust=document.getElementById('f-cust').value.trim();
+  const item=document.getElementById('f-item').value.trim();
+  if(!cust||!item){toast('⚠️ Nama & Barang wajib diisi!',true);return;}
+  const batch=document.getElementById('f-batch').value;
+  if(!batch){toast('⚠️ Pilih Kloter!',true);return;}
+  const qty=+document.getElementById('f-qty').value||1;
+  const jpy=+document.getElementById('f-jpy').value||0;
+  const rate=+document.getElementById('f-rate').value||0;
+  const jual=+document.getElementById('f-jual').value||0;
+  const dp=+document.getElementById('f-dp').value||0;
+  const stype=document.getElementById('f-stype').value;
+  const pic=document.getElementById('f-pic').value;
+  const ship=document.getElementById('f-ship').value;
+  const sbayar=document.getElementById('f-sbayar').value;
+  const mo=jpy*qty*rate, tj=jual*qty, u=tj-mo, mg=tj>0?u/tj*100:0;
+  const sisa=tj-dp;
+
+  _pendingOrder={
+    id:Date.now(),date:new Date().toISOString().split('T')[0],
+    cust,stype,pic,ship,item,qty,jpy,rate,jual,admin:0,dp,sbayar,
+    ostatus:'ORDER',sudahBeli:false,batch
+  };
+
+  const SBG2={Paid:'#dcfce7',Unpaid:'#fef9c3','Down Payment':'#ede9fe','Hold Tokopedia':'#fee2e2','Hold Shopee':'#fee2e2'};
+  const SCL2={Paid:'#166534',Unpaid:'#854d0e','Down Payment':'#5b21b6','Hold Tokopedia':'#991b1b','Hold Shopee':'#991b1b'};
+  const SBO2={Paid:'#bbf7d0',Unpaid:'#fef08a','Down Payment':'#ddd6fe','Hold Tokopedia':'#fecaca','Hold Shopee':'#fecaca'};
+  const SI2={WhatsApp:'💬',Threads:'🧵',Instagram:'📷',Shopee:'🟠',Tokopedia:'🟢',Direct:'🤝'};
+
+  document.getElementById('preview-content').innerHTML=`
+    <!-- Customer info -->
+    <div style="background:var(--bg);border:1px solid var(--bor);border-radius:var(--r);padding:16px 18px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">👤 Info Customer</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-.3px;color:var(--dark)">${cust}</div>
+          <div style="font-size:12px;color:var(--t2);margin-top:4px;display:flex;align-items:center;gap:6px">
+            <span>${SI2[stype]||''} ${stype}</span>
+            <span style="color:var(--bor2)">·</span><span>PIC: ${pic}</span>
+            <span style="color:var(--bor2)">·</span><span>📦 ${ship}</span>
+          </div>
+        </div>
+        <span style="background:var(--g1);color:#fff;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(91,94,244,.25)">${batch}</span>
+      </div>
+    </div>
+    <!-- Item detail -->
+    <div style="background:var(--bg);border:1px solid var(--bor);border-radius:var(--r);padding:16px 18px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">🛍️ Detail Barang</div>
+      <div style="font-size:16px;font-weight:800;color:var(--dark);margin-bottom:8px">${item}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)">
+          <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">QTY</div>
+          <div style="font-size:15px;font-weight:800;margin-top:2px;font-family:var(--mono)">${qty}</div>
+        </div>
+        ${jpy?`<div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)">
+          <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Modal JPY</div>
+          <div style="font-size:15px;font-weight:800;margin-top:2px;font-family:var(--mono);color:var(--red)">¥${fn(jpy)} × ${qty}</div>
+        </div>`:''}
+        <div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)">
+          <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Harga Jual</div>
+          <div style="font-size:15px;font-weight:800;margin-top:2px;font-family:var(--mono);color:var(--grn)">${fr(jual)}<span style="font-size:11px;color:var(--t3)"> /item</span></div>
+        </div>
+        <div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)">
+          <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Total Jual</div>
+          <div style="font-size:15px;font-weight:800;margin-top:2px;font-family:var(--mono);color:var(--grn)">${fr(tj)}</div>
+        </div>
+      </div>
+      <!-- Profit preview -->
+      <div style="margin-top:10px;background:linear-gradient(135deg,rgba(91,94,244,.06),rgba(139,92,246,.06));border:1.5px solid rgba(91,94,244,.12);border-radius:8px;padding:10px 14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+        <div><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Modal IDR</div><div style="font-size:14px;font-weight:800;font-family:var(--mono);color:var(--red)">${fr(mo)}</div></div>
+        <div style="width:1px;background:var(--bor);align-self:stretch"></div>
+        <div><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Est. Untung</div><div style="font-size:14px;font-weight:800;font-family:var(--mono);color:${u>=0?'var(--pur)':'var(--red)'}">${u>=0?'+':''}${fr(u)}</div></div>
+        <div style="width:1px;background:var(--bor);align-self:stretch"></div>
+        <div><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Margin</div><div style="font-size:14px;font-weight:800;font-family:var(--mono);color:${mg>=0?'var(--pur)':'var(--red)'}">${mg.toFixed(1)}%</div></div>
+      </div>
+    </div>
+    <!-- Pembayaran -->
+    <div style="background:var(--bg);border:1px solid var(--bor);border-radius:var(--r);padding:14px 18px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">💳 Pembayaran</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <span style="background:${SBG2[sbayar]||'#fef9c3'};color:${SCL2[sbayar]||'#854d0e'};border:1px solid ${SBO2[sbayar]||'#fef08a'};border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700">${sbayar}</span>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:var(--t2)">Sudah bayar: <span style="font-family:var(--mono);font-weight:700;color:var(--acc)">${fr(dp)}</span></div>
+          <div style="font-size:12px;color:var(--t2);margin-top:2px">Sisa: <span style="font-family:var(--mono);font-weight:700;color:${sisa>0?'var(--red)':'var(--grn)'}">${sisa>0?fr(sisa):'✓ Lunas'}</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('previewmod').style.display='flex';
+}
+
+async function confirmSave(){
+  if(!_pendingOrder){closePreview();return;}
+  const o=_pendingOrder;_pendingOrder=null;
+  closePreview();
+  orders.push(o);sl();
+  ['f-cust','f-item','f-jpy','f-jual','f-dp'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-qty').value=1;document.getElementById('f-sbayar').value='Unpaid';calc();
+  refreshAll();toast('✅ Pesanan disimpan!');
+  try{await apiCall({action:'saveOrder',data:o});setSS('ok');}catch(e){setSS('err','Offline');}
+}
+
 async function addOrder(){
   const cust=document.getElementById('f-cust').value.trim();
   const item=document.getElementById('f-item').value.trim();
