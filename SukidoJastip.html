@@ -415,20 +415,151 @@ select.si option{background:#fff;color:var(--txt);}
 }
 
 /* PIUTANG LIST */
-.pi-cust-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--bor);transition:all .3s;}
-.pi-cust-row:last-child{border:none;padding-bottom:0;}
-.pi-cust-row:first-child{padding-top:0;}
+#pilist{display:flex;flex-direction:column;gap:8px;}
+.pi-cust-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 16px;
+  background:var(--bg);border:1.5px solid var(--bor);border-radius:12px;
+  transition:all .3s;
+}
+.pi-cust-row:hover{border-color:var(--bor2);box-shadow:0 2px 10px rgba(26,29,78,.07);}
 .pi-cust-info{flex:1;min-width:0;}
 .pi-cust-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.piamt{font-size:16px;font-weight:800;color:var(--amb);font-family:var(--mono);}
 .pi-lunas-btn{
   display:flex;align-items:center;gap:5px;
-  padding:6px 13px;background:var(--grn);border:none;border-radius:8px;
-  color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;
+  padding:7px 14px;background:var(--grn);border:none;border-radius:8px;
+  color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;
   cursor:pointer;transition:all .18s;white-space:nowrap;
   box-shadow:0 3px 10px rgba(34,197,94,.25);
 }
 .pi-lunas-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(34,197,94,.35);}
 .pi-lunas-btn svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* DAFTAR BELI */
+.beli-empty{text-align:center;padding:60px 20px;color:var(--t3);}
+.beli-kloter-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);margin-bottom:12px;overflow:hidden;box-shadow:var(--sh);}
+.beli-kloter-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--bg);border-bottom:1px solid var(--bor);}
+.beli-items{padding:4px 0;}
+.beli-item{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--bor);transition:all .25s;}
+.beli-item:last-child{border-bottom:none;}
+.beli-item:hover{background:var(--bg);}
+.beli-check{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  border:2px solid var(--bor2);background:transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.beli-check:hover{border-color:var(--grn);background:rgba(34,197,94,.08);}
+.beli-check svg{width:14px;height:14px;stroke:transparent;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s;}
+.beli-check:hover svg{stroke:var(--grn);}
+.beli-item-info{flex:1;min-width:0;}
+.beli-item-name{font-size:13px;font-weight:700;color:var(--txt);}
+.beli-item-sub{font-size:11px;color:var(--t2);margin-top:2px;font-family:var(--mono);}
+
+
+
+
+/* KLOTER LIST ITEM (kiri) */
+.kl-item{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--bor);transition:all .18s;position:relative;}
+.kl-item:last-child{border-bottom:none;}
+.kl-item:hover{background:var(--bg);}
+.kl-item.active{background:rgba(91,94,244,.06);}
+.kl-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--g1);border-radius:0 3px 3px 0;}
+.kl-item-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:2px;}
+.kl-item-info{flex:1;min-width:0;}
+.kl-item-name{font-size:13px;font-weight:700;letter-spacing:-.2px;}
+.kl-item-meta{font-size:11px;color:var(--t3);margin-top:2px;}
+.kl-item-right{text-align:right;flex-shrink:0;}
+.kl-item-profit{font-size:13px;font-weight:800;font-family:var(--mono);background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.kl-item-count{font-size:10px;color:var(--t3);margin-top:1px;}
+.kl-add-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--bor);color:var(--acc);font-size:12px;font-weight:700;transition:all .18s;}
+.kl-add-btn:hover{background:rgba(91,94,244,.04);}
+.kl-add-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* KLOTER DETAIL (kanan) */
+.kd-header{padding:20px 24px;border-bottom:1px solid var(--bor);background:var(--bg);}
+.kd-name{font-size:20px;font-weight:800;letter-spacing:-.4px;}
+.kd-meta{font-size:12px;color:var(--t2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.kd-meta-dot{width:3px;height:3px;border-radius:50%;background:var(--bor2);}
+.kd-profit{font-size:22px;font-weight:800;font-family:var(--mono);background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.kd-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px 20px;border-bottom:1px solid var(--bor);background:var(--bg);}
+.kd-stat{background:var(--sur);border-radius:10px;padding:10px 12px;border:1px solid var(--bor);}
+.kd-stat-l{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;}
+.kd-stat-v{font-size:14px;font-weight:800;margin-top:3px;font-family:var(--mono);}
+.kd-actions{display:flex;align-items:center;gap:8px;padding:12px 20px;border-bottom:1px solid var(--bor);flex-wrap:wrap;}
+.kd-body{padding:16px 20px;}
+
+@media(max-width:900px){
+  .kd-stats{grid-template-columns:1fr 1fr;}
+}
+
+/* Kloter fills remaining height */
+
+
+/* ── KLOTER SPLIT ── */
+.sec#sec-kloter{max-width:none;padding:0;margin:0;}
+.kloter-wrap{display:flex;height:calc(100vh - 60px);overflow:hidden;}
+.kloter-left{width:320px;flex-shrink:0;border-right:1px solid var(--bor);display:flex;flex-direction:column;background:var(--sur);overflow:hidden;}
+.kloter-left-header{padding:16px 16px 12px;border-bottom:1px solid var(--bor);}
+.kl-add{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;background:var(--bg);border:1.5px dashed var(--bor2);border-radius:10px;color:var(--acc);font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;}
+.kl-add:hover{background:rgba(91,94,244,.05);border-color:var(--acc);}
+.kl-add svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.kl-form{padding:14px 16px;border-bottom:1px solid var(--bor);background:var(--bg);display:none;}
+.kl-form.on{display:block;}
+.kl-list{flex:1;overflow-y:auto;}
+.kl-item{display:flex;align-items:flex-start;gap:10px;padding:13px 16px;cursor:pointer;border-bottom:1px solid var(--bor);transition:background .15s;position:relative;}
+.kl-item:hover{background:var(--bg);}
+.kl-item.active{background:rgba(91,94,244,.06);}
+.kl-item.active::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:3px;background:var(--g1);border-radius:3px 0 0 3px;}
+.kl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.kl-info{flex:1;min-width:0;}
+.kl-name{font-size:13px;font-weight:700;letter-spacing:-.2px;}
+.kl-meta{font-size:11px;color:var(--t3);margin-top:2px;}
+.kl-right{text-align:right;flex-shrink:0;}
+.kl-profit{font-size:12px;font-weight:800;font-family:var(--mono);background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.kl-status{font-size:10px;color:var(--t3);margin-top:1px;}
+/* Right panel */
+.kloter-right{flex:1;overflow-y:auto;background:var(--bg);}
+.kd-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--t3);text-align:center;padding:40px;}
+.kd-empty svg{width:48px;height:48px;stroke:var(--t3);fill:none;stroke-width:1;opacity:.35;margin-bottom:16px;stroke-linecap:round;stroke-linejoin:round;}
+.kd-empty p{font-size:15px;font-weight:700;color:var(--t2);margin-bottom:5px;}
+.kd-empty small{font-size:13px;}
+.kd-inner{padding:20px 24px;}
+.kd-header-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:18px 20px;margin-bottom:14px;box-shadow:var(--sh);}
+.kd-body-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:16px 20px;box-shadow:var(--sh);}
+.kd-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.kd-title{font-size:20px;font-weight:800;letter-spacing:-.4px;}
+.kd-subtitle{font-size:12px;color:var(--t2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.kd-profit-big{font-size:22px;font-weight:800;font-family:var(--mono);background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+@media(max-width:900px){
+  .kloter-wrap{flex-direction:column;height:auto;}
+  .kloter-left{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--bor);}
+  .kl-list{max-height:200px;}
+  .kloter-right{min-height:400px;}
+}
+
+/* STOK */
+.stok-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:16px 18px;margin-bottom:10px;box-shadow:var(--sh);display:flex;align-items:flex-start;gap:14px;transition:box-shadow .18s;}
+.stok-card:hover{box-shadow:var(--sh2);}
+.stok-icon{width:44px;height:44px;border-radius:12px;background:var(--g1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;}
+.stok-info{flex:1;min-width:0;}
+.stok-name{font-size:14px;font-weight:800;letter-spacing:-.2px;}
+.stok-cat{font-size:11px;color:var(--t2);margin-top:2px;}
+.stok-nums{display:flex;align-items:center;gap:14px;margin-top:8px;flex-wrap:wrap;}
+.stok-num{display:flex;flex-direction:column;}
+.stok-num-l{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;}
+.stok-num-v{font-size:13px;font-weight:800;margin-top:2px;font-family:var(--mono);}
+.stok-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
+.stok-qty-badge{font-size:22px;font-weight:800;font-family:var(--mono);color:var(--acc);}
+.stok-qty-lbl{font-size:10px;color:var(--t3);text-align:right;}
+.stok-actions{display:flex;gap:6px;}
+.stok-edit-btn{background:transparent;border:1.5px solid var(--bor);border-radius:7px;padding:4px 10px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.stok-edit-btn:hover{border-color:var(--acc);color:var(--acc);}
+.stok-del-btn{background:transparent;border:none;cursor:pointer;padding:4px;opacity:.25;display:flex;transition:opacity .15s;border-radius:6px;}
+.stok-del-btn:hover{opacity:1;background:rgba(239,68,68,.07);}
+.stok-del-btn svg{width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.stok-empty{text-align:center;padding:50px 20px;color:var(--t3);}
+.stok-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
 </style>
 </head>
 <body>
@@ -455,6 +586,10 @@ select.si option{background:#fff;color:var(--txt);}
       <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Kloter
     </button>
+    <button class="nb" onclick="sw('beli')" id="nb-beli">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Daftar Beli
+    </button>
     <button class="nb" onclick="sw('lap')" id="nb-lap">
       <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Laporan
@@ -462,6 +597,10 @@ select.si option{background:#fff;color:var(--txt);}
     <button class="nb" onclick="sw('kirim')" id="nb-kirim">
       <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Kirim & Resi
+    </button>
+    <button class="nb" onclick="sw('stok')" id="nb-stok">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Stok Barang
     </button>
   </nav>
   <div class="sidebar-footer">
@@ -519,18 +658,45 @@ select.si option{background:#fff;color:var(--txt);}
 
   <!-- KLOTER -->
   <div class="sec" id="sec-kloter">
-    <div class="card">
-      <div class="kltr-form-hdr" onclick="togKF()">
-        <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i4"><svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>Tambah Kloter Baru</div>
-        <svg id="kfchev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
+    <div class="kloter-wrap">
+      <!-- KIRI -->
+      <div class="kloter-left">
+        <div class="kloter-left-header">
+          <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">Kloter Pengiriman</div>
+          <button class="kl-add" onclick="togKF()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Kloter Baru
+          </button>
+        </div>
+        <div class="kl-form" id="kfbd">
+          <div class="g3" style="margin-bottom:10px">
+            <div class="fl"><label>Nama Kloter</label><input id="k-name" placeholder="Kloter 1"/></div>
+            <div class="fl"><label>Rate ¥→Rp</label><input type="number" id="k-rate" placeholder="109"/></div>
+            <div class="fl"><label>Jasa Bagasi</label><input id="k-bagasi" placeholder="e.g. Kiki"/></div>
+          </div>
+          <div class="g2" style="margin-bottom:12px">
+            <div class="fl"><label>ETA</label><input type="date" id="k-eta"/></div>
+            <div class="fl"><label>Status</label><select id="k-status"><option value="open">🟢 Open</option><option value="closed">🔴 Closed</option><option value="transit">✈️ Transit</option><option value="arrived">📦 Tiba</option></select></div>
+          </div>
+          <button class="sbtn" onclick="addKloter()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan</button>
+        </div>
+        <div class="kl-list" id="klist"></div>
       </div>
-      <div id="kfbd" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--bor)">
-        <div class="g3"><div class="fl"><label>Nama Kloter</label><input id="k-name" placeholder="Kloter 1 / April"/></div><div class="fl"><label>Rate ¥→Rp</label><input type="number" id="k-rate" placeholder="109"/></div><div class="fl"><label>Jasa Bagasi</label><input id="k-bagasi" placeholder="e.g. Kiki Bagasi"/></div></div>
-        <div class="g2"><div class="fl"><label>ETA</label><input type="date" id="k-eta"/></div><div class="fl"><label>Status</label><select id="k-status"><option value="open">🟢 Open</option><option value="closed">🔴 Closed</option><option value="transit">✈️ In Transit</option><option value="arrived">📦 Sudah Tiba</option></select></div></div>
-        <button class="sbtn" onclick="addKloter()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Kloter</button>
+      <!-- KANAN -->
+      <div class="kloter-right" id="kloter-right">
+        <div class="kd-empty" id="kd-empty">
+          <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <p>Pilih Kloter</p>
+          <small>Klik salah satu kloter di kiri untuk melihat detail</small>
+        </div>
+        <div id="kd-content" style="display:none" class="kd-inner"></div>
       </div>
     </div>
-    <div id="klist"></div>
+  </div>
+
+  <!-- DAFTAR BELI -->
+  <div class="sec" id="sec-beli">
+    <div id="beli-list"></div>
   </div>
 
   <!-- LAPORAN -->
@@ -575,6 +741,34 @@ select.si option{background:#fff;color:var(--txt);}
       <button class="printbtn" onclick="printAll()"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Semua Resi</button>
     </div>
     <div id="kirimlist"></div>
+  </div>
+
+  <!-- STOK -->
+  <div class="sec" id="sec-stok">
+    <div class="ph"><div class="ph-lbl">Inventori</div><h2>Stok Barang</h2></div>
+    <div class="card">
+      <div class="kltr-form-hdr" onclick="togStokForm()">
+        <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i2"><svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>Tambah Barang Stok</div>
+        <svg id="stokchev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div id="stokform" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--bor)">
+        <div class="g2">
+          <div class="fl" style="grid-column:1/-1"><label>Nama Barang</label><input id="sk-nama" placeholder="e.g. Salomon Active Skin 8"/></div>
+        </div>
+        <div class="g3">
+          <div class="fl"><label>Jumlah Stok</label><input type="number" id="sk-qty" placeholder="0" min="0"/></div>
+          <div class="fl"><label>Harga Modal (Rp)</label><input type="number" id="sk-modal" placeholder="0" oninput="calcStok()"/></div>
+          <div class="fl"><label>Harga Jual (Rp)</label><input type="number" id="sk-jual" placeholder="0" oninput="calcStok()"/></div>
+        </div>
+        <div class="fl"><label>Catatan (opsional)</label><input id="sk-catatan" placeholder="Ukuran, warna, atau info lainnya"/></div>
+        <div class="pp" style="margin-bottom:14px">
+          <div class="ppi"><div class="ppl">Margin</div><div class="ppv" id="sk-margin" style="color:var(--pur)">0%</div></div><div class="ppd"></div>
+          <div class="ppi"><div class="ppl">Potensi Profit</div><div class="ppv" id="sk-profit" style="color:var(--grn)">Rp 0</div></div>
+        </div>
+        <button class="sbtn" onclick="addStok()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Barang</button>
+      </div>
+    </div>
+    <div id="stoklist"></div>
   </div>
 
   </div><!-- end .content -->
@@ -662,20 +856,24 @@ async function syncNow(){
   }catch(e){setSS('err',e.name==='AbortError'?'Timeout':'Offline');}
 }
 function toast(m,err){const el=document.getElementById('toast');el.textContent=m;el.className='toast'+(err?' err':'')+' on';setTimeout(()=>el.classList.remove('on'),2800);}
-function updateBadge(){document.getElementById('topbar-badge').textContent=orders.filter(o=>o.ostatus!=='CANCELLED').length+' pesanan';}
-function refreshAll(){refreshDD();renderKloter();renderLap();renderKirim();updateBadge();}
+function updateBadge(){
+  const act=orders.filter(o=>o.ostatus!=='CANCELLED');
+  const custs=new Set(act.map(o=>o.cust)).size;
+  document.getElementById('topbar-badge').textContent=custs+' customer · '+act.length+' barang';
+}
+function refreshAll(){refreshDD();renderKloter();renderBeli();renderLap();renderKirim();renderStok();updateBadge();}
 
 // NAV
-const TITLES={add:'Tambah Pesanan',kloter:'Kloter Pengiriman',lap:'Laporan Keuangan',kirim:'Kirim & Resi'};
-const LABELS={add:'Form Input',kloter:'Manajemen',lap:'Finansial',kirim:'Pengiriman'};
+const TITLES={add:'Tambah Pesanan',kloter:'Kloter Pengiriman',beli:'Daftar Beli',lap:'Laporan Keuangan',kirim:'Kirim & Resi',stok:'Stok Barang'};
+const LABELS={add:'Form Input',kloter:'Manajemen',beli:'Shopping List',lap:'Finansial',kirim:'Pengiriman',stok:'Inventori'};
 function sw(t){
-  ['add','kloter','lap','kirim'].forEach(s=>{
+  ['add','kloter','beli','lap','kirim','stok'].forEach(s=>{
     document.getElementById('sec-'+s).classList.toggle('on',s===t);
     const nb=document.getElementById('nb-'+s);if(nb){nb.className='nb'+(s===t?' on':'');}
   });
   document.getElementById('topbar-title').textContent=TITLES[t];
   const lbl=document.getElementById('page-lbl');if(lbl)lbl.textContent=LABELS[t]||'';
-  if(t==='add')refreshDD();if(t==='kloter')renderKloter();if(t==='lap')renderLap();if(t==='kirim')renderKirim();
+  if(t==='add')refreshDD();if(t==='kloter')renderKloter();if(t==='beli')renderBeli();if(t==='lap')renderLap();if(t==='kirim')renderKirim();if(t==='stok')renderStok();
   closeSidebar();
 }
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('mob-ov').classList.add('on');}
@@ -742,19 +940,19 @@ function calcSisa(key,totalJual){
 }
 
 // KLOTER
-function togKF(){const b=document.getElementById('kfbd'),c=document.getElementById('kfchev');const op=b.style.display==='block';b.style.display=op?'none':'block';c.style.transform=op?'':'rotate(180deg)';}
+function togKF(){const b=document.getElementById('kfbd');b.classList.toggle('on');}
 function togKConf(){const b=document.getElementById('kconfbdy'),c=document.getElementById('kcchev');b.classList.toggle('on');c.style.transform=b.classList.contains('on')?'rotate(180deg)':'';}
 function togExp(id){id=String(id);expK[id]=!expK[id];renderKloter();}
-function togPes(id){id=String(id);expP[id]=!expP[id];renderKloter();}
-function togPG(id){id=String(id);expPG[id]=!expPG[id];renderKloter();}
-function setCurr(id,m){pgCurr[String(id)]=m;renderKloter();}
-function togCust(key){custOpen[key]=!custOpen[key];renderKloter();}
+function togPes(id){id=String(id);expP[id]=!expP[id];if(activeKid)renderKloterDetail(activeKid);else renderKloter();}
+function togPG(id){id=String(id);expPG[id]=!expPG[id];if(activeKid)renderKloterDetail(activeKid);else renderKloter();}
+function setCurr(id,m){pgCurr[String(id)]=m;if(activeKid)renderKloterDetail(activeKid);else renderKloter();}
+function togCust(key){custOpen[key]=!custOpen[key];if(activeKid)renderKloterDetail(activeKid);else renderKloter();}
 
 async function addKloter(){
   const name=document.getElementById('k-name').value.trim();if(!name){toast('⚠️ Nama kloter wajib!',true);return;}
   const k={id:Date.now(),name,rate:+document.getElementById('k-rate').value||0,bagasi:document.getElementById('k-bagasi').value.trim(),eta:document.getElementById('k-eta').value,status:document.getElementById('k-status').value,pengeluaran:[]};
   kloters.push(k);sl();['k-name','k-bagasi','k-eta'].forEach(id=>document.getElementById(id).value='');document.getElementById('k-rate').value='';document.getElementById('k-status').value='open';
-  togKF();refreshAll();toast('✅ Kloter disimpan!');
+  togKF();refreshAll();toast('✅ Kloter disimpan!');setTimeout(()=>{selectKloter(String(k.id));},80);
   try{await apiCall({action:'saveKloter',data:k});setSS('ok');}catch(e){setSS('err','Offline');}
 }
 async function delKloter(id){
@@ -763,9 +961,10 @@ async function delKloter(id){
   if(k){const rel=orders.filter(o=>o.batch===k.name);orders=orders.filter(o=>o.batch!==k.name);try{for(const o of rel)await apiCall({action:'deleteOrder',id:String(o.id)});}catch(e){}}
   kloters=kloters.filter(k=>String(k.id)!==String(id));
   [expK,expP,expPG].forEach(s=>delete s[String(id)]);
+  if(activeKid===String(id)){activeKid=null;document.getElementById('kd-empty').style.display='flex';document.getElementById('kd-content').style.display='none';}
   sl();refreshAll();try{await apiCall({action:'deleteKloter',id:String(id)});setSS('ok');}catch(e){setSS('err','Sync gagal');}
 }
-async function chgKS(id,v){const k=findK(id);if(!k)return;k.status=v;sl();renderKloter();try{await apiCall({action:'updateKloter',data:k});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
+async function chgKS(id,v){const k=findK(id);if(!k)return;k.status=v;sl();renderKloter();renderKloterDetail(String(id));try{await apiCall({action:'updateKloter',data:k});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 async function addPG(kid){
   const mode=pgCurr[String(kid)]||'IDR';
   const desc=document.getElementById('pgd-'+kid).value.trim(),amt=+document.getElementById('pga-'+kid).value||0;
@@ -962,96 +1161,137 @@ function custCard(cust,custOrders,kloterName){
 
 // RENDER KLOTER
 function renderKloter(){
+  // Render kiri (list)
   const el=document.getElementById('klist');
-  if(!kloters.length){el.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><p>Belum Ada Kloter</p><small>Tambah kloter baru di atas</small></div>`;return;}
+  if(!el)return;
+  if(!kloters.length){
+    el.innerHTML=`<div style="padding:24px 16px;text-align:center;color:var(--t3);font-size:12px">Belum ada kloter</div>`;
+    return;
+  }
   el.innerHTML=kloters.slice().reverse().map(k=>{
     const sid=String(k.id);
-    const ko=orders.filter(o=>o.batch===k.name),act=ko.filter(o=>o.ostatus!=='CANCELLED');
-    const tj=act.reduce((s,o)=>s+o.jual*o.qty,0),tm=act.reduce((s,o)=>s+o.jpy*o.qty*(o.rate||k.rate||109),0);
-    const r=kr(k),pt=(k.pengeluaran||[]).reduce((s,p)=>s+pgidr(p,r),0),tu=kunt(k);
-    const paid=ko.filter(o=>o.sbayar==='Paid').length,bb=act.filter(o=>!o.sudahBeli).length;
-    const isExp=!!expK[sid],isPes=!!expP[sid],isPG=!!expPG[sid];
-    const mode=pgCurr[sid]||'IDR',isY=mode==='JPY';
-    const opts=['open','closed','transit','arrived'].map(s=>`<option value="${s}"${k.status===s?' selected':''}>${KSL[s]}</option>`).join('');
-    const groups={};ko.forEach(o=>{if(!groups[o.cust])groups[o.cust]=[];groups[o.cust].push(o);});
-    const custCount=Object.keys(groups).length;
-
-    const badge=(txt,bg,cl,bo)=>`<span style="background:${bg};color:${cl};border:1px solid ${bo};border-radius:6px;padding:1px 8px;font-size:10px;font-weight:700;font-family:var(--mono)">${txt}</span>`;
-
-    const pesSec=`
-      <div class="ptog${isPes?' on':''}" onclick="togPes('${sid}')">
-        <div class="ptog-l">
-          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          Daftar Pesanan
-          ${badge(ko.length+' item · '+custCount+' cust','rgba(91,94,244,.12)','var(--acc2)','rgba(91,94,244,.2)')}
-          ${bb>0?badge(bb+' belum dibeli','#fef3c7','#92400e','#fde68a'):''}
-          ${ko.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED').length>0?badge(ko.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED').length+' belum bayar','#fee2e2','#991b1b','#fecaca'):''}
-        </div>
-        <svg class="ptog-r" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    const ko=orders.filter(o=>o.batch===k.name);
+    const act=ko.filter(o=>o.ostatus!=='CANCELLED');
+    const tu=kunt(k);
+    const bb=act.filter(o=>!o.sudahBeli).length;
+    return`<div class="kl-item${activeKid===sid?' active':''}" onclick="selectKloter('${sid}')">
+      <div class="kl-dot" style="background:${KSC[k.status]||'#94a3b8'}"></div>
+      <div class="kl-info">
+        <div class="kl-name">${k.name}</div>
+        <div class="kl-meta">${ko.length} pesanan${bb>0?` · <span style="color:var(--amb)">${bb} blm beli</span>`:' · <span style="color:var(--grn)">semua dibeli</span>'}</div>
       </div>
-      <div class="pcont${isPes?' on':''}">
-        ${custCount?Object.entries(groups).map(([c,cos])=>custCard(c,cos,k.name)).join(''):'<div style="text-align:center;padding:14px;color:var(--t3);font-size:12px">Belum ada pesanan</div>'}
-      </div>`;
-
-    const peng=k.pengeluaran||[],tot=peng.reduce((s,p)=>s+pgidr(p,r),0);
-    const pgList=peng.length?`<div style="margin-bottom:8px">${peng.map(p=>{const idr=pgidr(p,r);return`<div class="pgrow"><div><div class="pgn">🧾 ${p.desc}</div><div class="pgd">${p.currency==='JPY'?`¥${fn(p.amountJPY)}×${fn(r)}=`:''} ${fr(idr)}</div></div><div class="pga"><span class="pgamt">${fr(idr)}</span><button class="pgdelbtn" onclick="delPG('${sid}','${p.id}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div></div>`;}).join('')}<div style="display:flex;justify-content:flex-end;padding-top:6px;border-top:1px solid var(--bor);margin-top:4px"><span style="font-size:12px;font-weight:800;color:var(--amb);font-family:var(--mono)">Total: ${fr(tot)}</span></div></div>`:'<div style="text-align:center;padding:7px 0;font-size:11px;color:var(--t3)">Belum ada pengeluaran</div>';
-
-    const pgSec=`
-      <div class="pgtog${isPG?' on':''}" onclick="togPG('${sid}')">
-        <div class="pgtog-l">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Pengeluaran Lain
-          ${tot?badge(fr(tot),'#fef3c7','#92400e','#fde68a'):''}
-          ${peng.length?badge(peng.length+' item','#fef3c7','#92400e','#fde68a'):''}
-        </div>
-        <svg class="pgr" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="pgcont${isPG?' on':''}">
-        <div class="pgsec" style="margin-top:8px">${pgList}
-          <div class="pginrow">
-            <input class="ind" id="pgd-${sid}" placeholder="Keterangan pengeluaran"/>
-            <div style="display:flex;align-items:center;gap:6px;flex:1">
-              <div class="ctog"><button class="ctbtn${!isY?' on':''}" onclick="setCurr('${sid}','IDR')">Rp</button><button class="ctbtn${isY?' on':''}" onclick="setCurr('${sid}','JPY')">¥</button></div>
-              <input class="ina" id="pga-${sid}" type="number" placeholder="${isY?'Jumlah ¥':'Jumlah Rp'}" style="flex:1"/>
-            </div>
-          </div>
-          ${isY&&k.rate?`<div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--mono)">¥1 = <span style="color:var(--amb);font-weight:600">Rp ${fn(r)}</span></div>`:''}
-          <button class="addpgbtn" onclick="addPG('${sid}')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Tambah Pengeluaran</button>
-        </div>
-      </div>`;
-
-    return `<div class="kc${isExp?' exp':''}">
-      <div class="kch">
-        <div class="kct">
-          <div style="flex:1;min-width:0">
-            <div class="kcn">${k.name}</div>
-            <div class="kcm">${k.bagasi?`<span>🧳 ${k.bagasi}</span><span class="kcm-dot"></span>`:''}<span style="font-family:var(--mono)">${k.rate?'Rate ¥'+k.rate:''}</span>${k.eta?`<span class="kcm-dot"></span><span>ETA ${(k.eta||'').slice(0,10)}</span>`:''}</div>
-          </div>
-          <div class="kcr"><div class="kcu">${fr(tu)}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">net profit</div></div>
-        </div>
-        <div class="kcstats">
-          <div class="kcs"><div class="kcs-l">Total Jual</div><div class="kcs-v" style="color:var(--grn)">${fr(tj)}</div></div>
-          <div class="kcs"><div class="kcs-l">Modal</div><div class="kcs-v" style="color:var(--red)">${fr(tm)}</div></div>
-          <div class="kcs"><div class="kcs-l">Lunas</div><div class="kcs-v">${paid}<span style="color:var(--t3)">/${ko.length}</span></div></div>
-          <div class="kcs"><div class="kcs-l">Blm Dibeli</div><div class="kcs-v" style="color:${bb>0?'var(--amb)':'var(--grn)'}">${bb}</div></div>
-        </div>
-        <div class="kca">
-          <select class="kstatus" style="background:${KSBg[k.status]||'#f1f5f9'};color:${KSC[k.status]||'#64748b'};border:1.5px solid ${KSBo[k.status]||'#e2e8f0'}" onchange="chgKS('${sid}',this.value)">${opts}</select>
-          <button class="bdtn${isExp?' on':''}" onclick="togExp('${sid}')">
-            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            ${isExp?'Tutup':'Buka Detail'}
-          </button>
-          <button class="dngbtn" onclick="delKloter('${sid}')">Hapus</button>
-        </div>
-      </div>
-      <div class="kcb${isExp?' on':''}">
-        ${pesSec}${pgSec}
+      <div class="kl-right">
+        <div class="kl-profit">${fr(tu)}</div>
+        <div class="kl-status">${KSL[k.status]||''}</div>
       </div>
     </div>`;
   }).join('');
+  // Auto-select first if none
+  if(!activeKid&&kloters.length){selectKloter(String(kloters[kloters.length-1].id));return;}
+  if(activeKid)renderKloterDetail(activeKid);
 }
 
-// RENDER LAPORAN
+let activeKid=null;
+
+function selectKloter(sid){
+  activeKid=sid;
+  document.getElementById('kd-empty').style.display='none';
+  document.getElementById('kd-content').style.display='block';
+  // Re-render list to update active state
+  const items=document.querySelectorAll('.kl-item');
+  items.forEach(el=>{
+    const isActive=el.getAttribute('onclick')===`selectKloter('${sid}')`;
+    el.classList.toggle('active',isActive);
+  });
+  renderKloterDetail(sid);
+}
+
+function renderKloterDetail(sid){
+  const k=findK(sid);const el=document.getElementById('kd-content');
+  if(!k||!el)return;
+  const ko=orders.filter(o=>o.batch===k.name),act=ko.filter(o=>o.ostatus!=='CANCELLED');
+  const tj=act.reduce((s,o)=>s+o.jual*o.qty,0),tm=act.reduce((s,o)=>s+o.jpy*o.qty*(o.rate||k.rate||109),0);
+  const r=kr(k),pt=(k.pengeluaran||[]).reduce((s,p)=>s+pgidr(p,r),0),tu=kunt(k);
+  const paid=ko.filter(o=>o.sbayar==='Paid').length,bb=act.filter(o=>!o.sudahBeli).length;
+  const isPes=!!expP[sid],isPG=!!expPG[sid],mode=pgCurr[sid]||'IDR',isY=mode==='JPY';
+  const opts=['open','closed','transit','arrived'].map(s=>`<option value="${s}"${k.status===s?' selected':''}>${KSL[s]}</option>`).join('');
+  const groups={};ko.forEach(o=>{if(!groups[o.cust])groups[o.cust]=[];groups[o.cust].push(o);});
+  const badge=(t,bg,cl,bo)=>`<span style="background:${bg};color:${cl};border:1px solid ${bo};border-radius:6px;padding:1px 8px;font-size:10px;font-weight:700;font-family:var(--mono)">${t}</span>`;
+  const peng=k.pengeluaran||[],tot=peng.reduce((s,p)=>s+pgidr(p,r),0);
+  const pgList=peng.length?`<div style="margin-bottom:8px">${peng.map(p=>{const idr=pgidr(p,r);return`<div class="pgrow"><div><div class="pgn">🧾 ${p.desc}</div><div class="pgd">${p.currency==='JPY'?`¥${fn(p.amountJPY)}×${fn(r)}=`:''} ${fr(idr)}</div></div><div class="pga"><span class="pgamt">${fr(idr)}</span><button class="pgdelbtn" onclick="delPG('${sid}','${p.id}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div></div>`;}).join('')}<div style="display:flex;justify-content:flex-end;padding-top:6px;border-top:1px solid var(--bor);margin-top:4px"><span style="font-size:12px;font-weight:800;color:var(--amb);font-family:var(--mono)">Total: ${fr(tot)}</span></div></div>`:'<div style="text-align:center;padding:7px 0;font-size:11px;color:var(--t3)">Belum ada pengeluaran</div>';
+
+  el.innerHTML=`
+    <!-- Header Card -->
+    <div class="kd-header-card">
+    <div class="kd-topbar">
+      <div>
+        <div class="kd-title">${k.name}</div>
+        <div class="kd-subtitle">
+          ${k.bagasi?`<span>🧳 ${k.bagasi}</span><span style="width:3px;height:3px;border-radius:50%;background:var(--bor2);display:inline-block"></span>`:''}
+          ${k.rate?`<span style="font-family:var(--mono)">Rate ¥${k.rate}</span>`:''}
+          ${k.eta?`<span style="width:3px;height:3px;border-radius:50%;background:var(--bor2);display:inline-block"></span><span>ETA ${(k.eta||'').slice(0,10)}</span>`:''}
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="kd-profit-big">${fr(tu)}</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">net profit</div>
+      </div>
+    </div>
+    <!-- Stats -->
+    <div class="kcstats" style="margin-bottom:14px">
+      <div class="kcs"><div class="kcs-l">Total Jual</div><div class="kcs-v" style="color:var(--grn)">${fr(tj)}</div></div>
+      <div class="kcs"><div class="kcs-l">Modal</div><div class="kcs-v" style="color:var(--red)">${fr(tm)}</div></div>
+      <div class="kcs"><div class="kcs-l">Lunas</div><div class="kcs-v">${paid}<span style="color:var(--t3)">/${ko.length}</span></div></div>
+      <div class="kcs"><div class="kcs-l">Blm Dibeli</div><div class="kcs-v" style="color:${bb>0?'var(--amb)':'var(--grn)'}">${bb}</div></div>
+    </div>
+    <!-- Actions -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <select class="kstatus" style="background:${KSBg[k.status]||'#f1f5f9'};color:${KSC[k.status]||'#64748b'};border:1.5px solid ${KSBo[k.status]||'#e2e8f0'}" onchange="chgKS('${sid}',this.value)">${opts}</select>
+      <button class="dngbtn" onclick="delKloter('${sid}')">Hapus Kloter</button>
+    </div>
+    </div><!-- end kd-header-card -->
+    <!-- Body Card -->
+    <div class="kd-body-card">
+    <!-- Daftar Pesanan toggle -->
+    <div class="ptog${isPes?' on':''}" onclick="togPes('${sid}')" style="margin-bottom:${isPes?'10px':'0'}">
+      <div class="ptog-l">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Daftar Pesanan
+        ${badge(ko.length+' item · '+Object.keys(groups).length+' cust','rgba(91,94,244,.1)','var(--acc)','rgba(91,94,244,.2)')}
+        ${bb>0?badge(bb+' blm dibeli','#fef9c3','#854d0e','#fef08a'):''}
+        ${ko.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED').length>0?badge(ko.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED').length+' blm bayar','#fee2e2','#991b1b','#fecaca'):''}
+      </div>
+      <svg class="ptog-r" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="${'pcont'+(isPes?' on':'')}" style="margin-bottom:12px">
+      ${Object.keys(groups).length?Object.entries(groups).map(([cust,cos])=>custCard(cust,cos,k.name)).join(''):'<div style="text-align:center;padding:14px;color:var(--t3);font-size:12px">Belum ada pesanan</div>'}
+    </div>
+    <!-- Pengeluaran toggle -->
+    <div class="pgtog${isPG?' on':''}" onclick="togPG('${sid}')">
+      <div class="pgtog-l">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Pengeluaran Lain
+        ${tot?badge(fr(tot),'#fef9c3','#854d0e','#fef08a'):''}
+      </div>
+      <svg class="pgr" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="pgcont${isPG?' on':''}">
+      <div class="pgsec" style="margin-top:8px">${pgList}
+        <div class="pginrow">
+          <input class="ind" id="pgd-${sid}" placeholder="Keterangan pengeluaran"/>
+          <div style="display:flex;align-items:center;gap:6px;flex:1">
+            <div class="ctog"><button class="ctbtn${!isY?' on':''}" onclick="setCurr('${sid}','IDR')">Rp</button><button class="ctbtn${isY?' on':''}" onclick="setCurr('${sid}','JPY')">¥</button></div>
+            <input class="ina" id="pga-${sid}" type="number" placeholder="${isY?'Jumlah ¥':'Jumlah Rp'}" style="flex:1"/>
+          </div>
+        </div>
+        ${isY&&k.rate?`<div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--mono)">¥1 = <span style="color:var(--amb);font-weight:600">Rp ${fn(r)}</span></div>`:''}
+        <button class="addpgbtn" onclick="addPG('${sid}')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Tambah Pengeluaran</button>
+      </div>
+    </div>
+    </div><!-- end kd-body-card -->`;
+}
+
+
 function renderLap(){
   const kn=document.getElementById('r-kl').value,from=document.getElementById('r-from').value,to=document.getElementById('r-to').value;
   const f=orders.filter(o=>(!kn||o.batch===kn)&&(!from||o.date>=from)&&(!to||o.date<=to)),act=f.filter(o=>o.ostatus!=='CANCELLED');
@@ -1059,7 +1299,9 @@ function renderLap(){
   const fKl=kn?kloters.filter(k=>k.name===kn):kloters,tPg=fKl.reduce((s,k)=>{const r=kr(k);return s+(k.pengeluaran||[]).reduce((ss,p)=>ss+pgidr(p,r),0);},0);
   const tUnt=act.reduce((s,o)=>s+unt(o),0)-tPg,mg=tOm>0?tUnt/tOm*100:0;
   const tPaid=f.filter(o=>o.sbayar==='Paid').reduce((s,o)=>s+o.jual*o.qty,0);
-  const tUnp=f.filter(o=>o.sbayar!=='Paid').reduce((s,o)=>s+Math.max(0,o.jual*o.qty-(o.dp||0)),0);
+  // tUnp: group by customer, ambil dp sebagai shared value
+const _piG={};f.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED').forEach(o=>{if(!_piG[o.cust])_piG[o.cust]={tj:0,dp:0};_piG[o.cust].tj+=o.jual*o.qty;if(o.dp>0)_piG[o.cust].dp=o.dp;});
+const tUnp=Object.values(_piG).reduce((s,g)=>s+Math.max(0,g.tj-g.dp),0);
   const sB=act.filter(o=>o.sudahBeli).length,bB=act.filter(o=>!o.sudahBeli).length;
   document.getElementById('sgrid').innerHTML=`
     <div class="sc scg"><div class="ico2">💰</div><div class="scv" style="color:var(--grn)">${fr(tOm)}</div><div class="scl">Total Omzet</div><div class="scs">${act.length} pesanan aktif</div></div>
@@ -1077,15 +1319,16 @@ function renderLap(){
     pc.style.display='block';
     const piGroups={};
     pi.forEach(o=>{
-      if(!piGroups[o.cust])piGroups[o.cust]={items:[],totalJual:0,totalDp:0,sbayar:o.sbayar};
+      if(!piGroups[o.cust])piGroups[o.cust]={items:[],totalJual:0,dp:0,sbayar:o.sbayar};
       piGroups[o.cust].items.push(o);
       piGroups[o.cust].totalJual+=o.jual*o.qty;
-      piGroups[o.cust].totalDp+=o.dp||0;
+      // dp shared per customer — ambil dari order manapun (harusnya sama)
+      if(o.dp>0) piGroups[o.cust].dp=o.dp;
     });
-    const totalSisa=Object.values(piGroups).reduce((s,g)=>s+Math.max(0,g.totalJual-g.totalDp),0);
+    const totalSisa=Object.values(piGroups).reduce((s,g)=>s+Math.max(0,g.totalJual-g.dp),0);
     const badge=document.getElementById('pi-total-badge');if(badge)badge.textContent=fr(totalSisa);
     document.getElementById('pilist').innerHTML=Object.entries(piGroups).map(([cust,g])=>{
-      const sisa=Math.max(0,g.totalJual-g.totalDp);
+      const sisa=Math.max(0,g.totalJual-g.dp);
       const itms=g.items.length;
       const safeCust=cust.replace(/'/g,"\\'");
       return`<div class="pi-cust-row" id="pirow-${btoa(encodeURIComponent(cust)).replace(/=/g,'')}">
@@ -1094,8 +1337,8 @@ function renderLap(){
           <div class="piri">${itms} item · <span style="color:var(--amb);font-weight:600">${g.sbayar}</span></div>
         </div>
         <div class="pi-cust-right">
-          <div class="piamt">↓ Kurang ${fr(sisa)}</div>
-          <button class="pi-lunas-btn" onclick="markLunas('${safeCust}')" title="Tandai Lunas">
+          <div class="piamt">${fr(sisa)}</div>
+          <button class="pi-lunas-btn" onclick="markLunas('${safeCust}')">
             <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             Lunas
           </button>
@@ -1123,7 +1366,9 @@ function generateLaporan(){
   const tPg=fKl.reduce((s,k)=>{const r=kr(k);return s+(k.pengeluaran||[]).reduce((ss,p)=>ss+pgidr(p,r),0);},0);
   const tUnt=act.reduce((s,o)=>s+unt(o),0)-tPg,mg=tOm>0?tUnt/tOm*100:0;
   const tPaid=f.filter(o=>o.sbayar==='Paid').reduce((s,o)=>s+o.jual*o.qty,0);
-  const tUnp=f.filter(o=>o.sbayar!=='Paid').reduce((s,o)=>s+Math.max(0,o.jual*o.qty-(o.dp||0)),0);
+  // tUnp: group by customer, ambil dp sebagai shared value
+const _piG={};f.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED').forEach(o=>{if(!_piG[o.cust])_piG[o.cust]={tj:0,dp:0};_piG[o.cust].tj+=o.jual*o.qty;if(o.dp>0)_piG[o.cust].dp=o.dp;});
+const tUnp=Object.values(_piG).reduce((s,g)=>s+Math.max(0,g.tj-g.dp),0);
   const bns=[...new Set([...fKl.map(k=>k.name),...f.filter(o=>o.batch).map(o=>o.batch)])];
   const now=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   const filterDesc=kn?`Kloter: ${kn}`:from&&to?`${from} s/d ${to}`:from?`Dari ${from}`:to?`S/d ${to}`:'Semua Data';
@@ -1139,7 +1384,9 @@ function generateLaporan(){
     return `<tr><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-weight:600">${n}${k?.bagasi?'<br><small style="color:#94a3b8;font-weight:400">'+k.bagasi+'</small>':''}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(btj)}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;color:#dc2626">${fr(btm+bpg)}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;color:${btu>=0?'#7c3aed':'#dc2626'};font-weight:700">${btu>=0?'+':''}${fr(btu)}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:center;font-family:monospace">${bmg.toFixed(1)}%</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:center">${bpaid}/${bo.length}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:${KB[ks]||'#f1f5f9'};color:${KC[ks]||'#64748b'};border-radius:5px;padding:2px 9px;font-size:11px;font-weight:700">${KN[ks]||'—'}</span></td></tr>`;
   }).filter(Boolean).join('');
   const piutang=f.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED');
-  const piRows=piutang.map(o=>{const s=Math.max(0,o.jual*o.qty-(o.dp||0));return`<tr><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;font-weight:600">${o.cust}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9">${o.item}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9">${o.batch||'—'}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(o.jual*o.qty)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(o.dp||0)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;color:#d97706;font-weight:700">${fr(s)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9"><span style="background:#fef3c7;color:#92400e;border-radius:5px;padding:2px 9px;font-size:11px;font-weight:700">${o.sbayar}</span></td></tr>`;}).join('');
+  // Group by customer untuk laporan juga
+  const piRawGroups={};piutang.forEach(o=>{if(!piRawGroups[o.cust])piRawGroups[o.cust]={items:[],totalJual:0,dp:0,sbayar:o.sbayar,batch:o.batch};piRawGroups[o.cust].items.push(o);piRawGroups[o.cust].totalJual+=o.jual*o.qty;if(o.dp>0)piRawGroups[o.cust].dp=o.dp;});
+  const piRows=Object.entries(piRawGroups).map(([cust,g])=>{const o=g.items[0];const s=Math.max(0,g.totalJual-g.dp);return`<tr><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;font-weight:600">${o.cust}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9">${o.item}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9">${o.batch||'—'}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(o.jual*o.qty)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(o.dp||0)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;color:#d97706;font-weight:700">${fr(s)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9"><span style="background:#fef3c7;color:#92400e;border-radius:5px;padding:2px 9px;font-size:11px;font-weight:700">${o.sbayar}</span></td></tr>`;}).join('');
   const detailSec=bns.map(n=>{
     const bo=f.filter(o=>o.batch===n);if(!bo.length)return'';
     const grps={};bo.forEach(o=>{if(!grps[o.cust])grps[o.cust]=[];grps[o.cust].push(o);});
@@ -1213,9 +1460,53 @@ async function markLunas(cust){
 }
 
 // INIT
-calc();loadCfg();refreshAll();
+calc();loadCfg();refreshAll();renderStok();
 setSS('ok',`Data lokal · ${orders.length} pesanan`);
 syncNow();
 </script>
 </body>
-</html>
+</html>function renderBeli(){
+  const el=document.getElementById('beli-list');if(!el)return;
+  const belum=orders.filter(o=>!o.sudahBeli&&o.ostatus!=='CANCELLED');
+  if(!belum.length){
+    el.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>Semua Sudah Dibeli! 🎉</p><small>Tidak ada barang yang perlu dibeli</small></div>`;
+    return;
+  }
+  // Group by kloter
+  const byKloter={};
+  belum.forEach(o=>{const k=o.batch||'Tanpa Kloter';if(!byKloter[k])byKloter[k]=[];byKloter[k].push(o);});
+  const kloterOrder=[...kloters.map(k=>k.name),...Object.keys(byKloter)].filter((v,i,a)=>a.indexOf(v)===i).filter(k=>byKloter[k]);
+  el.innerHTML=`<div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+    <div><div class="ph-lbl">Shopping List</div><h2 style="font-size:22px;font-weight:800;letter-spacing:-.4px">${belum.length} item perlu dibeli</h2></div>
+  </div>`+
+  kloterOrder.map(kName=>{
+    const items=byKloter[kName];
+    const k=kloters.find(k=>k.name===kName);
+    return`<div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:${KSC[k?.status||'']||'#94a3b8'}"></div>
+          <span style="font-size:13px;font-weight:800">📦 ${kName}</span>
+          ${k?.bagasi?`<span style="font-size:11px;color:var(--t3)">🧳 ${k.bagasi}</span>`:''}
+        </div>
+        <span style="background:rgba(91,94,244,.1);color:var(--acc);border-radius:6px;padding:2px 10px;font-size:11px;font-weight:700">${items.length} item</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        ${items.map(o=>`<div class="beli-item" id="beli-${o.id}">
+          <button class="beli-check" onclick="beliCheck('${o.id}')">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <div class="beli-item-info">
+            <div class="beli-item-name">${o.item}</div>
+            <div class="beli-item-sub">${o.cust}${o.qty>1?' · Qty '+o.qty:''}${o.jpy?' · ¥'+fn(o.jpy):''}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono)">${fr(o.jual*o.qty)}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
