@@ -413,6 +413,22 @@ select.si option{background:#fff;color:var(--txt);}
   .ccact,.arow{flex-direction:column;}
   .page-title{font-size:20px;}
 }
+
+/* PIUTANG LIST */
+.pi-cust-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--bor);transition:all .3s;}
+.pi-cust-row:last-child{border:none;padding-bottom:0;}
+.pi-cust-row:first-child{padding-top:0;}
+.pi-cust-info{flex:1;min-width:0;}
+.pi-cust-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.pi-lunas-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 13px;background:var(--grn);border:none;border-radius:8px;
+  color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;
+  cursor:pointer;transition:all .18s;white-space:nowrap;
+  box-shadow:0 3px 10px rgba(34,197,94,.25);
+}
+.pi-lunas-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(34,197,94,.35);}
+.pi-lunas-btn svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 </style>
 </head>
 <body>
@@ -1059,16 +1075,32 @@ function renderLap(){
   const pi=f.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED');const pc=document.getElementById('picard');
   if(pi.length){
     pc.style.display='block';
-    // Group by customer
     const piGroups={};
-    pi.forEach(o=>{if(!piGroups[o.cust])piGroups[o.cust]={items:[],totalJual:0,totalDp:0,sbayar:o.sbayar,batch:o.batch};piGroups[o.cust].items.push(o);piGroups[o.cust].totalJual+=o.jual*o.qty;piGroups[o.cust].totalDp+=o.dp||0;});
+    pi.forEach(o=>{
+      if(!piGroups[o.cust])piGroups[o.cust]={items:[],totalJual:0,totalDp:0,sbayar:o.sbayar};
+      piGroups[o.cust].items.push(o);
+      piGroups[o.cust].totalJual+=o.jual*o.qty;
+      piGroups[o.cust].totalDp+=o.dp||0;
+    });
     const totalSisa=Object.values(piGroups).reduce((s,g)=>s+Math.max(0,g.totalJual-g.totalDp),0);
     const badge=document.getElementById('pi-total-badge');if(badge)badge.textContent=fr(totalSisa);
     document.getElementById('pilist').innerHTML=Object.entries(piGroups).map(([cust,g])=>{
       const sisa=Math.max(0,g.totalJual-g.totalDp);
       const itms=g.items.length;
-      const batches=[...new Set(g.items.map(o=>o.batch).filter(Boolean))].join(', ');
-      return`<div class="pirow"><div><div class="pirn">${cust}</div><div class="piri">${itms} item · ${batches||'—'}</div></div><div style="text-align:right"><div style="font-size:11px;font-weight:600;color:var(--t3);margin-bottom:2px">${g.sbayar}</div><div class="piamt">↓ Kurang ${fr(sisa)}</div></div></div>`;
+      const safeCust=cust.replace(/'/g,"\\'");
+      return`<div class="pi-cust-row" id="pirow-${btoa(encodeURIComponent(cust)).replace(/=/g,'')}">
+        <div class="pi-cust-info">
+          <div class="pirn">${cust}</div>
+          <div class="piri">${itms} item · <span style="color:var(--amb);font-weight:600">${g.sbayar}</span></div>
+        </div>
+        <div class="pi-cust-right">
+          <div class="piamt">↓ Kurang ${fr(sisa)}</div>
+          <button class="pi-lunas-btn" onclick="markLunas('${safeCust}')" title="Tandai Lunas">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Lunas
+          </button>
+        </div>
+      </div>`;
     }).join('');
   }
   else pc.style.display='none';
@@ -1137,7 +1169,7 @@ function saveCfg(){try{localStorage.setItem('sk_cfg',JSON.stringify({url:documen
 function loadCfg(){try{const c=JSON.parse(localStorage.getItem('sk_cfg')||'{}');if(c.url)document.getElementById('cfg-url').value=c.url;if(c.nm)document.getElementById('cfg-nm').value=c.nm;if(c.hp)document.getElementById('cfg-hp').value=c.hp;}catch(e){}}
 function getCfg(){try{return JSON.parse(localStorage.getItem('sk_cfg')||'{}');}catch(e){return{};}}
 function getAddr(cust){const k='alamat_cust_'+cust.trim().toLowerCase().replace(/\s+/g,'_');try{const d=localStorage.getItem(k);if(d)return JSON.parse(d);}catch(e){}return null;}
-function buildLink(cust,cos){const cfg=getCfg();let base=cfg.url||'';if(!base){const cur=window.location.href.split('?')[0];base=cur.replace(/[^/]+\.html$/i,'FormAlamat.html');if(base===cur)base=cur.replace(/\/?$/,'/FormAlamat.html');if(base.startsWith('file://'))base='FormAlamat.html';}return base+'?custName='+encodeURIComponent(cust)+'&items='+encodeURIComponent(JSON.stringify(cos.map(o=>o.item+' (Qty '+o.qty+')')));}
+function buildLink(cust,cos){const cfg=getCfg();let base=cfg.url||'';if(!base){const cur=window.location.href.split('?')[0];base=cur.replace(/[^/]+\.html$/i,'FormAlamat.html');if(base===cur)base=cur.replace(/\/?$/,'/FormAlamat.html');if(base.startsWith('file://'))base='FormAlamat.html';}const total=cos.reduce((s,o)=>s+o.jual*o.qty,0);return base+'?custName='+encodeURIComponent(cust)+'&items='+encodeURIComponent(JSON.stringify(cos.map(o=>o.item+' (Qty '+o.qty+')')))+'&total='+total;}
 function copyLink(cust){const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');const link=buildLink(cust,cos);navigator.clipboard.writeText(link).then(()=>toast('✅ Link disalin!')).catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('✅ Link disalin!');});}
 function renderKirim(){
   const kn=document.getElementById('k-kl').value,el=document.getElementById('kirimlist');
@@ -1163,6 +1195,22 @@ function buildResi(addr,pn,ph,ship,stype,cust,il){return`<div id="resi-area" sty
 function printResi(){const c=document.getElementById('resi-area');if(!c)return;const w=window.open('','_blank','width=700,height=550');w.document.write(`<!DOCTYPE html><html><head><title>Resi - ${resiCust}</title><style>body{font-family:Arial,sans-serif;padding:20px;margin:0;}</style></head><body>${c.outerHTML}<script>window.onload=function(){window.print();}<\/script></body></html>`);w.document.close();}
 function closeResi(){document.getElementById('resimod').style.display='none';}
 function printAll(){const kn=document.getElementById('k-kl').value;const filt=orders.filter(o=>o.ostatus!=='CANCELLED'&&(!kn||o.batch===kn));const custs={};filt.forEach(o=>{if(!custs[o.cust])custs[o.cust]={cust:o.cust,orders:[]};custs[o.cust].orders.push(o);});const cfg=getCfg(),pn=cfg.nm||'SUKIDO STORE',ph=cfg.hp||'—';const all=Object.values(custs).map(c=>{const addr=getAddr(c.cust);if(!addr)return'';const il=c.orders.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', ');return buildResi(addr,pn,ph,c.orders[0]?.ship||'JNT',c.orders[0]?.stype||'—',c.cust,il).replace('id="resi-area"','class="rp"');}).filter(Boolean);if(!all.length){toast('⚠️ Belum ada alamat',true);return;}const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html><head><title>Semua Resi</title><style>body{font-family:Arial,sans-serif;padding:20px;}.rp{margin-bottom:28px;padding-bottom:22px;border-bottom:2px dashed #ccc;page-break-after:always;}.rp:last-child{border:none;}</style></head><body>${all.join('')}<script>window.onload=function(){window.print();}<\/script></body></html>`);w.document.close();}
+
+// MARK LUNAS
+async function markLunas(cust){
+  if(!confirm(`Tandai ${cust} sudah LUNAS?`))return;
+  const cos=orders.filter(o=>o.cust===cust&&o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED');
+  if(!cos.length)return;
+  cos.forEach(o=>{o.sbayar='Paid';o.dp=o.jual*o.qty;});
+  sl();
+  // Animasi hilang
+  const rowId='pirow-'+btoa(encodeURIComponent(cust)).replace(/=/g,'');
+  const el=document.getElementById(rowId);
+  if(el){el.style.transition='all .3s';el.style.opacity='0';el.style.transform='translateX(20px)';setTimeout(()=>{renderLap();renderKloter();},320);}
+  else{renderLap();renderKloter();}
+  toast(`✅ ${cust} ditandai Lunas!`);
+  for(const o of cos){try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
+}
 
 // INIT
 calc();loadCfg();refreshAll();
