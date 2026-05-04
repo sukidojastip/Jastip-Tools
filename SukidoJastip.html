@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>Sukido Jastip</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -400,18 +400,48 @@ select.si option{background:#fff;color:var(--txt);}
   .sidebar.open{transform:translateX(0);}
   .main{margin-left:0;}
   .ham-btn{display:flex;}
-  .topbar{padding:16px 18px 0 64px;}
+  .topbar{padding:16px 18px 0 62px;}
   .content{padding:14px 16px 24px;}
   .sgrid,.hero-cards{grid-template-columns:1fr 1fr;}
-  .kcstats{grid-template-columns:1fr 1fr;}
+  .kcstats,.kd-stats{grid-template-columns:1fr 1fr;}
   .g2,.g3,.pay-grid{grid-template-columns:1fr;}
   .bkhd,.bkr{grid-template-columns:1.5fr 1fr 1fr;}
   .bkhd span:nth-child(n+4),.bkr>div:nth-child(n+4){display:none;}
+  .kloter-wrap{flex-direction:column;height:auto;}
+  .kloter-left{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--bor);}
+  .kl-list{max-height:180px;}
+  .kloter-right{min-height:auto;height:auto;}
+  .kd-inner{padding:14px 16px;gap:14px;}
+  .stok-card{flex-direction:column;gap:10px;}
+  .stok-right{flex-direction:row;align-items:center;justify-content:space-between;width:100%;}
+  .topbar-right .topbar-pill{display:none;}
+  .cust-preview{display:none;}
 }
 @media(max-width:540px){
   .sgrid,.hero-cards{grid-template-columns:1fr;}
   .ccact,.arow{flex-direction:column;}
   .page-title{font-size:20px;}
+  .topbar{padding:14px 16px 0 58px;}
+  .content{padding:12px 14px 24px;}
+  .card{padding:16px 18px;}
+  .kd-header-card,.kd-body-card{padding:16px 18px;}
+  .kd-inner{padding:12px 14px;gap:12px;}
+  .sidebar-brand{padding:20px 16px 16px;}
+  .brand-name{font-size:13px;}
+  .cust-hdr{padding:14px 14px;}
+  .item-row{padding:11px 14px;}
+  .pay-sec{padding:12px 14px;}
+  .cust-name{font-size:15px;}
+  .g2{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr 1fr;}
+  .topbar-count{font-size:11px;padding:6px 12px;}
+  .mbox{padding:18px 16px;}
+  .pay-grid{grid-template-columns:1fr;}
+  .pp{flex-direction:column;gap:8px;}
+  .ppd{display:none;}
+  .kcstats{grid-template-columns:1fr 1fr;}
+  .kcs-v{font-size:13px;}
+  .page-title{font-size:18px;}
 }
 
 /* PIUTANG LIST */
@@ -524,7 +554,7 @@ select.si option{background:#fff;color:var(--txt);}
 .kd-empty svg{width:48px;height:48px;stroke:var(--t3);fill:none;stroke-width:1;opacity:.35;margin-bottom:16px;stroke-linecap:round;stroke-linejoin:round;}
 .kd-empty p{font-size:15px;font-weight:700;color:var(--t2);margin-bottom:5px;}
 .kd-empty small{font-size:13px;}
-.kd-inner{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.kd-inner{padding:20px 24px;display:flex;flex-direction:column;gap:20px;}
 .kd-header-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);}
 .kd-body-card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:18px 22px;box-shadow:var(--sh);}
 .kd-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
@@ -560,6 +590,19 @@ select.si option{background:#fff;color:var(--txt);}
 .stok-del-btn svg{width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .stok-empty{text-align:center;padding:50px 20px;color:var(--t3);}
 .stok-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+
+/* iPhone safe area */
+@supports(padding:max(0px)){
+  .sidebar{padding-bottom:max(20px,env(safe-area-inset-bottom));}
+  .content{padding-bottom:max(32px,env(safe-area-inset-bottom));}
+  .topbar{padding-top:max(20px,env(safe-area-inset-top));}
+}
+/* Touch targets minimum 44px */
+.nb,.sico,.belibtn,.editbtn,.beli-check{min-height:44px;}
+.beli-check{min-width:44px;}
+/* Prevent text zoom on iOS */
+input,select,textarea{font-size:16px!important;}
+@media(min-width:541px){input,select,textarea{font-size:13px!important;}}
 </style>
 </head>
 <body>
