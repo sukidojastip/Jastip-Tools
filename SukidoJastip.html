@@ -682,7 +682,7 @@ input,select,textarea{font-size:16px!important;}
     <div class="card">
       <div class="card-ttl"><div class="ct-ico i1"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Info Customer</div>
       <div class="g2"><div class="fl"><label>Nama Pembeli</label><input id="f-cust" placeholder="e.g. Tartaranta"/></div><div class="fl"><label>Sosmed</label><select id="f-stype"><option value="WhatsApp">💬 WhatsApp</option><option value="Threads">🧵 Threads</option><option value="Instagram">📷 Instagram</option><option value="Shopee">🟠 Shopee</option><option value="Tokopedia">🟢 Tokopedia</option><option value="Direct">🤝 Direct</option></select></div></div>
-      <div class="g2"><div class="fl"><label>PIC</label><select id="f-pic"><option>Sukido</option><option>Dodo</option><option>Sukhita</option></select></div><div class="fl"><label>Pengiriman</label><select id="f-ship"><option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option></select></div></div>
+      <div class="g2"><div class="fl"><label>PIC</label><select id="f-pic"><option>Sukido</option><option>Dodo</option><option>Sukhita</option></select></div><div class="fl"><label>Pengiriman</label><select id="f-ship"><option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option></select></div></div>
     </div>
     <div class="card">
       <div class="card-ttl"><div class="ct-ico i2"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>Detail Barang & Harga</div>
@@ -864,7 +864,7 @@ input,select,textarea{font-size:16px!important;}
 <div class="mov" id="editmod" style="display:none" onclick="if(event.target===this)closeEdit()">
   <div class="mbox" onclick="event.stopPropagation()">
     <div class="mhdr"><span class="mtit">✏️ Edit Pesanan</span><button class="mclose" onclick="closeEdit()">✕ Tutup</button></div>
-    <div class="card" style="margin-bottom:12px"><div class="card-ttl"><div class="ct-ico i1"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Info Customer</div><div class="g2"><div class="fl"><label>Nama</label><input id="e-cust"/></div><div class="fl"><label>Sosmed</label><select id="e-stype"><option value="WhatsApp">💬 WhatsApp</option><option value="Threads">🧵 Threads</option><option value="Instagram">📷 Instagram</option><option value="Shopee">🟠 Shopee</option><option value="Tokopedia">🟢 Tokopedia</option><option value="Direct">🤝 Direct</option></select></div></div><div class="g2"><div class="fl"><label>PIC</label><select id="e-pic"><option>Sukido</option><option>Dodo</option><option>Sukhita</option></select></div><div class="fl"><label>Pengiriman</label><select id="e-ship"><option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option></select></div></div></div>
+    <div class="card" style="margin-bottom:12px"><div class="card-ttl"><div class="ct-ico i1"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Info Customer</div><div class="g2"><div class="fl"><label>Nama</label><input id="e-cust"/></div><div class="fl"><label>Sosmed</label><select id="e-stype"><option value="WhatsApp">💬 WhatsApp</option><option value="Threads">🧵 Threads</option><option value="Instagram">📷 Instagram</option><option value="Shopee">🟠 Shopee</option><option value="Tokopedia">🟢 Tokopedia</option><option value="Direct">🤝 Direct</option></select></div></div><div class="g2"><div class="fl"><label>PIC</label><select id="e-pic"><option>Sukido</option><option>Dodo</option><option>Sukhita</option></select></div><div class="fl"><label>Pengiriman</label><select id="e-ship"><option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option></select></div></div></div>
     <div class="card" style="margin-bottom:12px"><div class="card-ttl"><div class="ct-ico i2"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>Detail Barang</div><div class="g1r"><div class="fl"><label>Nama Barang</label><input id="e-item"/></div></div><div class="g2"><div class="fl"><label>QTY</label><input type="number" id="e-qty" min="1"/></div><div class="fl"><label>Kloter</label><select id="e-batch"></select></div></div><div class="g2"><div class="fl"><label>Modal (JPY)/Item</label><input type="number" id="e-jpy"/></div><div class="fl"><label>Rate ¥→Rp</label><input type="number" id="e-rate"/></div></div><div class="g1r"><div class="fl"><label>Harga Jual (Rp)/Item</label><input type="number" id="e-jual"/></div></div></div>
     <div class="card" style="margin-bottom:14px"><div class="card-ttl"><div class="ct-ico i3"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>Status</div><div class="g2"><div class="fl"><label>Order Status</label><select id="e-ostatus"><option value="ORDER">📋 Order</option><option value="PACKED">📦 Packed</option><option value="SHIPPED">🚚 Shipped</option><option value="DONE">✅ Done</option><option value="CANCELLED">❌ Cancelled</option></select></div><div class="fl"><label>Sudah Dibeli?</label><select id="e-beli"><option value="false">⬜ Belum</option><option value="true">✅ Sudah</option></select></div></div></div>
     <button class="sbtn" onclick="saveEdit()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Perubahan</button>
@@ -911,6 +911,45 @@ input,select,textarea{font-size:16px!important;}
       <button onclick="confirmSave()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
         <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
         Konfirmasi & Simpan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT RESI MODAL -->
+<div class="mov" id="editresimod" style="display:none" onclick="if(event.target===this)closeEditResi()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:520px">
+    <div class="mhdr"><span class="mtit">✏️ Edit Data Resi</span><button class="mclose" onclick="closeEditResi()">✕</button></div>
+    <div class="g2">
+      <div class="fl"><label>Nama Penerima</label><input id="er-nama" placeholder="Nama lengkap penerima"/></div>
+      <div class="fl"><label>No. HP / WhatsApp</label><input id="er-hp" placeholder="08xx-xxxx-xxxx"/></div>
+    </div>
+    <div class="fl" style="margin-bottom:14px"><label>Alamat Lengkap</label>
+      <textarea id="er-alamat" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;resize:vertical;min-height:80px;transition:all .18s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'" placeholder="Jalan, RT/RW, Kelurahan, Kecamatan..."></textarea>
+    </div>
+    <div class="g3">
+      <div class="fl"><label>Kota / Kabupaten</label><input id="er-kota" placeholder="e.g. Bekasi"/></div>
+      <div class="fl"><label>Provinsi</label><input id="er-prov" placeholder="e.g. Jawa Barat"/></div>
+      <div class="fl"><label>Kode Pos</label><input id="er-kodepos" placeholder="17121"/></div>
+    </div>
+    <div class="fl" style="margin-bottom:14px"><label>Catatan (opsional)</label>
+      <input id="er-catatan" placeholder="e.g. Titip satpam"/>
+    </div>
+    <div class="g2">
+      <div class="fl"><label>Isi Barang (resi)</label>
+        <input id="er-items" placeholder="Nama barang untuk resi"/>
+      </div>
+      <div class="fl"><label>Jenis Pengiriman</label>
+        <select id="er-ship" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;transition:all .18s">
+          <option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button onclick="closeEditResi()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bor2)';this.style.color='var(--t2)'">Batal</button>
+      <button onclick="saveEditResi()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);display:flex;align-items:center;justify-content:center;gap:8px" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan & Update Resi
       </button>
     </div>
   </div>
@@ -1432,7 +1471,7 @@ function openEdit(id) {
   });
   const eqty = document.getElementById('e-qty'); if (eqty) eqty.value = o.qty || 1;
   const ebeli = document.getElementById('e-beli'); if (ebeli) ebeli.value = o.sudahBeli ? 'true' : 'false';
-  const ship_opts = '<option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option>';
+  const ship_opts = '<option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option>';
   const eship = document.getElementById('e-ship'); if (eship) { eship.innerHTML = ship_opts; eship.value = o.ship || 'Regular JNT'; }
   const ebatch = document.getElementById('e-batch');
   if (ebatch) ebatch.innerHTML = kloters.map(k => `<option value="${k.name}"${k.name === o.batch ? ' selected' : ''}>${k.name}</option>`).join('');
@@ -2146,6 +2185,11 @@ function renderKirim() {
             onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bor2)'">
             <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Link
           </button>
+          <button onclick="event.stopPropagation();openEditResi('${esc(c.cust)}')"
+            style="padding:7px 12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px;transition:all .15s"
+            onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='var(--bor2)';this.style.color='var(--t2)'">
+            ✏️ Edit
+          </button>
           ${hasA
             ? `<button onclick="event.stopPropagation();showResi('${esc(c.cust)}')" style="padding:7px 13px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(91,94,244,.25)">🖨️ Resi</button>`
             : `<button disabled style="padding:7px 13px;background:#fef9c3;border:1.5px solid #fef08a;border-radius:8px;color:#854d0e;font-family:var(--fn);font-size:11px;font-weight:600;cursor:not-allowed">Tunggu Alamat</button>`}
@@ -2410,6 +2454,69 @@ loadCfg();
 refreshAll();
 setSS('ok', `Data lokal · ${orders.length} pesanan`);
 syncNow();
+
+// ── EDIT RESI ──
+let _editResiCust = null;
+
+function openEditResi(cust) {
+  _editResiCust = cust;
+  const addr = getAddr(cust);
+  const cos  = orders.filter(o => o.cust === cust && o.ostatus !== 'CANCELLED');
+  const ship = cos[0]?.ship || 'Regular JNT';
+  const il   = cos.map(o => o.item + (o.qty > 1 ? ' (' + o.qty + 'x)' : '')).join(', ');
+  const set  = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  set('er-nama',    addr?.nama     || cust);
+  set('er-hp',      addr?.hp       || '');
+  set('er-alamat',  addr?.alamat   || '');
+  set('er-kota',    addr?.kota     || '');
+  set('er-prov',    addr?.provinsi || '');
+  set('er-kodepos', addr?.kodepos  || '');
+  set('er-catatan', addr?.catatan  || '');
+  set('er-items',   il);
+  const shipEl = document.getElementById('er-ship');
+  if (shipEl) shipEl.value = ship;
+  document.getElementById('editresimod').style.display = 'flex';
+}
+
+function closeEditResi() {
+  _editResiCust = null;
+  document.getElementById('editresimod').style.display = 'none';
+}
+
+async function saveEditResi() {
+  if (!_editResiCust) return;
+  const get  = id => document.getElementById(id)?.value.trim() || '';
+  const key  = 'alamat_cust_' + _editResiCust.trim().toLowerCase().replace(/\s+/g, '_');
+  const data = {
+    nama:      get('er-nama'),
+    hp:        get('er-hp'),
+    alamat:    get('er-alamat'),
+    kota:      get('er-kota'),
+    provinsi:  get('er-prov'),
+    kodepos:   get('er-kodepos'),
+    catatan:   get('er-catatan'),
+    custName:  _editResiCust,
+    timestamp: new Date().toISOString()
+  };
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
+
+  // Update jenis pengiriman di semua order customer ini
+  const newShip = get('er-ship');
+  if (newShip) {
+    const affected = orders.filter(o => o.cust === _editResiCust && o.ostatus !== 'CANCELLED');
+    affected.forEach(o => { o.ship = newShip; });
+    if (affected.length) {
+      sl();
+      for (const o of affected) {
+        try { await apiCall({ action:'updateOrder', data:o }); setSS('ok'); } catch(e) { setSS('err','Sync gagal'); }
+      }
+    }
+  }
+  closeEditResi();
+  renderKirim();
+  toast('✅ Data resi diupdate!');
+}
+
 </script>
 </body>
 </html>

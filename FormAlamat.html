@@ -120,6 +120,14 @@ body{font-family:var(--fn);background:#eef0fb;min-height:100vh;display:flex;alig
     </div>
     <div class="fl"><label>Kode Pos</label><input id="f-kodepos" type="number" placeholder="e.g. 64272"/></div>
     <div class="fl"><label>Catatan Pengiriman (opsional)</label><input id="f-catatan" placeholder="e.g. Titip di pos satpam..."/></div>
+    <div class="fl"><label>Jenis Pengiriman</label>
+      <select id="f-ship" style="width:100%;background:#f5f7ff;border:1.5px solid #e2e5f5;border-radius:10px;padding:11px 13px;color:#1a1d4e;font-family:inherit;font-size:14px;outline:none;-webkit-appearance:none;transition:all .2s" onfocus="this.style.borderColor='#5b5ef4'" onblur="this.style.borderColor='#e2e5f5'">
+        <option value="">— Pilih Pengiriman —</option>
+        <option value="Regular">🚚 Regular</option>
+        <option value="Instant">⚡ Instant</option>
+        <option value="COD">💵 COD</option>
+      </select>
+    </div>
 
     <button class="submitbtn" id="submitbtn" onclick="submit()">
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -195,7 +203,8 @@ function submit(){
   btn.disabled=true;
   btn.innerHTML='<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;animation:spin .8s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/></svg> Mengirim...';
 
-  const data={nama,hp,alamat,kota,provinsi,kodepos,catatan,custName,timestamp:new Date().toISOString()};
+  const ship=document.getElementById('f-ship')?.value||'';
+  const data={nama,hp,alamat,kota,provinsi,kodepos,catatan,ship,custName,timestamp:new Date().toISOString()};
   const key='alamat_cust_'+custName.trim().toLowerCase().replace(/\s+/g,'_');
   try{localStorage.setItem(key,JSON.stringify(data));}catch(e){}
 
