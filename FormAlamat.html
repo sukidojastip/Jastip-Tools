@@ -213,6 +213,15 @@ function submit(){
   const key='alamat_cust_'+custName.trim().toLowerCase().replace(/\s+/g,'_');
   try{localStorage.setItem(key,JSON.stringify(data));}catch(e){}
 
+  // Save to Google Sheets API
+  const apiUrl='https://script.google.com/macros/s/AKfycbyh6BtcQMttZcaHX4l0vjWJrV15KApABzC4UVOsn0i1iMgXgkqqHIGsxoI2KD2kiZJ4/exec';
+  try{
+    const url=new URL(apiUrl);
+    url.searchParams.set('action','saveAddress');
+    url.searchParams.set('data',JSON.stringify(data));
+    fetch(url.toString()).catch(()=>{});// fire and forget
+  }catch(e){}
+
   setTimeout(()=>{
     document.getElementById('main-card').style.display='none';
     document.getElementById('success-card').style.display='block';
