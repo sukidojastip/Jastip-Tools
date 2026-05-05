@@ -685,7 +685,14 @@ input,select,textarea{font-size:16px!important;}
     <div class="hero-cards" id="add-hero" style="display:none"></div>
     <div class="card">
       <div class="card-ttl"><div class="ct-ico i1"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Info Customer</div>
-      <div class="g2"><div class="fl"><label>Nama Pembeli</label><input id="f-cust" placeholder="e.g. Tartaranta"/></div><div class="fl"><label>Sosmed</label><select id="f-stype"><option value="WhatsApp">💬 WhatsApp</option><option value="Threads">🧵 Threads</option><option value="Instagram">📷 Instagram</option><option value="Shopee">🟠 Shopee</option><option value="Tokopedia">🟢 Tokopedia</option><option value="Direct">🤝 Direct</option></select></div></div>
+      <div class="g2"><div class="fl"><label>Nama Pembeli</label>
+          <div style="display:flex;gap:6px">
+            <input id="f-cust" placeholder="e.g. Tartaranta" style="flex:1"/>
+            <button onclick="openKontakPopup()" style="height:44px;padding:0 13px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(91,94,244,.25);display:flex;align-items:center;gap:5px">
+              <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Kontak
+            </button>
+          </div>
+        </div><div class="fl"><label>Sosmed</label><select id="f-stype"><option value="WhatsApp">💬 WhatsApp</option><option value="Threads">🧵 Threads</option><option value="Instagram">📷 Instagram</option><option value="Shopee">🟠 Shopee</option><option value="Tokopedia">🟢 Tokopedia</option><option value="Direct">🤝 Direct</option></select></div></div>
       <div class="g2"><div class="fl"><label>PIC</label><select id="f-pic"><option>Sukido</option><option>Dodo</option><option>Sukhita</option></select></div><div class="fl"><label>Pengiriman</label><select id="f-ship"><option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option></select></div></div>
     </div>
     <div class="card">
@@ -1015,13 +1022,24 @@ input,select,textarea{font-size:16px!important;}
 
 <!-- RESI DETAIL MODAL -->
 <div class="mov" id="residetailmod" style="display:none" onclick="if(event.target===this)closeResiDetail()">
-  <div class="mbox" onclick="event.stopPropagation()" style="max-width:520px">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:520px;max-height:90vh;overflow-y:auto">
     <div class="mhdr">
       <div><div class="mtit">📋 Konfirmasi Resi</div><div style="font-size:12px;color:var(--t3);margin-top:2px" id="rd-cust"></div></div>
       <button class="mclose" onclick="closeResiDetail()">✕</button>
     </div>
+    <!-- List barang pesanan (auto, read-only) -->
+    <div style="background:var(--bg);border:1px solid var(--bor);border-radius:10px;padding:10px 14px;margin-bottom:14px">
+      <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">📦 List Pesanan (otomatis)</div>
+      <div id="rd-items-auto" style="font-size:12px;color:var(--t2);line-height:1.8"></div>
+    </div>
+    <!-- Isi barang untuk resi (manual) -->
+    <div class="fl" style="margin-bottom:14px">
+      <label>Isi Barang di Resi <span style="color:var(--t3);font-weight:400">(tulis manual)</span></label>
+      <input id="rd-items" placeholder="e.g. Sepatu Salomon, Jaket, dll..."/>
+      <div class="hint">Yang tercetak di resi sebagai keterangan isi paket</div>
+    </div>
     <div id="rd-plat-note" style="display:none;background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#5b21b6;font-weight:600">
-      📱 Pengiriman via platform — alamat otomatis dari aplikasi Shopee/Tokopedia/Toco
+      📱 Pengiriman via platform — alamat otomatis dari aplikasi
     </div>
     <div id="rd-addr-sec">
       <div class="g2">
@@ -1029,30 +1047,38 @@ input,select,textarea{font-size:16px!important;}
         <div class="fl"><label>No. HP</label><input id="rd-hp" placeholder="08xx-xxxx-xxxx"/></div>
       </div>
       <div class="fl" style="margin-bottom:12px"><label>Alamat Lengkap</label>
-        <textarea id="rd-alamat" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;resize:vertical;min-height:70px;transition:border .18s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'" placeholder="Jalan, RT/RW, Kelurahan, Kecamatan..."></textarea>
+        <textarea id="rd-alamat" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;resize:vertical;min-height:70px;transition:border .18s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'" placeholder="Alamat lengkap..."></textarea>
       </div>
       <div class="g3">
         <div class="fl"><label>Kota</label><input id="rd-kota" placeholder="Kota"/></div>
         <div class="fl"><label>Provinsi</label><input id="rd-prov" placeholder="Provinsi"/></div>
         <div class="fl"><label>Kode Pos</label><input id="rd-kodepos" placeholder="12345"/></div>
       </div>
-      <div class="fl" style="margin-bottom:12px"><label>Catatan (opsional)</label><input id="rd-catatan" placeholder="e.g. Titip satpam"/></div>
+      <div class="fl" style="margin-bottom:12px"><label>Catatan</label><input id="rd-catatan" placeholder="Catatan pengiriman (opsional)"/></div>
     </div>
-    <div class="g2">
-      <div class="fl"><label>Jenis Pengiriman</label>
-        <select id="rd-ship" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none">
-          <option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option>
-        </select>
-      </div>
-      <div class="fl"><label>Isi Barang (untuk resi)</label><input id="rd-items" placeholder="Nama barang di resi..."/></div>
+    <div class="fl" style="margin-bottom:16px"><label>Jenis Pengiriman</label>
+      <select id="rd-ship" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none">
+        <option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option>
+      </select>
     </div>
-    <div style="display:flex;gap:10px;margin-top:4px">
+    <div style="display:flex;gap:10px">
       <button onclick="closeResiDetail()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
       <button onclick="confirmResiDetail()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);display:flex;align-items:center;justify-content:center;gap:8px">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         Preview & Print Resi
       </button>
     </div>
+  </div>
+</div>
+
+<!-- KONTAK POPUP MODAL -->
+<div class="mov" id="kontakpopmod" style="display:none" onclick="if(event.target===this)closeKontakPopup()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:480px;max-height:80vh;display:flex;flex-direction:column">
+    <div class="mhdr"><span class="mtit">👥 Pilih Customer</span><button class="mclose" onclick="closeKontakPopup()">✕</button></div>
+    <input id="kontak-popup-search" placeholder="🔍 Cari nama customer..." oninput="renderKontakPopup()"
+      style="width:100%;background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;font-family:var(--fn);font-size:13px;outline:none;margin-bottom:12px;flex-shrink:0"
+      onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+    <div id="kontak-popup-list" style="flex:1;overflow-y:auto;max-height:50vh"></div>
   </div>
 </div>
 
@@ -1794,34 +1820,69 @@ function togKirimOpen(cust){
 function togKirimSent(cust){kirimSent[cust]=!kirimSent[cust];renderKirim();}
 
 function renderKirim(){
-  const kn=document.getElementById('k-kl')?.value||'';
-  const el=document.getElementById('kirimlist');if(!el)return;
-  const q=(document.getElementById('kirim-search')?.value||'').toLowerCase();
-  const sf=document.getElementById('kirim-ship-filter')?.value||'';
-  let filt=orders.filter(o=>o.ostatus!=='CANCELLED'&&(!kn||o.batch===kn));
-  if(!filt.length){el.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><p>Belum Ada Pesanan</p><small>Tambah pesanan dulu</small></div>`;return;}
-  const custs={};filt.forEach(o=>{if(!custs[o.cust])custs[o.cust]={cust:o.cust,orders:[],ship:o.ship,stype:o.stype};custs[o.cust].orders.push(o);});
-  let entries=Object.values(custs);
-  if(q)entries=entries.filter(c=>c.cust.toLowerCase().includes(q)||c.orders.some(o=>o.item.toLowerCase().includes(q)));
-  if(sf)entries=entries.filter(c=>c.orders.some(o=>o.ship===sf));
-  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--t3)">Tidak ada hasil</div>`;return;}
-  // Sort: punya alamat / platform dulu
-  const getOk=c=>!!getAddr(c.cust)||c.orders.some(o=>PLATFORM_SHIPS.includes(o.ship));
-  entries.sort((a,b)=>{const aOk=getOk(a),bOk=getOk(b);return aOk&&!bOk?-1:!aOk&&bOk?1:0;});
-  const siap=entries.filter(c=>getOk(c)),belum=entries.filter(c=>!getOk(c));
-  function renderGroup(list,title,ico,titleColor){
-    if(!list.length)return'';
-    return`<div class="kd-body-card" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <span style="font-size:15px">${ico}</span>
-        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:${titleColor};flex:1">${title}</span>
-        ${mkBadge(list.length,'rgba(91,94,244,.1)','var(--acc)','rgba(91,94,244,.2)')}
-      </div>
-      <div>${list.map(c=>renderKirimCard(c)).join('')}</div>
-    </div>`;
+  const kn = document.getElementById('k-kl')?.value || '';
+  const el = document.getElementById('kirimlist'); if(!el) return;
+  const q  = (document.getElementById('kirim-search')?.value || '').toLowerCase();
+  const sf = document.getElementById('kirim-ship-filter')?.value || '';
+  let filt = orders.filter(o => o.ostatus !== 'CANCELLED' && (!kn || o.batch === kn));
+  if(!filt.length){
+    el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><p>Belum Ada Pesanan</p><small>Tambah pesanan dulu</small></div>`;
+    return;
   }
-  el.innerHTML=renderGroup(siap,'Siap Kirim','✅','var(--grn)')+renderGroup(belum,'Belum Isi Alamat','⏳','var(--amb)');
+  // Build custs map
+  const custs = {};
+  filt.forEach(o => {
+    if(!custs[o.cust]) custs[o.cust] = {cust:o.cust, orders:[], ship:o.ship, stype:o.stype};
+    custs[o.cust].orders.push(o);
+  });
+  let entries = Object.values(custs);
+  if(q)  entries = entries.filter(e => e.cust.toLowerCase().includes(q) || e.orders.some(o => o.item.toLowerCase().includes(q)));
+  if(sf) entries = entries.filter(e => e.orders.some(o => o.ship === sf));
+  if(!entries.length){ el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--t3)">Tidak ada hasil</div>`; return; }
+
+  // Classify
+  const isCOD    = e => e.orders.some(o => o.ship === 'COD');
+  const isOnline = e => PLATFORM_SHIPS.some(p => e.orders.some(o => o.ship === p));
+  const hasAddr  = e => !!getAddr(e.cust);
+
+  const groups = {
+    cod:    { label:'COD',              ico:'💵', color:'#854d0e',  bg:'#fef9c3', border:'#fef08a', items: entries.filter(e => isCOD(e)) },
+    siap:   { label:'Siap Kirim',       ico:'✅', color:'#166534',  bg:'#dcfce7', border:'#bbf7d0', items: entries.filter(e => !isCOD(e) && !isOnline(e) && hasAddr(e)) },
+    online: { label:'Online Shop',      ico:'📱', color:'#5b21b6',  bg:'#ede9fe', border:'#ddd6fe', items: entries.filter(e => !isCOD(e) && isOnline(e)) },
+    belum:  { label:'Belum Isi Alamat', ico:'⏳', color:'#991b1b',  bg:'#fee2e2', border:'#fecaca', items: entries.filter(e => !isCOD(e) && !isOnline(e) && !hasAddr(e)) },
+  };
+
+  // Tab buttons row
+  const tabBtns = Object.entries(groups).map(([key, g]) => {
+    const isActive = kirimTab === key;
+    return `<button onclick="setKirimTab('${key}')"
+      style="flex:1;padding:10px 6px;border:1.5px solid ${isActive ? g.border : 'var(--bor)'};
+             background:${isActive ? g.bg : 'var(--sur)'};border-radius:10px;cursor:pointer;
+             font-family:var(--fn);font-size:11px;font-weight:700;color:${isActive ? g.color : 'var(--t2)'};
+             transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0">
+        <span style="font-size:18px">${g.ico}</span>
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${g.label}</span>
+        <span style="font-size:12px;font-weight:800;color:${isActive ? g.color : 'var(--acc)'}">${g.items.length}</span>
+      </button>`;
+  }).join('');
+
+  // Active group content
+  const activeGroup = groups[kirimTab] || groups.siap;
+  const activeItems = activeGroup.items;
+  const listHtml = activeItems.length
+    ? activeItems.map(e => renderKirimCard(e)).join('')
+    : `<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">${activeGroup.ico} Tidak ada pesanan di kategori ini</div>`;
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      ${tabBtns}
+    </div>
+    <div id="kirim-tab-content">${listHtml}</div>`;
 }
+
+let kirimTab = 'siap';
+function setKirimTab(tab){ kirimTab = tab; renderKirim(); }
+
 
 function renderKirimCard(c){
   const addr=getAddr(c.cust),hasA=!!addr;
@@ -1900,7 +1961,12 @@ function showResi(cust){
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
   set('rd-nama',addr?.nama||cust);set('rd-hp',addr?.hp||'');set('rd-alamat',addr?.alamat||'');
   set('rd-kota',addr?.kota||'');set('rd-prov',addr?.provinsi||'');set('rd-kodepos',addr?.kodepos||'');
-  set('rd-catatan',addr?.catatan||'');set('rd-items',il);
+  set('rd-catatan',addr?.catatan||'');
+  // Auto-fill list pesanan (read-only display)
+  const autoList=document.getElementById('rd-items-auto');
+  if(autoList)autoList.innerHTML=cos.map(o=>`<div>• ${o.item}${o.qty>1?' ('+o.qty+'x)':''} — <span style="color:var(--grn);font-family:var(--mono)">${fr(o.jual*o.qty)}</span></div>`).join('');
+  // Manual isi field — pre-fill with simple list for convenience
+  set('rd-items', cos.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', '));
   const shipEl=document.getElementById('rd-ship');if(shipEl)shipEl.value=cos[0]?.ship||'Regular JNT';
   const addrSec=document.getElementById('rd-addr-sec');if(addrSec)addrSec.style.display=isPlat?'none':'block';
   const platNote=document.getElementById('rd-plat-note');if(platNote)platNote.style.display=isPlat?'block':'none';
@@ -2100,7 +2166,7 @@ function renderStok(){
   const q=(document.getElementById('stok-search')?.value||'').toLowerCase();
   const kf=document.getElementById('stok-kloter-filter')?.value||'';
   const filtered=stokList.filter(s=>(!q||s.nama.toLowerCase().includes(q)||(s.catatan||'').toLowerCase().includes(q))&&(!kf||s.kloter===kf));
-  if(!filtered.length){el.innerHTML=`<div style="text-align:center;padding:50px 20px;color:var(--t3)"><svg viewBox="0 0 24 24" style="width:44px;height:44px;stroke:var(--t3);fill:none;stroke-width:1;margin:0 auto 14px;display:block;opacity:.4;stroke-linecap:round;stroke-linejoin:round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><p style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:5px">${q?'Tidak ada hasil':'Belum Ada Stok'}</p><small>${q?'Untuk "'+q+'"':'Tambah barang di atas'}</small></div>`;return;}
+  if(!filtered.length){el.innerHTML=`<div class="card" style="text-align:center;padding:50px 20px;color:var(--t3)"><svg viewBox="0 0 24 24" style="width:44px;height:44px;stroke:var(--t3);fill:none;stroke-width:1;margin:0 auto 14px;display:block;opacity:.4;stroke-linecap:round;stroke-linejoin:round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><p style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:5px">${q?'Tidak ada hasil':'Belum Ada Stok'}</p><small>${q?'Untuk "'+q+'"':'Tambah barang di atas'}</small></div>`;return;}
   const totalItems=stokList.reduce((s,x)=>s+(x.qty||0),0);
   const totalNilai=stokList.reduce((s,x)=>s+(x.modal||0)*(x.qty||0),0);
   const totalPotensi=stokList.reduce((s,x)=>s+(x.jual||0)*(x.qty||0),0);
@@ -2108,7 +2174,7 @@ function renderStok(){
   // Group by kloter
   const byKloter={};filtered.forEach(s=>{const k=s.kloter||'Tanpa Kloter';if(!byKloter[k])byKloter[k]=[];byKloter[k].push(s);});
   const kloterOrder=[...kloters.map(k=>k.name),'Tanpa Kloter',...Object.keys(byKloter)].filter((v,i,a)=>a.indexOf(v)===i).filter(k=>byKloter[k]);
-  el.innerHTML=`<div class="stok-summary">
+  el.innerHTML=`<div class="stok-summary" style="margin-bottom:16px">
     <div class="sc scb"><div class="ico2">📦</div><div class="scv" style="color:var(--acc)">${stokList.length}</div><div class="scl">Jenis Barang</div><div class="scs">${totalItems} total unit</div></div>
     <div class="sc scr"><div class="ico2">🛒</div><div class="scv" style="color:var(--red)">${fr(totalNilai)}</div><div class="scl">Nilai Modal</div></div>
     <div class="sc scg"><div class="ico2">💰</div><div class="scv" style="color:var(--grn)">${fr(totalPotensi)}</div><div class="scl">Potensi Jual</div></div>
@@ -2221,6 +2287,52 @@ loadCfg();
 refreshAll();
 setSS('ok',`Data lokal · ${orders.length} pesanan`);
 syncNow();
+// ── KONTAK POPUP ──
+function openKontakPopup(){
+  document.getElementById('kontakpopmod').style.display='flex';
+  const si=document.getElementById('kontak-popup-search');if(si)si.value='';
+  renderKontakPopup();
+  setTimeout(()=>document.getElementById('kontak-popup-search')?.focus(),100);
+}
+function closeKontakPopup(){
+  document.getElementById('kontakpopmod').style.display='none';
+}
+function renderKontakPopup(){
+  const el=document.getElementById('kontak-popup-list');if(!el)return;
+  const q=(document.getElementById('kontak-popup-search')?.value||'').toLowerCase();
+  const custMap={};
+  orders.forEach(o=>{if(!custMap[o.cust])custMap[o.cust]={name:o.cust,stype:o.stype,pic:o.pic,ship:o.ship,orders:[]};custMap[o.cust].orders.push(o);});
+  let custs=Object.values(custMap);
+  if(q)custs=custs.filter(c=>c.name.toLowerCase().includes(q));
+  custs.sort((a,b)=>a.name.localeCompare(b.name));
+  if(!custs.length){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--t3);font-size:13px">Belum ada customer</div>';return;}
+  el.innerHTML=custs.map(c=>{
+    const total=c.orders.filter(o=>o.ostatus!=='CANCELLED').reduce((s,o)=>s+o.jual*o.qty,0);
+    const addr=getAddr(c.name);
+    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--bor);cursor:pointer;transition:background .15s;gap:10px"
+      onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'"
+      onclick="pickCustomer('${esc(c.name)}','${esc(c.stype||'WhatsApp')}','${esc(c.pic||'Sukido')}','${esc(c.ship||'Regular JNT')}')">
+      <div style="min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--dark)">${c.name}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:2px">${SI[c.stype]||''} ${c.stype||''} · ${c.ship||'—'} · ${c.orders.length} pesanan</div>
+        ${addr?`<div style="font-size:10px;color:var(--grn);margin-top:1px">📍 Ada alamat</div>`:''}
+      </div>
+      <div style="flex-shrink:0">
+        <button onclick="event.stopPropagation();pickCustomer('${esc(c.name)}','${esc(c.stype||'WhatsApp')}','${esc(c.pic||'Sukido')}','${esc(c.ship||'Regular JNT')}')"
+          style="padding:7px 16px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer">Pilih</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function pickCustomer(name,stype,pic,ship){
+  const setV=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
+  setV('f-cust',name);setV('f-stype',stype);setV('f-pic',pic);setV('f-ship',ship);
+  closeKontakPopup();
+  document.getElementById('f-item')?.focus();
+  toast('✅ '+name+' dipilih!');
+}
+
+
 </script>
 </body>
 </html>
