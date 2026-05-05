@@ -700,7 +700,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="g1r"><div class="fl"><label>Nama Barang</label>
       <div style="display:flex;gap:6px">
         <input id="f-item" placeholder="e.g. Salomon Active Skin 8 Black M" style="flex:1"/>
-        <button onclick="togStokPicker()" style="padding:0 12px;background:var(--g2);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.25)" title="Pilih dari Stok">📦 Stok</button>
+        <button onclick="openStokPopup()" style="padding:0 12px;background:var(--g2);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.25)" title="Pilih dari Stok">📦 Stok</button>
       </div>
     </div></div>
     <!-- Stok Picker Dropdown -->
@@ -1116,6 +1116,20 @@ input,select,textarea{font-size:16px!important;}
   </div>
 </div>
 
+<!-- STOK PICKER POPUP -->
+<div class="mov" id="stokpopmod" style="display:none" onclick="if(event.target===this)closeStokPopup()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:500px;max-height:80vh;display:flex;flex-direction:column">
+    <div class="mhdr">
+      <span class="mtit">📦 Pilih dari Stok</span>
+      <button class="mclose" onclick="closeStokPopup()">✕</button>
+    </div>
+    <input id="stok-popup-search" placeholder="🔍 Cari nama barang..." oninput="renderStokPopup()"
+      style="width:100%;background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;font-family:var(--fn);font-size:13px;outline:none;margin-bottom:12px;flex-shrink:0"
+      onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+    <div id="stok-popup-list" style="flex:1;overflow-y:auto;max-height:50vh"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 
@@ -1126,7 +1140,7 @@ input,select,textarea{font-size:16px!important;}
 // ═══════════════════════════════════════════════════════
 //  SUKIDO JASTIP MANAGER v5.0
 // ═══════════════════════════════════════════════════════
-const API = 'https://script.google.com/macros/s/AKfycbyh6BtcQMttZcaHX4l0vjWJrV15KApABzC4UVOsn0i1iMgXgkqqHIGsxoI2KD2kiZJ4/exec';
+const API = 'https://script.google.com/macros/s/AKfycbxXwJKotY6yYftyb8Ex_brEa2A-_dmFphMbmTAlpbIIVvi2h273G7CNLkq2RQ08ZHNq/exec';
 const PLATFORM_SHIPS = ['Shopee','Tokopedia','Toco'];
 
 // ─── STATE ──────────────────────────────────────────────
@@ -2447,17 +2461,18 @@ function renderStok(){
 
   // ── Empty state ──
   if(!stokList.length){
-    el.innerHTML = `<div class="card" style="text-align:center;padding:48px 20px">
+    el.innerHTML = `<div style="background:#ffffff;border:2px solid #5b5ef4;border-radius:16px;text-align:center;padding:48px 20px;margin:0">
       <div style="font-size:44px;margin-bottom:12px">📦</div>
-      <div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Belum Ada Stok</div>
-      <div style="font-size:13px;color:var(--t3)">Tambah barang stok di form atas</div>
+      <div style="font-size:16px;font-weight:800;color:#1a1d4e;margin-bottom:8px">Belum Ada Stok</div>
+      <div style="font-size:13px;color:#6b7a99;margin-bottom:20px">Klik "Tambah Barang Stok" di atas untuk mulai</div>
+      <button onclick="togStokForm()" style="padding:10px 22px;background:linear-gradient(135deg,#5b5ef4,#8b5cf6);border:none;border-radius:10px;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(91,94,244,.3)">+ Tambah Barang Pertama</button>
     </div>`;
     return;
   }
 
   if(!filtered.length){
-    el.innerHTML = `<div class="card" style="text-align:center;padding:32px 20px">
-      <div style="font-size:13px;color:var(--t3)">Tidak ada barang sesuai filter</div>
+    el.innerHTML = `<div style="background:#ffffff;border:1px solid #e2e5f5;border-radius:16px;text-align:center;padding:32px 20px">
+      <div style="font-size:13px;color:#6b7a99">Tidak ada barang sesuai filter</div>
     </div>`;
     return;
   }
@@ -2578,6 +2593,61 @@ function renderStok(){
   el.innerHTML = out;
 }
 
+
+// ── STOK PICKER POPUP ──
+function openStokPopup(){
+  if(!stokList.length){ toast('⚠️ Belum ada stok. Tambah dulu di tab Stok Barang', true); return; }
+  document.getElementById('stokpopmod').style.display = 'flex';
+  const si = document.getElementById('stok-popup-search'); if(si){ si.value=''; si.focus(); }
+  renderStokPopup();
+}
+function closeStokPopup(){
+  document.getElementById('stokpopmod').style.display = 'none';
+}
+function renderStokPopup(){
+  const el = document.getElementById('stok-popup-list'); if(!el) return;
+  const q  = (document.getElementById('stok-popup-search')?.value||'').toLowerCase();
+  const list = stokList.filter(s => !q || s.nama.toLowerCase().includes(q) || (s.catatan||'').toLowerCase().includes(q));
+  if(!list.length){
+    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--t3);font-size:13px">Tidak ada hasil</div>';
+    return;
+  }
+  el.innerHTML = list.map(s => {
+    const qtyBg = s.qty===0?'#fee2e2':s.qty<=2?'#fef9c3':'#dcfce7';
+    const qtyC  = s.qty===0?'#991b1b':s.qty<=2?'#854d0e':'#166534';
+    const margin = s.jual>0 ? Math.round((s.jual-s.modal)/s.jual*100) : 0;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--bor);cursor:pointer;transition:background .15s;gap:12px"
+      onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'"
+      onclick="pickStokPopup('${s.id}')">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--dark)">${s.nama}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:3px">
+          ${fr(s.jual)}/item · Margin ${margin}%
+          ${s.catatan ? ' · 📝 '+s.catatan : ''}
+          ${s.kloter ? ' · 📦 '+s.kloter : ''}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <span style="background:${qtyBg};color:${qtyC};border-radius:8px;padding:3px 10px;font-size:12px;font-weight:800;font-family:var(--mono)">${s.qty} unit</span>
+        <button onclick="event.stopPropagation();pickStokPopup('${s.id}')"
+          style="padding:6px 14px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(91,94,244,.2)">Pilih</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function pickStokPopup(id){
+  const s = stokList.find(x => String(x.id)===String(id)); if(!s) return;
+  const set = (elId,val) => { const el=document.getElementById(elId); if(el) el.value=val; };
+  set('f-item', s.nama);
+  set('f-jual', s.jual);
+  if(s.modalCurr==='JPY' && s.modalJPY) set('f-jpy', s.modalJPY);
+  else set('f-jpy', '');
+  if(s.kloter){ set('f-batch', s.kloter); onBC(); }
+  closeStokPopup();
+  calc();
+  document.getElementById('f-qty')?.focus();
+  toast('✅ '+s.nama+' dipilih!');
+}
 
 </script>
 </body>

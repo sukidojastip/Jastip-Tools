@@ -214,7 +214,7 @@ function submit(){
   const key='alamat_cust_'+custName.trim().toLowerCase().replace(/\s+/g,'_');
   try{localStorage.setItem(key,JSON.stringify(data));}catch(e){}
   // Save to Google Sheets API (cross-origin solution)
-  const API='https://script.google.com/macros/s/AKfycbyh6BtcQMttZcaHX4l0vjWJrV15KApABzC4UVOsn0i1iMgXgkqqHIGsxoI2KD2kiZJ4/exec';
+  const API='https://script.google.com/macros/s/AKfycbxXwJKotY6yYftyb8Ex_brEa2A-_dmFphMbmTAlpbIIVvi2h273G7CNLkq2RQ08ZHNq/exec';
   try{
     const url=new URL(API);
     url.searchParams.set('action','saveAddress');
@@ -223,7 +223,7 @@ function submit(){
   }catch(e){}
 
   // Save to Google Sheets API
-  const apiUrl='https://script.google.com/macros/s/AKfycbyh6BtcQMttZcaHX4l0vjWJrV15KApABzC4UVOsn0i1iMgXgkqqHIGsxoI2KD2kiZJ4/exec';
+  const apiUrl='https://script.google.com/macros/s/AKfycbxXwJKotY6yYftyb8Ex_brEa2A-_dmFphMbmTAlpbIIVvi2h273G7CNLkq2RQ08ZHNq/exec';
   try{
     const url=new URL(apiUrl);
     url.searchParams.set('action','saveAddress');
