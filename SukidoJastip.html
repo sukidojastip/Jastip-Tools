@@ -424,7 +424,7 @@ select.si option{background:#fff;color:var(--txt);}
   .topbar{padding:14px 16px 0 58px;}
   .content{padding:12px 14px 24px;}
   .card{padding:16px 18px;}
-  .kd-header-card,.kd-body-card{padding:16px 18px;}
+  .kd-header-card,.kd-body-card{padding:16px 18px;background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:16px;}
   .kd-inner{padding:14px;gap:0;}
   .sidebar-brand{padding:20px 16px 16px;}
   .brand-name{font-size:13px;}
@@ -851,55 +851,89 @@ input,select,textarea{font-size:16px!important;}
 
   <!-- STOK -->
   <div class="sec" id="sec-stok">
-    <!-- Search & Filter bar -->
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <input id="stok-search" placeholder="🔍 Cari nama barang..." oninput="renderStok()"
-        style="flex:1;min-width:160px;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:11px 14px;font-family:var(--fn);font-size:13px;outline:none;box-shadow:var(--sh);transition:border .18s"
-        onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-      <select id="stok-kloter-filter" onchange="renderStok()"
-        style="background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:11px 14px;font-family:var(--fn);font-size:13px;outline:none;cursor:pointer;-webkit-appearance:none;min-width:150px;box-shadow:var(--sh)">
-        <option value="">📦 Semua Kloter</option>
-      </select>
+
+  <!-- ── ADD FORM ── -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0" onclick="togStokForm()">
+      <div class="card-ttl" style="margin-bottom:0">
+        <div class="ct-ico i2">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </div>
+        Tambah Barang Stok
+      </div>
+      <svg id="stokchev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s;flex-shrink:0">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
     </div>
 
-    <div class="card">
-      <div class="kltr-form-hdr" onclick="togStokForm()">
-        <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i2"><svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>Tambah Barang Stok</div>
-        <svg id="stokchev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div id="stokform" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--bor)">
-        <div class="g1r"><div class="fl"><label>Nama Barang</label><input id="sk-nama" placeholder="e.g. Salomon Active Skin 8"/></div></div>
-        <div class="g2" style="margin-bottom:0">
-          <div class="fl"><label>Jumlah Stok</label><input type="number" id="sk-qty" placeholder="0" min="0"/></div>
-          <div class="fl"><label>Harga Jual (Rp)</label><input type="number" id="sk-jual" placeholder="0" oninput="calcStok()"/></div>
+    <div id="stokform" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--bor)">
+      <div class="g2" style="margin-bottom:12px">
+        <div class="fl" style="grid-column:1/-1">
+          <label>Nama Barang</label>
+          <input id="sk-nama" placeholder="e.g. Salomon Active Skin 8 Black M"/>
         </div>
-        <div class="g2">
-          <div class="fl"><label>Harga Modal</label>
-            <div style="display:flex;gap:6px;align-items:center">
-              <input type="number" id="sk-modal" placeholder="0" oninput="calcStok()" style="flex:1"/>
-              <div class="ctog" style="flex-shrink:0"><button class="ctbtn on" id="sk-curr-idr" onclick="setStokCurr('IDR')">Rp</button><button class="ctbtn" id="sk-curr-jpy" onclick="setStokCurr('JPY')">¥</button></div>
-            </div>
-            <div id="sk-rate-hint" style="font-size:10px;color:var(--t3);margin-top:4px;display:none">Rate aktif dari kloter terbuka</div>
-          </div>
-          <div class="fl"><label>Catatan (opsional)</label><input id="sk-catatan" placeholder="Ukuran, warna, dll"/></div>
-        <div class="fl"><label>Kloter (opsional)</label>
-          <select id="sk-kloter" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none">
+        <div class="fl">
+          <label>Kloter Kedatangan</label>
+          <select id="sk-kloter" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
             <option value="">— Tanpa Kloter —</option>
           </select>
         </div>
+        <div class="fl">
+          <label>Jumlah Stok</label>
+          <input type="number" id="sk-qty" placeholder="0" min="0"/>
         </div>
-        <div class="pp" style="margin-bottom:14px">
-          <div class="ppi"><div class="ppl">Margin</div><div class="ppv" id="sk-margin" style="color:var(--pur)">0%</div></div><div class="ppd"></div>
-          <div class="ppi"><div class="ppl">Profit/Item</div><div class="ppv" id="sk-profit" style="color:var(--grn)">Rp 0</div></div><div class="ppd"></div>
-          <div class="ppi"><div class="ppl">Modal IDR</div><div class="ppv" id="sk-modal-idr" style="color:var(--red)">Rp 0</div></div>
+        <div class="fl">
+          <label>Harga Modal</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="number" id="sk-modal" placeholder="0" oninput="calcStok()" style="flex:1"/>
+            <div class="ctog" style="flex-shrink:0">
+              <button class="ctbtn on" id="sk-curr-idr" onclick="setStokCurr('IDR')">Rp</button>
+              <button class="ctbtn" id="sk-curr-jpy" onclick="setStokCurr('JPY')">¥</button>
+            </div>
+          </div>
+          <div id="sk-rate-hint" style="font-size:10px;color:var(--t3);margin-top:4px;display:none">Rate dari kloter aktif</div>
         </div>
-        <button class="sbtn" id="sk-save-btn" onclick="addStok()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Barang</button>
+        <div class="fl">
+          <label>Harga Jual (Rp)</label>
+          <input type="number" id="sk-jual" placeholder="0" oninput="calcStok()"/>
+          <div style="margin-top:6px;display:flex;gap:14px;font-size:11px">
+            <span style="color:var(--t3)">Margin: <b id="sk-margin" style="color:var(--pur)">0%</b></span>
+            <span style="color:var(--t3)">Profit: <b id="sk-profit" style="color:var(--grn)">Rp 0</b></span>
+          </div>
+        </div>
+        <div class="fl">
+          <label>Catatan (opsional)</label>
+          <input id="sk-catatan" placeholder="Ukuran, warna, dll"/>
+        </div>
       </div>
+      <button class="sbtn" id="sk-save-btn" onclick="addStok()">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Simpan Barang
+      </button>
     </div>
-    <div id="stoklist"></div>
   </div>
 
-  </div><!-- end .content -->
+  <!-- ── SEARCH ── -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <input id="stok-search" placeholder="🔍 Cari nama barang..." oninput="renderStok()"
+      style="flex:1;min-width:160px;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 14px;font-family:var(--fn);font-size:13px;outline:none;box-shadow:var(--sh);transition:border .18s"
+      onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+    <select id="stok-kloter-filter" onchange="renderStok()"
+      style="min-width:160px;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 14px;font-family:var(--fn);font-size:13px;outline:none;cursor:pointer;-webkit-appearance:none;box-shadow:var(--sh)">
+      <option value="">📦 Semua Kloter</option>
+    </select>
+  </div>
+
+  <!-- ── LIST ── -->
+  <div id="stoklist"></div>
+
+</div>
+
+</div><!-- end .content -->
 </div><!-- end .main -->
 </div><!-- end .layout -->
 
@@ -1100,7 +1134,6 @@ let orders=[], kloters=[], stokList=[];
 let editId=null, qiCust=null, qiKid=null, resiCust=null;
 let activeKid=null, _pendingOrder=null, _pickedStokId=null, _editResiCust=null;
 let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={};
-let stokCurr='IDR', editStokId=null, piutangOpen=false;
 let kloterSearch={}, kloterShipFilter={};
 
 // ─── LOAD ──────────────────────────────────────────────
@@ -1110,7 +1143,7 @@ try{stokList=JSON.parse(localStorage.getItem('sk_stok')||'[]');}catch(e){stokLis
 
 // ─── SAVE ──────────────────────────────────────────────
 function sl(){try{localStorage.setItem('sk_o',JSON.stringify(orders));localStorage.setItem('sk_k',JSON.stringify(kloters));}catch(e){}}
-function saveStok(){try{localStorage.setItem('sk_stok',JSON.stringify(stokList));}catch(e){}}
+
 
 // ─── HELPERS ───────────────────────────────────────────
 const fn  = n => Math.round(n).toLocaleString('id-ID');
@@ -1166,8 +1199,30 @@ async function apiCall(p){
 }
 async function syncNow(){
   setSS('ld','Sinkronisasi...');
-  try{const d=await apiCall({action:'getAll'});orders=d.orders||[];kloters=d.kloters||[];sl();setSS('ok',`${orders.length} pesanan · ${kloters.length} kloter`);refreshAll();}
-  catch(e){setSS('err',e.name==='AbortError'?'Timeout':'Offline');}
+  try{
+    const d=await apiCall({action:'getAll'});
+    orders=d.orders||[];kloters=d.kloters||[];sl();
+    // Load addresses from Sheets into localStorage
+    if(d.addresses&&d.addresses.length){
+      d.addresses.forEach(addr=>{
+        if(!addr.custName)return;
+        const key='alamat_cust_'+addr.custName.trim().toLowerCase().replace(/\s+/g,'_');
+        try{
+          // Only update if Sheet has newer or local doesn't exist
+          const existing=localStorage.getItem(key);
+          if(!existing||!JSON.parse(existing).timestamp||(addr.timestamp&&addr.timestamp>JSON.parse(existing).timestamp)){
+            localStorage.setItem(key,JSON.stringify({
+              nama:addr.nama,hp:addr.hp,alamat:addr.alamat,kota:addr.kota,
+              provinsi:addr.provinsi,kodepos:addr.kodepos,catatan:addr.catatan,
+              custName:addr.custName,timestamp:addr.timestamp
+            }));
+          }
+        }catch(e){}
+      });
+    }
+    setSS('ok',`${orders.length} pesanan · ${kloters.length} kloter`);
+    refreshAll();
+  }catch(e){setSS('err',e.name==='AbortError'?'Timeout':'Offline');}
 }
 
 // ─── TOAST ─────────────────────────────────────────────
@@ -1199,7 +1254,7 @@ function sw(t){
   });
   const title=document.getElementById('topbar-title');if(title)title.textContent=TITLES[t]||t;
   const lbl=document.getElementById('page-lbl');if(lbl)lbl.textContent=LABELS[t]||'';
-  const renderers={kloter:renderKloter,add:()=>{refreshDD();renderStokPicker();},beli:renderBeli,stok:renderStok,kirim:renderKirim,kontak:renderKontak,lap:renderLap};
+  const renderers={kloter:renderKloter,add:()=>{refreshDD();renderStokPicker();},beli:renderBeli,stok:()=>{refreshDD();renderStok();},kirim:renderKirim,kontak:renderKontak,lap:renderLap};
   renderers[t]?.();
   closeSidebar();
 }
@@ -1208,10 +1263,12 @@ function closeSidebar(){document.getElementById('sidebar')?.classList.remove('op
 
 // ─── DROPDOWNS ─────────────────────────────────────────
 function refreshDD(){
-  const s=document.getElementById('f-batch');if(!s)return;
-  const pv=s.value;
-  s.innerHTML='<option value="">— Pilih Kloter —</option>'+kloters.map(k=>`<option value="${k.name}">${k.name}${k.rate?' (¥'+k.rate+')':''}</option>`).join('');
-  if(pv)s.value=pv;
+  const s=document.getElementById('f-batch');
+  if(s){
+    const pv=s.value;
+    s.innerHTML='<option value="">— Pilih Kloter —</option>'+kloters.map(k=>`<option value="${k.name}">${k.name}${k.rate?' (¥'+k.rate+')':''}</option>`).join('');
+    if(pv)s.value=pv;
+  }
   const allKN=[...new Set([...kloters.map(k=>k.name),...orders.filter(o=>o.batch).map(o=>o.batch)])];
   ['r-kl','k-kl'].forEach(id=>{const el=document.getElementById(id);if(!el)return;const pv2=el.value;el.innerHTML='<option value="">📦 Semua</option>'+allKN.map(n=>`<option value="${n}">${n}</option>`).join('');if(pv2)el.value=pv2;});
   // Also populate stok kloter selects
@@ -2107,132 +2164,17 @@ async function downloadJPG(){
 // ═══════════════════════════════════════════════════════
 //  STOK BARANG
 // ═══════════════════════════════════════════════════════
-let stokOpen={};
-function togStokItem(id){stokOpen[String(id)]=!stokOpen[String(id)];renderStok();}
 
-function togStokForm(){
-  const b=document.getElementById('stokform'),chev=document.getElementById('stokchev');if(!b)return;
-  const op=b.style.display==='block';b.style.display=op?'none':'block';if(chev)chev.style.transform=op?'':'rotate(180deg)';
-  if(!op){editStokId=null;const btn=document.getElementById('sk-save-btn');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Barang';}
-}
-function setStokCurr(m){
-  stokCurr=m;
-  document.getElementById('sk-curr-idr')?.classList.toggle('on',m==='IDR');
-  document.getElementById('sk-curr-jpy')?.classList.toggle('on',m==='JPY');
-  const hint=document.getElementById('sk-rate-hint');if(hint)hint.style.display=m==='JPY'?'block':'none';
-  calcStok();
-}
-function calcStok(){
-  let modal=+document.getElementById('sk-modal')?.value||0,jual=+document.getElementById('sk-jual')?.value||0;
-  let modalIDR=modal;
-  if(stokCurr==='JPY'){const ok=kloters.find(k=>k.status==='open')||kloters[kloters.length-1];modalIDR=modal*(ok?.rate||110);}
-  const margin=jual>0?(jual-modalIDR)/jual*100:0,profit=jual-modalIDR;
-  const set=(id,val,c)=>{const el=document.getElementById(id);if(el){el.textContent=val;if(c)el.style.color=c;}};
-  set('sk-margin',margin.toFixed(1)+'%',margin>=0?'var(--pur)':'var(--red)');
-  set('sk-profit',fr(profit),profit>=0?'var(--grn)':'var(--red)');
-  set('sk-modal-idr',fr(modalIDR),'var(--red)');
-}
-function addStok(){
-  const nama=document.getElementById('sk-nama')?.value.trim();if(!nama){toast('⚠️ Nama barang wajib!',true);return;}
-  let modalInput=+document.getElementById('sk-modal')?.value||0,modalIDR=modalInput;
-  if(stokCurr==='JPY'){const ok=kloters.find(k=>k.status==='open')||kloters[kloters.length-1];modalIDR=Math.round(modalInput*(ok?.rate||110));}
-  // Get kloter assignment
-  const stokKloter=document.getElementById('sk-kloter')?.value||'';
-  const existing=editStokId?stokList.find(x=>x.id==editStokId):null;
-  const s={id:editStokId||Date.now(),nama,qty:+document.getElementById('sk-qty')?.value||0,modal:modalIDR,modalJPY:stokCurr==='JPY'?modalInput:0,modalCurr:stokCurr,jual:+document.getElementById('sk-jual')?.value||0,catatan:document.getElementById('sk-catatan')?.value.trim()||'',kloter:stokKloter,createdAt:existing?.createdAt||new Date().toISOString().split('T')[0]};
-  if(editStokId)stokList=stokList.map(x=>x.id==editStokId?s:x);else stokList.push(s);
-  editStokId=null;saveStok();
-  ['sk-nama','sk-catatan'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['sk-qty','sk-modal','sk-jual'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  setStokCurr('IDR');togStokForm();renderStok();toast('✅ Barang disimpan!');
-}
-function openEditStok(id){
-  const s=stokList.find(x=>String(x.id)===String(id));if(!s)return;editStokId=s.id;
-  const form=document.getElementById('stokform');if(form)form.style.display='block';
-  const chev=document.getElementById('stokchev');if(chev)chev.style.transform='rotate(180deg)';
-  const set=(elId,val)=>{const el=document.getElementById(elId);if(el)el.value=val;};
-  set('sk-nama',s.nama||'');set('sk-qty',s.qty||0);set('sk-jual',s.jual||0);set('sk-catatan',s.catatan||'');
-  const skKl=document.getElementById('sk-kloter');if(skKl)skKl.value=s.kloter||'';
-  if(s.modalCurr==='JPY'&&s.modalJPY){setStokCurr('JPY');set('sk-modal',s.modalJPY);}else{setStokCurr('IDR');set('sk-modal',s.modal||0);}
-  calcStok();
-  const btn=document.getElementById('sk-save-btn');if(btn)btn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Update Barang';
-  document.getElementById('sk-nama')?.focus();window.scrollTo({top:0,behavior:'smooth'});toast('📝 Mode edit barang');
-}
-function delStok(id){if(!confirm('Hapus barang ini?'))return;stokList=stokList.filter(s=>String(s.id)!==String(id));saveStok();renderStok();toast('✅ Barang dihapus!');}
-function editStokQty(id,delta){const s=stokList.find(x=>String(x.id)===String(id));if(!s)return;s.qty=Math.max(0,(s.qty||0)+delta);saveStok();renderStok();}
 
-function renderStok(){
-  const el=document.getElementById('stoklist');if(!el)return;
-  const q=(document.getElementById('stok-search')?.value||'').toLowerCase();
-  const kf=document.getElementById('stok-kloter-filter')?.value||'';
-  const filtered=stokList.filter(s=>(!q||s.nama.toLowerCase().includes(q)||(s.catatan||'').toLowerCase().includes(q))&&(!kf||s.kloter===kf));
-  if(!filtered.length){el.innerHTML=`<div class="card" style="text-align:center;padding:50px 20px;color:var(--t3)"><svg viewBox="0 0 24 24" style="width:44px;height:44px;stroke:var(--t3);fill:none;stroke-width:1;margin:0 auto 14px;display:block;opacity:.4;stroke-linecap:round;stroke-linejoin:round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><p style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:5px">${q?'Tidak ada hasil':'Belum Ada Stok'}</p><small>${q?'Untuk "'+q+'"':'Tambah barang di atas'}</small></div>`;return;}
-  const totalItems=stokList.reduce((s,x)=>s+(x.qty||0),0);
-  const totalNilai=stokList.reduce((s,x)=>s+(x.modal||0)*(x.qty||0),0);
-  const totalPotensi=stokList.reduce((s,x)=>s+(x.jual||0)*(x.qty||0),0);
-  const emojis=['👟','👕','👜','🎽','🧢','🧥','🎒','⌚','🕶️','🩴'];
-  // Group by kloter
-  const byKloter={};filtered.forEach(s=>{const k=s.kloter||'Tanpa Kloter';if(!byKloter[k])byKloter[k]=[];byKloter[k].push(s);});
-  const kloterOrder=[...kloters.map(k=>k.name),'Tanpa Kloter',...Object.keys(byKloter)].filter((v,i,a)=>a.indexOf(v)===i).filter(k=>byKloter[k]);
-  el.innerHTML=`<div class="stok-summary" style="margin-bottom:16px">
-    <div class="sc scb"><div class="ico2">📦</div><div class="scv" style="color:var(--acc)">${stokList.length}</div><div class="scl">Jenis Barang</div><div class="scs">${totalItems} total unit</div></div>
-    <div class="sc scr"><div class="ico2">🛒</div><div class="scv" style="color:var(--red)">${fr(totalNilai)}</div><div class="scl">Nilai Modal</div></div>
-    <div class="sc scg"><div class="ico2">💰</div><div class="scv" style="color:var(--grn)">${fr(totalPotensi)}</div><div class="scl">Potensi Jual</div></div>
-  </div>`+kloterOrder.map(kName=>{
-    const items=byKloter[kName];const k=kloters.find(k=>k.name===kName);
-    return`<div class="kd-body-card" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bor)">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:8px;height:8px;border-radius:50%;background:${KSC[k?.status||'']||'#94a3b8'}"></div>
-          <span style="font-size:13px;font-weight:800">📦 ${kName}</span>
-          ${k?.bagasi?`<span style="font-size:11px;color:var(--t3)">🧳 ${k.bagasi}</span>`:''}
-        </div>
-        ${mkBadge(items.length+' item · '+items.reduce((s,x)=>s+(x.qty||0),0)+' unit','rgba(91,94,244,.1)','var(--acc)','rgba(91,94,244,.2)')}
-      </div>
-      ${items.map(s=>{
-        const margin=s.jual>0?(s.jual-s.modal)/s.jual*100:0,profit=s.jual-s.modal;
-        const isOpen=!!stokOpen[String(s.id)];
-        const statusColor=s.qty===0?'var(--red)':s.qty<=3?'var(--amb)':'var(--grn)';
-        return`<div class="stok-card" style="flex-direction:column;gap:0;padding:0;overflow:hidden;border-radius:var(--rs);border:1px solid var(--bor);margin-bottom:6px;background:var(--sur);box-shadow:var(--sh)">
-          <!-- Collapsed row -->
-          <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer" onclick="togStokItem('${s.id}')">
-            <div style="flex:1;min-width:0">
-              <div style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.nama}</div>
-              ${s.catatan?`<div style="font-size:11px;color:var(--t3);margin-top:1px">📝 ${s.catatan}</div>`:''}
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-              <div style="text-align:right">
-                <div style="font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono)">${fr(s.jual)}</div>
-                <div style="font-size:10px;color:var(--t3)">${margin.toFixed(0)}% margin</div>
-              </div>
-              <div style="background:${s.qty===0?'#fee2e2':s.qty<=3?'#fef9c3':'#dcfce7'};color:${statusColor};border-radius:8px;padding:4px 10px;font-size:12px;font-weight:800;font-family:var(--mono);min-width:36px;text-align:center">${s.qty}</div>
-              <div style="display:flex;align-items:center;gap:3px">
-                <button onclick="event.stopPropagation();editStokQty('${s.id}',-1)" style="width:26px;height:26px;background:var(--bg);border:1.5px solid var(--bor);border-radius:7px;cursor:pointer;font-size:15px;font-weight:700;color:var(--t2);display:flex;align-items:center;justify-content:center;line-height:1;transition:all .15s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bor)';this.style.color='var(--t2)'">−</button>
-                <button onclick="event.stopPropagation();editStokQty('${s.id}',1)" style="width:26px;height:26px;background:var(--grn);border:none;border-radius:7px;cursor:pointer;font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;line-height:1;box-shadow:0 2px 6px rgba(34,197,94,.3);transition:all .15s">+</button>
-              </div>
-              <svg style="width:12px;height:12px;stroke:var(--t3);fill:none;stroke-width:2.5;flex-shrink:0;transition:transform .18s;${isOpen?'transform:rotate(180deg)':''}" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            </div>
-          </div>
-          <!-- Expanded details -->
-          <div style="display:${isOpen?'block':'none'};padding:12px 14px;border-top:1px solid var(--bor);background:var(--bg)">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-              <div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)"><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Harga Modal</div><div style="font-size:14px;font-weight:800;color:var(--red);font-family:var(--mono)">${fr(s.modal)}${s.modalCurr==='JPY'&&s.modalJPY?`<span style="font-size:10px;color:var(--t3)"> (¥${fn(s.modalJPY)})</span>`:''}</div></div>
-              <div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)"><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Harga Jual</div><div style="font-size:14px;font-weight:800;color:var(--grn);font-family:var(--mono)">${fr(s.jual)}</div></div>
-              <div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)"><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Margin</div><div style="font-size:14px;font-weight:800;font-family:var(--mono);color:${margin>=0?'var(--pur)':'var(--red)'}">${margin.toFixed(1)}%</div></div>
-              <div style="background:var(--sur);border-radius:8px;padding:9px 12px;border:1px solid var(--bor)"><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Profit/item</div><div style="font-size:14px;font-weight:800;font-family:var(--mono);color:${profit>=0?'var(--pur)':'var(--red)'}">${profit>=0?'+':''}${fr(profit)}</div></div>
-            </div>
-            <div style="display:flex;gap:8px">
-              <button onclick="openEditStok('${s.id}')" style="flex:1;height:32px;background:var(--bg);border:1.5px solid var(--bor);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:var(--fn);font-size:12px;font-weight:700;color:var(--t2);transition:all .15s" onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='var(--bor)';this.style.color='var(--t2)'">✏️ Edit</button>
-              <button onclick="delStok('${s.id}')" style="flex:1;height:32px;background:transparent;border:1.5px solid rgba(239,68,68,.2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:var(--fn);font-size:12px;font-weight:700;color:var(--red);transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.07)';this.style.borderColor='var(--red)'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(239,68,68,.2)'">
-                <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Hapus
-              </button>
-            </div>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`;
-  }).join('');
-}
+
+
+
+
+
+
+
+
+
 
 // ═══════════════════════════════════════════════════════
 //  KONTAK / ADDRESS BOOK
@@ -2330,6 +2272,310 @@ function pickCustomer(name,stype,pic,ship){
   closeKontakPopup();
   document.getElementById('f-item')?.focus();
   toast('✅ '+name+' dipilih!');
+}
+
+
+
+// ═══════════════════════════════════════════════════════
+//  STOK BARANG — complete rebuild
+// ═══════════════════════════════════════════════════════
+
+let stokCurr = 'IDR';
+let editStokId = null;
+
+function saveStok(){ try{ localStorage.setItem('sk_stok', JSON.stringify(stokList)); }catch(e){} }
+
+function togStokForm(){
+  const form = document.getElementById('stokform');
+  const chev = document.getElementById('stokchev');
+  if(!form) return;
+  const open = form.style.display === 'block';
+  form.style.display = open ? 'none' : 'block';
+  if(chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+  if(!open){
+    // reset to add mode
+    editStokId = null;
+    const btn = document.getElementById('sk-save-btn');
+    if(btn) btn.textContent = 'Simpan Barang';
+    ['sk-nama','sk-catatan'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    ['sk-qty','sk-modal','sk-jual'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    const kl = document.getElementById('sk-kloter'); if(kl) kl.value = '';
+    setStokCurr('IDR');
+  }
+}
+
+function setStokCurr(m){
+  stokCurr = m;
+  const idr = document.getElementById('sk-curr-idr');
+  const jpy = document.getElementById('sk-curr-jpy');
+  if(idr){ idr.className = 'ctbtn' + (m==='IDR' ? ' on' : ''); }
+  if(jpy){ jpy.className = 'ctbtn' + (m==='JPY' ? ' on' : ''); }
+  const hint = document.getElementById('sk-rate-hint');
+  if(hint) hint.style.display = m === 'JPY' ? 'block' : 'none';
+  calcStok();
+}
+
+function calcStok(){
+  const modal = +document.getElementById('sk-modal')?.value || 0;
+  const jual  = +document.getElementById('sk-jual')?.value  || 0;
+  let modalIDR = modal;
+  if(stokCurr === 'JPY'){
+    const kloterName = document.getElementById('sk-kloter')?.value || '';
+    const kl = kloters.find(k => k.name === kloterName) || kloters.find(k => k.status === 'open') || kloters[kloters.length-1];
+    modalIDR = Math.round(modal * (kl?.rate || 110));
+    const hint = document.getElementById('sk-rate-hint');
+    if(hint) hint.textContent = 'Rate: ¥1 = Rp ' + fn(kl?.rate||110);
+  }
+  const margin = jual > 0 ? Math.round((jual - modalIDR) / jual * 100) : 0;
+  const profit = jual - modalIDR;
+  const mg = document.getElementById('sk-margin'); if(mg){ mg.textContent = margin + '%'; mg.style.color = margin >= 0 ? 'var(--pur)' : 'var(--red)'; }
+  const pf = document.getElementById('sk-profit'); if(pf){ pf.textContent = fr(profit); pf.style.color = profit >= 0 ? 'var(--grn)' : 'var(--red)'; }
+}
+
+function addStok(){
+  const nama = document.getElementById('sk-nama')?.value.trim();
+  if(!nama){ toast('⚠️ Nama barang wajib!', true); return; }
+  const modal = +document.getElementById('sk-modal')?.value || 0;
+  let modalIDR = modal;
+  if(stokCurr === 'JPY'){
+    const kl = kloters.find(k => k.name === document.getElementById('sk-kloter')?.value) || kloters.find(k => k.status === 'open') || kloters[kloters.length-1];
+    modalIDR = Math.round(modal * (kl?.rate || 110));
+  }
+  const s = {
+    id:         editStokId || Date.now(),
+    nama,
+    kloter:     document.getElementById('sk-kloter')?.value || '',
+    qty:        +document.getElementById('sk-qty')?.value   || 0,
+    modal:      modalIDR,
+    modalJPY:   stokCurr === 'JPY' ? modal : 0,
+    modalCurr:  stokCurr,
+    jual:       +document.getElementById('sk-jual')?.value  || 0,
+    catatan:    document.getElementById('sk-catatan')?.value.trim() || '',
+    createdAt:  new Date().toISOString().split('T')[0]
+  };
+  if(editStokId){
+    stokList = stokList.map(x => String(x.id) === String(editStokId) ? s : x);
+  } else {
+    stokList.push(s);
+  }
+  saveStok();
+  togStokForm();
+  renderStok();
+  toast('✅ Barang ' + (editStokId ? 'diupdate' : 'disimpan') + '!');
+  editStokId = null;
+}
+
+function openEditStok(id){
+  const s = stokList.find(x => String(x.id) === String(id));
+  if(!s) return;
+  editStokId = s.id;
+  // Open form
+  const form = document.getElementById('stokform');
+  const chev = document.getElementById('stokchev');
+  if(form) form.style.display = 'block';
+  if(chev) chev.style.transform = 'rotate(180deg)';
+  const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val ?? ''; };
+  set('sk-nama',    s.nama);
+  set('sk-qty',     s.qty);
+  set('sk-jual',    s.jual);
+  set('sk-catatan', s.catatan);
+  set('sk-kloter',  s.kloter);
+  if(s.modalCurr === 'JPY' && s.modalJPY){
+    setStokCurr('JPY');
+    set('sk-modal', s.modalJPY);
+  } else {
+    setStokCurr('IDR');
+    set('sk-modal', s.modal);
+  }
+  calcStok();
+  const btn = document.getElementById('sk-save-btn');
+  if(btn) btn.textContent = '✓ Update Barang';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  toast('📝 Mode edit: ' + s.nama);
+}
+
+function delStok(id){
+  if(!confirm('Hapus barang ini dari stok?')) return;
+  stokList = stokList.filter(s => String(s.id) !== String(id));
+  saveStok();
+  renderStok();
+  toast('✅ Barang dihapus!');
+}
+
+function editStokQty(id, delta){
+  const s = stokList.find(x => String(x.id) === String(id));
+  if(!s) return;
+  s.qty = Math.max(0, (s.qty || 0) + delta);
+  saveStok();
+  renderStok();
+}
+
+function pickStokToForm(id){
+  const s = stokList.find(x => String(x.id) === String(id));
+  if(!s) return;
+  const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val ?? ''; };
+  set('f-item', s.nama);
+  set('f-jual', s.jual);
+  if(s.modalCurr === 'JPY' && s.modalJPY) set('f-jpy', s.modalJPY);
+  if(s.kloter){
+    set('f-batch', s.kloter);
+    onBC();
+  }
+  sw('add');
+  setTimeout(() => document.getElementById('f-qty')?.focus(), 200);
+  toast('✅ ' + s.nama + ' — isi qty & konfirmasi');
+}
+
+function renderStok(){
+  const el = document.getElementById('stoklist');
+  if(!el){ return; }
+
+  // Populate kloter dropdowns
+  const klOpts = kloters.map(k => `<option value="${k.name}">${k.name}${k.rate?' (¥'+k.rate+')':''}</option>`).join('');
+  const skKl = document.getElementById('sk-kloter');
+  if(skKl && skKl.children.length <= 1) skKl.innerHTML = '<option value="">— Tanpa Kloter —</option>' + klOpts;
+  const filterEl = document.getElementById('stok-kloter-filter');
+  if(filterEl && filterEl.children.length <= 1) filterEl.innerHTML = '<option value="">📦 Semua Kloter</option>' + kloters.map(k=>`<option value="${k.name}">${k.name}</option>`).join('');
+
+  const q  = (document.getElementById('stok-search')?.value || '').toLowerCase();
+  const kf = document.getElementById('stok-kloter-filter')?.value || '';
+
+  const filtered = stokList.filter(s =>
+    (!q  || s.nama.toLowerCase().includes(q) || (s.catatan||'').toLowerCase().includes(q)) &&
+    (!kf || (s.kloter||'') === kf)
+  );
+
+  // ── Empty state ──
+  if(!stokList.length){
+    el.innerHTML = `<div class="card" style="text-align:center;padding:48px 20px">
+      <div style="font-size:44px;margin-bottom:12px">📦</div>
+      <div style="font-size:15px;font-weight:700;color:var(--t2);margin-bottom:6px">Belum Ada Stok</div>
+      <div style="font-size:13px;color:var(--t3)">Tambah barang stok di form atas</div>
+    </div>`;
+    return;
+  }
+
+  if(!filtered.length){
+    el.innerHTML = `<div class="card" style="text-align:center;padding:32px 20px">
+      <div style="font-size:13px;color:var(--t3)">Tidak ada barang sesuai filter</div>
+    </div>`;
+    return;
+  }
+
+  // ── Summary ──
+  const totalUnit   = stokList.reduce((s,x) => s+(x.qty||0), 0);
+  const totalModal  = stokList.reduce((s,x) => s+(x.modal||0)*(x.qty||0), 0);
+  const totalPotensi= stokList.reduce((s,x) => s+(x.jual||0)*(x.qty||0), 0);
+
+  let out = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+    <div class="card" style="text-align:center;padding:12px 8px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Jenis</div>
+      <div style="font-size:22px;font-weight:800;color:var(--acc);font-family:var(--mono);margin-top:4px">${stokList.length}</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px 8px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Unit</div>
+      <div style="font-size:22px;font-weight:800;color:var(--pur);font-family:var(--mono);margin-top:4px">${totalUnit}</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px 8px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Modal</div>
+      <div style="font-size:13px;font-weight:800;color:var(--red);font-family:var(--mono);margin-top:4px">${fr(totalModal)}</div>
+    </div>
+    <div class="card" style="text-align:center;padding:12px 8px">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Potensi</div>
+      <div style="font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono);margin-top:4px">${fr(totalPotensi)}</div>
+    </div>
+  </div>`;
+
+  // ── Group by kloter ──
+  const byKloter = {};
+  filtered.forEach(s => {
+    const key = s.kloter || 'Tanpa Kloter';
+    if(!byKloter[key]) byKloter[key] = [];
+    byKloter[key].push(s);
+  });
+  const kloterOrder = [
+    ...kloters.map(k => k.name).filter(n => byKloter[n]),
+    ...(byKloter['Tanpa Kloter'] ? ['Tanpa Kloter'] : [])
+  ];
+
+  kloterOrder.forEach(kName => {
+    const items = byKloter[kName];
+    const k = kloters.find(k => k.name === kName);
+    const KSC = {open:'#22c55e',closed:'#ef4444',transit:'#f59e0b',arrived:'#3b82f6'};
+    const grpUnit  = items.reduce((s,x) => s+(x.qty||0), 0);
+    const grpModal = items.reduce((s,x) => s+(x.modal||0)*(x.qty||0), 0);
+    const grpJual  = items.reduce((s,x) => s+(x.jual||0)*(x.qty||0), 0);
+
+    out += `<div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px 18px;background:var(--bg);border-bottom:1px solid var(--bor)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:9px;height:9px;border-radius:50%;background:${KSC[k?.status||'']||'#94a3b8'};flex-shrink:0"></div>
+          <span style="font-size:13px;font-weight:800;color:var(--dark)">📦 ${kName}</span>
+          ${k?.eta ? `<span style="font-size:11px;color:var(--t3)">ETA ${k.eta.slice(0,10)}</span>` : ''}
+        </div>
+        <div style="display:flex;gap:14px;font-size:11px;flex-wrap:wrap">
+          <span><b style="font-family:var(--mono);color:var(--pur)">${grpUnit}</b> unit</span>
+          <span style="color:var(--t3)">Modal: <b style="font-family:var(--mono);color:var(--red)">${fr(grpModal)}</b></span>
+          <span style="color:var(--t3)">Potensi: <b style="font-family:var(--mono);color:var(--grn)">${fr(grpJual)}</b></span>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;min-width:560px">
+          <thead>
+            <tr style="background:var(--bg)">
+              <th style="padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bor)">Nama Barang</th>
+              <th style="padding:9px 10px;text-align:center;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bor);white-space:nowrap">Stok</th>
+              <th style="padding:9px 10px;text-align:right;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bor);white-space:nowrap">Modal</th>
+              <th style="padding:9px 10px;text-align:right;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bor);white-space:nowrap">Jual</th>
+              <th style="padding:9px 10px;text-align:center;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bor)">%</th>
+              <th style="padding:9px 14px;text-align:center;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bor)">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(s => {
+              const margin = s.jual > 0 ? Math.round((s.jual - s.modal) / s.jual * 100) : 0;
+              const qtyBg = s.qty===0 ? '#fee2e2' : s.qty<=2 ? '#fef9c3' : '#dcfce7';
+              const qtyC  = s.qty===0 ? '#991b1b' : s.qty<=2 ? '#854d0e' : '#166534';
+              return `<tr style="border-bottom:1px solid var(--bor);transition:background .12s" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+                <td style="padding:11px 14px">
+                  <div style="font-weight:700;color:var(--dark);font-size:13px">${s.nama}</div>
+                  ${s.catatan ? `<div style="font-size:11px;color:var(--t3);margin-top:2px">📝 ${s.catatan}</div>` : ''}
+                </td>
+                <td style="padding:11px 10px;text-align:center">
+                  <div style="display:flex;align-items:center;justify-content:center;gap:4px">
+                    <button onclick="editStokQty('${s.id}',-1)" style="width:22px;height:22px;border:1.5px solid var(--bor);border-radius:5px;background:transparent;cursor:pointer;font-weight:700;font-size:14px;color:var(--t2);line-height:1">−</button>
+                    <span style="background:${qtyBg};color:${qtyC};border-radius:6px;padding:2px 9px;font-size:12px;font-weight:800;font-family:var(--mono);min-width:28px;display:inline-block;text-align:center">${s.qty}</span>
+                    <button onclick="editStokQty('${s.id}',1)" style="width:22px;height:22px;border:none;border-radius:5px;background:var(--grn);cursor:pointer;font-weight:700;font-size:14px;color:#fff;line-height:1">+</button>
+                  </div>
+                </td>
+                <td style="padding:11px 10px;text-align:right;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--red);white-space:nowrap">
+                  ${fr(s.modal)}${s.modalCurr==='JPY'&&s.modalJPY ? `<br><span style="font-size:10px;color:var(--t3)">¥${fn(s.modalJPY)}</span>` : ''}
+                </td>
+                <td style="padding:11px 10px;text-align:right;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--grn);white-space:nowrap">${fr(s.jual)}</td>
+                <td style="padding:11px 10px;text-align:center">
+                  <span style="font-size:12px;font-weight:700;color:${margin>=0?'var(--pur)':'var(--red)'}">${margin}%</span>
+                </td>
+                <td style="padding:11px 14px">
+                  <div style="display:flex;align-items:center;justify-content:center;gap:5px">
+                    <button onclick="pickStokToForm('${s.id}')" title="Buat pesanan dari barang ini"
+                      style="height:28px;padding:0 10px;background:var(--g1);border:none;border-radius:7px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px rgba(91,94,244,.25)">+ Pesan</button>
+                    <button onclick="openEditStok('${s.id}')"
+                      style="width:28px;height:28px;background:var(--sur);border:1.5px solid var(--bor);border-radius:7px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center">✏️</button>
+                    <button onclick="delStok('${s.id}')"
+                      style="width:28px;height:28px;background:transparent;border:1.5px solid rgba(239,68,68,.25);border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center">
+                      <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  });
+
+  el.innerHTML = out;
 }
 
 
