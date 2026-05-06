@@ -1035,8 +1035,8 @@ input,select,textarea{font-size:16px!important;}
       <input id="er-catatan" placeholder="e.g. Titip satpam"/>
     </div>
     <div class="g2">
-      <div class="fl"><label>Isi Barang (resi)</label>
-        <input id="er-items" placeholder="Nama barang untuk resi"/>
+      <div class="fl"><label style="color:var(--acc);font-weight:800">📝 Isi Barang (resi) <span style="background:#ef4444;color:#fff;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;margin-left:3px;vertical-align:middle">WAJIB</span></label>
+        <input id="er-items" placeholder="Nama barang untuk resi" style="border-color:rgba(91,94,244,.3)" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='rgba(91,94,244,.3)'"/>
       </div>
       <div class="fl"><label>Jenis Pengiriman</label>
         <select id="er-ship" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;transition:all .18s">
@@ -1067,10 +1067,10 @@ input,select,textarea{font-size:16px!important;}
       <div id="rd-items-auto" style="font-size:12px;color:var(--t2);line-height:1.8"></div>
     </div>
     <!-- Isi barang untuk resi (manual) -->
-    <div class="fl" style="margin-bottom:14px">
-      <label>Isi Barang di Resi <span style="color:var(--t3);font-weight:400">(tulis manual)</span></label>
-      <input id="rd-items" placeholder="e.g. Sepatu Salomon, Jaket, dll..."/>
-      <div class="hint">Yang tercetak di resi sebagai keterangan isi paket</div>
+    <div class="fl" style="margin-bottom:14px;background:linear-gradient(135deg,rgba(91,94,244,.05),rgba(139,92,246,.05));border:1.5px solid rgba(91,94,244,.25);border-radius:12px;padding:12px 14px">
+      <label style="color:var(--acc);font-weight:800">📝 Isi Barang di Resi <span style="background:#ef4444;color:#fff;border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700;letter-spacing:.4px;margin-left:4px;vertical-align:middle">WAJIB ISI</span></label>
+      <input id="rd-items" placeholder="e.g. Sepatu Salomon, Jaket, dll..." style="margin-top:6px" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+      <div class="hint" style="color:var(--acc);font-weight:500;margin-top:5px">⬆️ Yang tercetak di resi sebagai keterangan isi paket. Sudah otomatis diisi, edit jika perlu.</div>
     </div>
     <div id="rd-plat-note" style="display:none;background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#5b21b6;font-weight:600">
       📱 Pengiriman via platform — alamat otomatis dari aplikasi
@@ -1148,6 +1148,7 @@ let orders=[], kloters=[], stokList=[];
 let editId=null, qiCust=null, qiKid=null, resiCust=null;
 let activeKid=null, _pendingOrder=null, _pickedStokId=null, _editResiCust=null;
 let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={};
+let piutangOpen=false;
 let kloterSearch={}, kloterShipFilter={};
 
 // ─── LOAD ──────────────────────────────────────────────
@@ -2047,6 +2048,12 @@ function closeResiDetail(){document.getElementById('residetailmod').style.displa
 function confirmResiDetail(){
   const cust=resiCust;const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
   const get=id=>document.getElementById(id)?.value||'';
+  // Validasi wajib isi
+  const isiEl=document.getElementById('rd-items');
+  if(!isiEl||!isiEl.value.trim()){
+    if(isiEl){isiEl.style.borderColor='var(--red)';isiEl.focus();}
+    toast('⚠️ Isi barang di resi wajib diisi!',true);return;
+  }
   const nama=get('rd-nama'),hp=get('rd-hp');
   if(nama&&hp)saveAddr(cust,{nama,hp,alamat:get('rd-alamat'),kota:get('rd-kota'),provinsi:get('rd-prov'),kodepos:get('rd-kodepos'),catatan:get('rd-catatan')});
   const il=get('rd-items')||cos.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', ');
@@ -2454,6 +2461,13 @@ function renderStok(){
   const q  = (document.getElementById('stok-search')?.value || '').toLowerCase();
   const kf = document.getElementById('stok-kloter-filter')?.value || '';
 
+  // Always repopulate kloter dropdowns on every render
+  const klOpts2 = kloters.map(k => `<option value="${k.name}">${k.name}${k.rate?' (¥'+k.rate+')':''}</option>`).join('');
+  const skKl2 = document.getElementById('sk-kloter');
+  if(skKl2){ const pv=skKl2.value; skKl2.innerHTML = '<option value="">— Tanpa Kloter —</option>' + klOpts2; if(pv)skKl2.value=pv; }
+  const filterEl2 = document.getElementById('stok-kloter-filter');
+  if(filterEl2){ const pv=filterEl2.value; filterEl2.innerHTML = '<option value="">📦 Semua Kloter</option>' + kloters.map(k=>`<option value="${k.name}">${k.name}</option>`).join(''); if(pv)filterEl2.value=pv; }
+
   const filtered = stokList.filter(s =>
     (!q  || s.nama.toLowerCase().includes(q) || (s.catatan||'').toLowerCase().includes(q)) &&
     (!kf || (s.kloter||'') === kf)
@@ -2510,6 +2524,8 @@ function renderStok(){
   });
   const kloterOrder = [
     ...kloters.map(k => k.name).filter(n => byKloter[n]),
+    // Sertakan kloter yang ada di stok tapi tidak ada di kloters[] (misal kloter sudah dihapus)
+    ...Object.keys(byKloter).filter(n => n !== 'Tanpa Kloter' && !kloters.find(k => k.name === n)),
     ...(byKloter['Tanpa Kloter'] ? ['Tanpa Kloter'] : [])
   ];
 
