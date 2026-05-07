@@ -1,10 +1,11 @@
 // ================================================
-// SUKIDO JASTIP — Google Apps Script Backend v3
+// SUKIDO JASTIP — Google Apps Script Backend v4
 // ================================================
 
-const SHEET_NAME_ORDERS   = "Orders";
-const SHEET_NAME_KLOTERS  = "Kloters";
+const SHEET_NAME_ORDERS    = "Orders";
+const SHEET_NAME_KLOTERS   = "Kloters";
 const SHEET_NAME_ADDRESSES = "Addresses";
+const SHEET_NAME_KIRIM     = "KirimStatus";
 
 function doGet(e)  { return handleRequest(e); }
 function doPost(e) { return handleRequest(e); }
@@ -14,21 +15,22 @@ function handleRequest(e) {
   const action = params.action || '';
   const output = ContentService.createTextOutput();
   output.setMimeType(ContentService.MimeType.JSON);
-  // Allow CORS
   try {
     let result;
     switch (action) {
-      case "getAll":         result = getAllData();                            break;
-      case "saveOrder":      result = saveOrder(JSON.parse(params.data));     break;
-      case "updateOrder":    result = updateOrder(JSON.parse(params.data));   break;
-      case "deleteOrder":    result = deleteOrder(params.id);                 break;
-      case "saveKloter":     result = saveKloter(JSON.parse(params.data));    break;
-      case "updateKloter":   result = updateKloter(JSON.parse(params.data));  break;
-      case "deleteKloter":   result = deleteKloter(params.id);                break;
-      case "saveAddress":    result = saveAddress(JSON.parse(params.data));   break;
-      case "getAddresses":   result = getAddresses();                         break;
+      case "getAll":           result = getAllData();                              break;
+      case "saveOrder":        result = saveOrder(JSON.parse(params.data));       break;
+      case "updateOrder":      result = updateOrder(JSON.parse(params.data));     break;
+      case "deleteOrder":      result = deleteOrder(params.id);                   break;
+      case "saveKloter":       result = saveKloter(JSON.parse(params.data));      break;
+      case "updateKloter":     result = updateKloter(JSON.parse(params.data));    break;
+      case "deleteKloter":     result = deleteKloter(params.id);                  break;
+      case "saveAddress":      result = saveAddress(JSON.parse(params.data));     break;
+      case "getAddresses":     result = getAddresses();                           break;
+      case "saveKirimStatus":  result = saveKirimStatus(JSON.parse(params.data)); break;
+      case "getKirimStatus":   result = getKirimStatus();                         break;
       default:
-        result = { ping: "ok", message: "Sukido Jastip API v3 running!" };
+        result = { ping: "ok", message: "Sukido Jastip API v4 running!" };
     }
     output.setContent(JSON.stringify({ ok: true, data: result }));
   } catch (err) {
@@ -57,6 +59,12 @@ function setupSheets() {
     const s = ss.insertSheet(SHEET_NAME_ADDRESSES);
     s.appendRow(["custName","nama","hp","alamat","kota","provinsi","kodepos","catatan","ship","timestamp"]);
     s.getRange(1,1,1,10).setFontWeight("bold").setBackground("#0891b2").setFontColor("#ffffff");
+  }
+
+  if (!ss.getSheetByName(SHEET_NAME_KIRIM)) {
+    const s = ss.insertSheet(SHEET_NAME_KIRIM);
+    s.appendRow(["custName","packed","sent","updatedAt"]);
+    s.getRange(1,1,1,4).setFontWeight("bold").setBackground("#16a34a").setFontColor("#ffffff");
   }
 }
 
@@ -93,10 +101,10 @@ function getAllData() {
     return obj;
   }).filter(k => k.id && k.id !== 'undefined' && k.id !== '');
 
-  // Also fetch addresses
   const addresses = getAddresses();
+  const kirimStatus = getKirimStatus();
 
-  return { orders, kloters, addresses };
+  return { orders, kloters, addresses, kirimStatus };
 }
 
 function saveOrder(order) {
@@ -181,7 +189,6 @@ function saveAddress(addr) {
   const data  = sheet.getDataRange().getValues();
   const custName = String(addr.custName || addr.nama || '').trim();
 
-  // Update existing row if custName matches
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]).trim().toLowerCase() === custName.toLowerCase()) {
       sheet.getRange(i+1,1,1,10).setValues([[
@@ -192,7 +199,6 @@ function saveAddress(addr) {
       return { updated: custName };
     }
   }
-  // Insert new row
   sheet.appendRow([
     custName, addr.nama||"", addr.hp||"", addr.alamat||"",
     addr.kota||"", addr.provinsi||"", addr.kodepos||"",
@@ -214,23 +220,47 @@ function getAddresses() {
   }).filter(a => a.custName && a.custName !== '');
 }
 
+// ── KIRIM STATUS ──────────────────────────────────────────
+function saveKirimStatus(data) {
+  // data = { custName, packed: true/false, sent: true/false }
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KIRIM);
+  const rows = sheet.getDataRange().getValues();
+  const custName = String(data.custName || '').trim();
+  const now = new Date().toISOString();
+
+  for (let i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]).trim().toLowerCase() === custName.toLowerCase()) {
+      sheet.getRange(i+1,1,1,4).setValues([[
+        custName, data.packed ? "true" : "false",
+        data.sent ? "true" : "false", now
+      ]]);
+      return { updated: custName };
+    }
+  }
+  sheet.appendRow([custName, data.packed ? "true" : "false", data.sent ? "true" : "false", now]);
+  return { saved: custName };
+}
+
+function getKirimStatus() {
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KIRIM);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return {};
+  const result = {};
+  data.slice(1).forEach(row => {
+    const custName = String(row[0] || '').trim();
+    if (!custName) return;
+    result[custName] = {
+      packed: String(row[1]).toLowerCase() === 'true',
+      sent:   String(row[2]).toLowerCase() === 'true'
+    };
+  });
+  return result;
+}
+
 // ── TEST ──────────────────────────────────────────────────
 function testGetAll() {
   const result = getAllData();
   Logger.log(JSON.stringify(result));
-}
-
-function testSaveAddress() {
-  saveAddress({
-    custName: "Test Customer",
-    nama: "Test Nama",
-    hp: "08123456789",
-    alamat: "Jl. Test No. 1",
-    kota: "Jakarta",
-    provinsi: "DKI Jakarta",
-    kodepos: "12345",
-    catatan: "",
-    ship: "Regular JNT",
-    timestamp: new Date().toISOString()
-  });
 }

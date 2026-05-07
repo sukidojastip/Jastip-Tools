@@ -268,7 +268,6 @@ select.si option{background:#fff;color:var(--txt);}
 .cust-card.open .ctgl-btn{background:rgba(91,94,244,.08);border-color:rgba(91,94,244,.25);color:var(--acc);}
 .ctgl-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;}
 .cust-card.open .ctgl-btn svg{transform:rotate(180deg);}
-.cust-card.paid-card{border-left:3px solid var(--grn);background:rgba(34,197,94,.03);}
 .cust-body{display:none;border-top:1.5px solid var(--bor);}
 .cust-card.open .cust-body{display:block;}
 .item-row{padding:13px 18px;border-bottom:1px solid var(--bor);}
@@ -279,7 +278,7 @@ select.si option{background:#fff;color:var(--txt);}
 .item-pr{text-align:right;flex-shrink:0;}
 .item-jual{font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono);}
 .item-unt{font-size:11px;font-weight:700;font-family:var(--mono);margin-top:1px;}
-.item-acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.item-acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:36px;}
 .belibtn{height:32px;padding:0 12px;border-radius:8px;border:1.5px solid var(--bor);background:transparent;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
 .belibtn.on{background:#dcfce7;border-color:#bbf7d0;color:#166534;}
 .editbtn{height:32px;width:32px;background:var(--bg);border:1.5px solid var(--bor);border-radius:8px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
@@ -450,7 +449,7 @@ select.si option{background:#fff;color:var(--txt);}
 .pi-cust-row{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 16px;
-  background:var(--sur);border:1px solid var(--bor);border-radius:12px;
+  background:var(--bg);border:1.5px solid var(--bor);border-radius:12px;
   transition:all .3s;
 }
 .pi-cust-row:hover{border-color:var(--bor2);box-shadow:0 2px 10px rgba(26,29,78,.07);}
@@ -458,13 +457,6 @@ select.si option{background:#fff;color:var(--txt);}
 .pi-cust-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .piamt{font-size:16px;font-weight:800;color:var(--amb);font-family:var(--mono);}
 .pi-lunas-btn{
-  display:flex;align-items:center;gap:5px;
-  padding:7px 14px;background:var(--grn);border:none;border-radius:8px;
-  color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;
-  cursor:pointer;transition:all .18s;white-space:nowrap;
-  box-shadow:0 3px 10px rgba(34,197,94,.25);
-}
-.pi-lunas-btn2{
   display:flex;align-items:center;gap:5px;
   padding:7px 14px;background:var(--grn);border:none;border-radius:8px;
   color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;
@@ -633,26 +625,17 @@ input,select,textarea{font-size:16px!important;}
       <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Kloter
     </button>
-    <button class="nb" onclick="sw('add')" id="nb-add">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      Tambah Pesanan
-    </button>
+
     <button class="nb" onclick="sw('beli')" id="nb-beli">
       <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       Daftar Beli
     </button>
-    <button class="nb" onclick="sw('stok')" id="nb-stok">
-      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      Stok Barang
-    </button>
+
     <button class="nb" onclick="sw('kirim')" id="nb-kirim">
       <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Kirim & Resi
     </button>
-    <button class="nb" onclick="sw('kontak')" id="nb-kontak">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Kontak
-    </button>
+
     <button class="nb" onclick="sw('lap')" id="nb-lap">
       <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Laporan
@@ -677,6 +660,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="page-title" id="topbar-title">Kloter Pengiriman</div>
     </div>
     <div class="topbar-right">
+      <button onclick="openTambahModal()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--g1);border:none;border-radius:20px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(91,94,244,.3);transition:all .2s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Pesanan</button>
       <div class="topbar-pill">
         <div class="sdot2 sdot s-ld" id="sdot2" style="width:7px;height:7px;border-radius:50%;flex-shrink:0;"></div>
         <span id="stxt2" style="font-size:11px;color:var(--t2);font-weight:500;">Memuat...</span>
@@ -688,45 +672,6 @@ input,select,textarea{font-size:16px!important;}
   <div class="content">
 
   <!-- TAMBAH -->
-  <div class="sec" id="sec-add">
-    <!-- Hero stat mini cards -->
-    <div class="hero-cards" id="add-hero" style="display:none"></div>
-    <div class="card">
-      <div class="card-ttl"><div class="ct-ico i1"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Info Customer</div>
-      <div class="g2"><div class="fl"><label>Nama Pembeli</label>
-          <div style="display:flex;gap:6px">
-            <input id="f-cust" placeholder="e.g. Tartaranta" style="flex:1"/>
-            <button onclick="openKontakPopup()" style="height:44px;padding:0 13px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(91,94,244,.25);display:flex;align-items:center;gap:5px">
-              <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Kontak
-            </button>
-          </div>
-        </div><div class="fl"><label>Sosmed</label><select id="f-stype"><option value="WhatsApp">💬 WhatsApp</option><option value="Threads">🧵 Threads</option><option value="Instagram">📷 Instagram</option><option value="Shopee">🟠 Shopee</option><option value="Tokopedia">🟢 Tokopedia</option><option value="Direct">🤝 Direct</option></select></div></div>
-      <div class="g2"><div class="fl"><label>PIC</label><select id="f-pic"><option>Sukido</option><option>Dodo</option><option>Sukhita</option></select></div><div class="fl"><label>Pengiriman</label><select id="f-ship"><option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option></select></div></div>
-    </div>
-    <div class="card">
-      <div class="card-ttl"><div class="ct-ico i2"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>Detail Barang & Harga</div>
-      <div class="g1r"><div class="fl"><label>Nama Barang</label>
-      <div style="display:flex;gap:6px">
-        <input id="f-item" placeholder="e.g. Salomon Active Skin 8 Black M" style="flex:1"/>
-        <button onclick="openStokPopup()" style="padding:0 12px;background:var(--g2);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.25)" title="Pilih dari Stok">📦 Stok</button>
-      </div>
-    </div></div>
-    <!-- Stok Picker Dropdown -->
-    <div id="stok-picker" style="display:none;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);margin-bottom:14px;overflow:hidden;box-shadow:var(--sh)">
-      <div style="padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--bor);font-size:11px;font-weight:700;color:var(--t2)">Pilih barang dari stok — stok akan berkurang otomatis</div>
-      <div id="stok-picker-list" style="max-height:220px;overflow-y:auto"></div>
-    </div>
-      <div class="g2"><div class="fl"><label>QTY</label><input type="number" id="f-qty" min="1" value="1" oninput="calc()"/></div><div class="fl"><label>Kloter</label><select id="f-batch" onchange="onBC()"><option value="">— Pilih Kloter —</option></select></div></div>
-      <div class="g2"><div class="fl"><label>Modal (JPY)/Item</label><input type="number" id="f-jpy" placeholder="0" oninput="calc()"/></div><div class="fl"><label>Rate ¥→Rp</label><div class="rrow"><input type="number" id="f-rate" readonly style="opacity:.45;cursor:not-allowed;flex:1" placeholder="—"/><span class="rbadge" id="rbadge">Pilih Kloter</span></div><div class="hint" id="rhint">Rate otomatis dari kloter</div></div></div>
-      <div class="g1r"><div class="fl"><label>Harga Jual (Rp)/Item</label><input type="number" id="f-jual" placeholder="0" oninput="calc()"/></div></div>
-      <div class="pp"><div class="ppi"><div class="ppl">Modal IDR</div><div class="ppv" id="pp-mo" style="color:var(--red)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Total Jual</div><div class="ppv" id="pp-ju" style="color:var(--grn)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Untung Est.</div><div class="ppv" id="pp-un" style="color:var(--amb)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Margin</div><div class="ppv" id="pp-mg" style="color:var(--pur)">0%</div></div></div>
-    </div>
-    <div class="card">
-      <div class="card-ttl"><div class="ct-ico i3"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>Status Pembayaran</div>
-      <div class="g2"><div class="fl"><label>Status Bayar</label><select id="f-sbayar"><option value="Unpaid">⏳ Unpaid</option><option value="Paid">✅ Paid</option><option value="Down Payment">💰 Down Payment</option><option value="Hold Tokopedia">🔒 Hold Tokopedia</option><option value="Hold Shopee">🔒 Hold Shopee</option></select></div><div class="fl"><label>DP/Jumlah Bayar (Rp)</label><input type="number" id="f-dp" placeholder="0"/></div></div>
-    </div>
-    <button class="sbtn" onclick="showPreview()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Preview & Simpan</button>
-  </div>
 
   <!-- KLOTER -->
   <div class="sec on" id="sec-kloter">
@@ -772,14 +717,6 @@ input,select,textarea{font-size:16px!important;}
   </div>
 
   <!-- KONTAK / ADDRESS BOOK -->
-  <div class="sec" id="sec-kontak">
-    <div style="margin-bottom:14px">
-      <input id="kontak-search" placeholder="🔍 Cari nama customer..." oninput="renderKontak()"
-        style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:11px 14px;font-family:var(--fn);font-size:13px;outline:none;box-shadow:var(--sh);transition:border .18s"
-        onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-    </div>
-    <div id="kontak-list"></div>
-  </div>
 
   <!-- LAPORAN -->
   <div class="sec" id="sec-lap">
@@ -809,6 +746,18 @@ input,select,textarea{font-size:16px!important;}
     </div>
   </div>
 
+  <!-- SUDAH BAYAR LIST -->
+  <div class="card" id="paidcard" style="display:none;margin-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0" onclick="togPaidList()">
+      <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i2"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Sudah Bayar / Lunas</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="paid-total-badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:8px;padding:3px 12px;font-size:12px;font-weight:700"></span>
+        <svg id="paid-chev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div id="paidlist" style="margin-top:14px;display:none;flex-direction:column;gap:8px"></div>
+  </div>
+
   <!-- KIRIM -->
   <div class="sec" id="sec-kirim">
     <div class="kconf">
@@ -817,8 +766,7 @@ input,select,textarea{font-size:16px!important;}
         <svg id="kcchev" viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="kconfbdy" id="kconfbdy">
-        <div class="fl" style="margin-bottom:10px"><label>URL FormAlamat.html</label><input id="cfg-url" placeholder="https://sukidojastip.github.io/Jastip-Tools/FormAlamat.html" oninput="saveCfg()"/><div class="hint">Paste URL FormAlamat dari GitHub Pages</div></div>
-        <div class="g2"><div class="fl"><label>Nama Pengirim</label><input id="cfg-nm" placeholder="SUKIDO STORE" oninput="saveCfg()"/></div><div class="fl"><label>HP Pengirim</label><input id="cfg-hp" placeholder="081318883426" oninput="saveCfg()"/></div></div>
+        <div class="fl"><label>URL FormAlamat.html</label><input id="cfg-url" placeholder="https://sukidojastip.github.io/Jastip-Tools/FormAlamat.html" oninput="saveCfg()"/><div class="hint">Paste URL FormAlamat dari GitHub Pages</div></div>
       </div>
     </div>
     <div class="kfiltbar" style="flex-wrap:wrap;gap:8px">
@@ -858,88 +806,7 @@ input,select,textarea{font-size:16px!important;}
     <div id="kirimlist"></div>
 
   <!-- STOK -->
-  <div class="sec" id="sec-stok">
 
-  <!-- ── ADD FORM ── -->
-  <div class="card" style="margin-bottom:14px">
-    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0" onclick="togStokForm()">
-      <div class="card-ttl" style="margin-bottom:0">
-        <div class="ct-ico i2">
-          <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-        </div>
-        Tambah Barang Stok
-      </div>
-      <svg id="stokchev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s;flex-shrink:0">
-        <polyline points="6 9 12 15 18 9"/>
-      </svg>
-    </div>
-
-    <div id="stokform" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--bor)">
-      <div class="g2" style="margin-bottom:12px">
-        <div class="fl" style="grid-column:1/-1">
-          <label>Nama Barang</label>
-          <input id="sk-nama" placeholder="e.g. Salomon Active Skin 8 Black M"/>
-        </div>
-        <div class="fl">
-          <label>Kloter Kedatangan</label>
-          <select id="sk-kloter" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
-            <option value="">— Tanpa Kloter —</option>
-          </select>
-        </div>
-        <div class="fl">
-          <label>Jumlah Stok</label>
-          <input type="number" id="sk-qty" placeholder="0" min="0"/>
-        </div>
-        <div class="fl">
-          <label>Harga Modal</label>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input type="number" id="sk-modal" placeholder="0" oninput="calcStok()" style="flex:1"/>
-            <div class="ctog" style="flex-shrink:0">
-              <button class="ctbtn on" id="sk-curr-idr" onclick="setStokCurr('IDR')">Rp</button>
-              <button class="ctbtn" id="sk-curr-jpy" onclick="setStokCurr('JPY')">¥</button>
-            </div>
-          </div>
-          <div id="sk-rate-hint" style="font-size:10px;color:var(--t3);margin-top:4px;display:none">Rate dari kloter aktif</div>
-        </div>
-        <div class="fl">
-          <label>Harga Jual (Rp)</label>
-          <input type="number" id="sk-jual" placeholder="0" oninput="calcStok()"/>
-          <div style="margin-top:6px;display:flex;gap:14px;font-size:11px">
-            <span style="color:var(--t3)">Margin: <b id="sk-margin" style="color:var(--pur)">0%</b></span>
-            <span style="color:var(--t3)">Profit: <b id="sk-profit" style="color:var(--grn)">Rp 0</b></span>
-          </div>
-        </div>
-        <div class="fl">
-          <label>Catatan (opsional)</label>
-          <input id="sk-catatan" placeholder="Ukuran, warna, dll"/>
-        </div>
-      </div>
-      <button class="sbtn" id="sk-save-btn" onclick="addStok()">
-        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        Simpan Barang
-      </button>
-    </div>
-  </div>
-
-  <!-- ── SEARCH ── -->
-  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-    <input id="stok-search" placeholder="🔍 Cari nama barang..." oninput="renderStok()"
-      style="flex:1;min-width:160px;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 14px;font-family:var(--fn);font-size:13px;outline:none;box-shadow:var(--sh);transition:border .18s"
-      onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-    <select id="stok-kloter-filter" onchange="renderStok()"
-      style="min-width:160px;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 14px;font-family:var(--fn);font-size:13px;outline:none;cursor:pointer;-webkit-appearance:none;box-shadow:var(--sh)">
-      <option value="">📦 Semua Kloter</option>
-    </select>
-  </div>
-
-  <!-- ── LIST ── -->
-  <div id="stoklist"></div>
-
-</div>
 
 </div><!-- end .content -->
 </div><!-- end .main -->
@@ -1075,10 +942,10 @@ input,select,textarea{font-size:16px!important;}
       <div id="rd-items-auto" style="font-size:12px;color:var(--t2);line-height:1.8"></div>
     </div>
     <!-- Isi barang untuk resi (manual) -->
-    <div class="fl" style="margin-bottom:14px;background:linear-gradient(135deg,rgba(91,94,244,.05),rgba(139,92,246,.05));border:1.5px solid rgba(91,94,244,.25);border-radius:12px;padding:12px 14px">
-      <label style="color:var(--acc);font-weight:800">Isi Barang di Resi <span style="background:#ef4444;color:#fff;border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700;margin-left:4px">WAJIB ISI</span></label>
-      <input id="rd-items" placeholder="e.g. Pakaian, Sepatu, dll..." style="margin-top:6px"/>
-      <div class="hint" style="color:var(--acc)">Yang tercetak di kotak Isi resi. Sudah otomatis diisi, edit sesuai kebutuhan.</div>
+    <div class="fl" style="margin-bottom:14px">
+      <label>Isi Barang di Resi <span style="color:var(--t3);font-weight:400">(tulis manual)</span></label>
+      <input id="rd-items" placeholder="e.g. Sepatu Salomon, Jaket, dll..."/>
+      <div class="hint">Yang tercetak di resi sebagai keterangan isi paket</div>
     </div>
     <div id="rd-plat-note" style="display:none;background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#5b21b6;font-weight:600">
       📱 Pengiriman via platform — alamat otomatis dari aplikasi
@@ -1155,28 +1022,21 @@ const PLATFORM_SHIPS = ['Shopee','Tokopedia','Toco'];
 let orders=[], kloters=[], stokList=[];
 let editId=null, qiCust=null, qiKid=null, resiCust=null;
 let activeKid=null, _pendingOrder=null, _pickedStokId=null, _editResiCust=null;
-let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={};
+let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={}, kirimPacked={};
 let piutangOpen=false;
 let kloterSearch={}, kloterShipFilter={};
-let kirimPacked={};
 
 // ─── LOAD ──────────────────────────────────────────────
 try{orders=JSON.parse(localStorage.getItem('sk_o')||'[]');}catch(e){orders=[];}
 try{kloters=JSON.parse(localStorage.getItem('sk_k')||'[]');}catch(e){kloters=[];}
 try{stokList=JSON.parse(localStorage.getItem('sk_stok')||'[]');}catch(e){stokList=[];}
-// kirimPacked/kirimSent loaded from Sheets via syncNow
+try{kirimPacked=JSON.parse(localStorage.getItem('sk_packed')||'{}');}catch(e){kirimPacked={};}
+try{kirimSent=JSON.parse(localStorage.getItem('sk_sent')||'{}');}catch(e){kirimSent={};}
 
 // ─── SAVE ──────────────────────────────────────────────
 function sl(){try{localStorage.setItem('sk_o',JSON.stringify(orders));localStorage.setItem('sk_k',JSON.stringify(kloters));}catch(e){}}
-function slKirim(){
-  try{localStorage.setItem('sk_packed',JSON.stringify(kirimPacked));localStorage.setItem('sk_sent',JSON.stringify(kirimSent));}catch(e){}
-}
-async function syncKirimStatus(cust){
-  try{
-    await apiCall({action:'saveKirimStatus',data:{custName:cust,packed:!!kirimPacked[cust],sent:!!kirimSent[cust]}});
-    setSS('ok');
-  }catch(e){setSS('err','Sync gagal');}
-}
+function slKirim(){try{localStorage.setItem('sk_packed',JSON.stringify(kirimPacked));localStorage.setItem('sk_sent',JSON.stringify(kirimSent));}catch(e){}}
+async function syncKirimStatus(cust){try{await apiCall({action:'saveKirimStatus',data:{custName:cust,packed:!!kirimPacked[cust],sent:!!kirimSent[cust]}});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 
 
 // ─── HELPERS ───────────────────────────────────────────
@@ -1236,13 +1096,7 @@ async function syncNow(){
   try{
     const d=await apiCall({action:'getAll'});
     orders=d.orders||[];kloters=d.kloters||[];sl();
-    // Load kirimStatus from Sheets
-    if(d.kirimStatus){
-      Object.entries(d.kirimStatus).forEach(([cust,s])=>{
-        kirimPacked[cust]=!!s.packed;
-        kirimSent[cust]=!!s.sent;
-      });
-    }
+    if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([cust,s])=>{kirimPacked[cust]=!!s.packed;kirimSent[cust]=!!s.sent;});}
     // Load addresses from Sheets into localStorage
     if(d.addresses&&d.addresses.length){
       d.addresses.forEach(addr=>{
@@ -1279,23 +1133,23 @@ function updateBadge(){
 // ─── REFRESH ───────────────────────────────────────────
 function refreshAll(){
   refreshDD();
-  renderKloter();renderBeli();renderLap();renderKirim();renderStok();updateBadge();
+  renderKloter();renderBeli();renderLap();renderKirim();updateBadge();
 }
 
 // ═══════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════
-const TITLES={kloter:'Kloter Pengiriman',add:'Tambah Pesanan',beli:'Daftar Beli',stok:'Stok Barang',kirim:'Kirim & Resi',kontak:'Buku Kontak',lap:'Laporan Keuangan'};
-const LABELS={kloter:'Manajemen',add:'Form Input',beli:'Shopping List',stok:'Inventori',kirim:'Pengiriman',kontak:'Customer',lap:'Finansial'};
+const TITLES={kloter:'Kloter Pengiriman',beli:'Daftar Beli',stok:'Stok Barang',kirim:'Kirim & Resi',lap:'Laporan Keuangan'};
+const LABELS={kloter:'Manajemen',beli:'Shopping List',stok:'Inventori',kirim:'Pengiriman',lap:'Finansial'};
 
 function sw(t){
-  ['kloter','add','beli','stok','kirim','kontak','lap'].forEach(s=>{
+  ['kloter','beli','kirim','lap'].forEach(s=>{
     document.getElementById('sec-'+s)?.classList.toggle('on',s===t);
     const nb=document.getElementById('nb-'+s);if(nb)nb.className='nb'+(s===t?' on':'');
   });
   const title=document.getElementById('topbar-title');if(title)title.textContent=TITLES[t]||t;
   const lbl=document.getElementById('page-lbl');if(lbl)lbl.textContent=LABELS[t]||'';
-  const renderers={kloter:renderKloter,add:()=>{refreshDD();renderStokPicker();},beli:renderBeli,stok:()=>{refreshDD();renderStok();},kirim:renderKirim,kontak:renderKontak,lap:renderLap};
+  const renderers={kloter:renderKloter,beli:renderBeli,kirim:renderKirim,lap:renderLap};
   renderers[t]?.();
   closeSidebar();
 }
@@ -1420,10 +1274,12 @@ async function confirmSave(){
   orders.push(o);sl();
   ['f-cust','f-item','f-jpy','f-jual','f-dp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const fq=document.getElementById('f-qty');if(fq)fq.value=1;const fs=document.getElementById('f-sbayar');if(fs)fs.value='Unpaid';
-  calc();refreshAll();toast('✅ Pesanan disimpan!');
+  calc();refreshAll();closeTambahModal();toast('✅ Pesanan disimpan!');
   try{await apiCall({action:'saveOrder',data:o});setSS('ok');}catch(e){setSS('err','Offline');}
 }
 async function addOrder(){showPreview();}
+function openTambahModal(){refreshDD();renderStokPicker();document.getElementById('tambahmod').style.display='flex';setTimeout(()=>document.getElementById('f-cust')?.focus(),100);}
+function closeTambahModal(){document.getElementById('tambahmod').style.display='none';}
 
 // ═══════════════════════════════════════════════════════
 //  ORDERS CRUD
@@ -1510,6 +1366,7 @@ async function saveQI(){
 // ═══════════════════════════════════════════════════════
 function itemRow(o){
   const u=unt(o),tj=o.jual*o.qty;
+  const osO=['ORDER','PACKED','SHIPPED','DONE','CANCELLED'].map(s=>`<option value="${s}"${o.ostatus===s?' selected':''}>${OSE[s]} ${s}</option>`).join('');
   return`<div class="item-row">
     <div class="item-top">
       <div style="flex:1;min-width:0">
@@ -1520,7 +1377,7 @@ function itemRow(o){
     </div>
     <div class="item-acts">
       <button class="belibtn${o.sudahBeli?' on':''}" onclick="togBeli('${o.id}')">${o.sudahBeli?'✅ Dibeli':'⬜ Beli'}</button>
-      <span class="tag ${OSC[o.ostatus]||'torder'}" style="height:32px;padding:0 12px;font-size:11px;display:inline-flex;align-items:center;gap:4px;border-radius:8px">${OSE[o.ostatus]||'📋'} ${o.ostatus||'ORDER'}</span>
+      <span class="tag ${OSC[o.ostatus]||'torder'}" style="height:32px;display:inline-flex;align-items:center"><select class="si" onchange="updOrder('${o.id}','ostatus',this.value)">${osO}</select></span>
       <button style="width:32px;height:32px;background:var(--bg);border:1.5px solid var(--bor);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0" onclick="openEdit('${o.id}')" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bor)'">✏️</button>
       <button style="width:32px;height:32px;background:transparent;border:1.5px solid rgba(239,68,68,.2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onclick="delOrder('${o.id}')" onmouseover="this.style.background='rgba(239,68,68,.07)';this.style.borderColor='var(--red)'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(239,68,68,.2)'">
         <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
@@ -1539,8 +1396,8 @@ function custCard(cust,custOrders,kloterName){
   const totalUnt=custOrders.reduce((s,o)=>s+unt(o),0)-curAdmin;
   const sisa=totalJual-curDp,lunas=curDp>=totalJual,lebih=curDp>totalJual,allBeli=custOrders.every(o=>o.sudahBeli);
   const sbO=['Unpaid','Paid','Down Payment','Hold Tokopedia','Hold Shopee'].map(s=>`<option value="${s}"${curSbayar===s?' selected':''}>${s}</option>`).join('');
-  const previewItems=custOrders.map(o=>`<div class="cprow"><div class="cprow-dot" style="background:${OSCLR[o.ostatus]||'var(--amb)'}"></div><span class="cprow-name">${o.sudahBeli?'✅ ':''}${o.item}${o.qty>1?' ('+o.qty+'x)':''}</span></div>`).join('');
-  return`<div class="cust-card${isOpen?' open':''}${curSbayar==='Paid'?' paid-card':''}">
+  const previewItems=custOrders.map(o=>`<div class="cprow"><div class="cprow-dot" style="background:${OSCLR[o.ostatus]||'var(--amb)'}"></div><span class="cprow-name">${o.sudahBeli?'✅ ':''}${o.item}</span><span style="font-size:10px;font-weight:600;color:var(--t3);font-family:var(--mono);flex-shrink:0">×${o.qty}</span><span class="cprow-price">${fr(o.jual*o.qty)}</span></div>`).join('');
+  return`<div class="cust-card${isOpen?' open':''}">
     <div class="cust-hdr" onclick="togCust('${key}')">
       <div class="cust-info">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
@@ -1553,7 +1410,7 @@ function custCard(cust,custOrders,kloterName){
       </div>
       <div class="cust-right">
         <div><div class="cust-total-jual">${fr(totalJual)}</div><div class="cust-total-unt" style="color:${totalUnt>=0?'var(--pur)':'var(--red)'}">${totalUnt>=0?'+':''}${fr(totalUnt)}</div></div>
-        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s;flex-shrink:0;transform:${isOpen?'rotate(180deg)':''}"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="ctgl-btn"><span>${isOpen?'Tutup':'Detail'}</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
       </div>
     </div>
     <div class="cust-body">
@@ -1614,44 +1471,10 @@ async function addKloter(){
   togKF();refreshAll();toast('✅ Kloter disimpan!');setTimeout(()=>selectKloter(String(k.id)),80);
   try{await apiCall({action:'saveKloter',data:k});setSS('ok');}catch(e){setSS('err','Offline');}
 }
-let _editKloterId = null;
-function openEditKloter(id){
-  const k=findK(id);if(!k)return;
-  _editKloterId=id;
-  const set=(eid,val)=>{const el=document.getElementById(eid);if(el)el.value=val||'';};
-  set('ek-name', k.name);
-  set('ek-rate', k.rate||'');
-  set('ek-bagasi', k.bagasi||'');
-  set('ek-eta', k.eta||'');
-  const stEl=document.getElementById('ek-status');if(stEl)stEl.value=k.status||'open';
-  const sub=document.getElementById('ek-subtitle');if(sub)sub.textContent=k.name+' · '+k.pengeluaran?.length+' pengeluaran';
-  document.getElementById('editklotermod').style.display='flex';
-}
+let _editKloterId=null;
+function openEditKloter(id){const k=findK(id);if(!k)return;_editKloterId=id;const set=(eid,val)=>{const el=document.getElementById(eid);if(el)el.value=val||'';};set('ek-name',k.name);set('ek-rate',k.rate||'');set('ek-bagasi',k.bagasi||'');set('ek-eta',k.eta||'');const stEl=document.getElementById('ek-status');if(stEl)stEl.value=k.status||'open';document.getElementById('editklotermod').style.display='flex';}
 function closeEditKloter(){_editKloterId=null;document.getElementById('editklotermod').style.display='none';}
-async function saveEditKloter(){
-  const k=findK(_editKloterId);if(!k)return;
-  const name=document.getElementById('ek-name')?.value.trim();
-  if(!name){toast('⚠️ Nama kloter wajib!',true);return;}
-  const oldName=k.name;
-  k.name=name;
-  k.rate=+document.getElementById('ek-rate')?.value||0;
-  k.bagasi=document.getElementById('ek-bagasi')?.value.trim()||'';
-  k.eta=document.getElementById('ek-eta')?.value||'';
-  k.status=document.getElementById('ek-status')?.value||'open';
-  // Jika nama berubah, update semua order yang pakai kloter ini
-  if(oldName!==name){
-    orders.forEach(o=>{if(o.batch===oldName)o.batch=name;});
-    stokList.forEach(s=>{if(s.kloter===oldName)s.kloter=name;});
-    saveStok();
-  }
-  sl();closeEditKloter();refreshAll();toast('✅ Kloter diupdate!');
-  try{await apiCall({action:'updateKloter',data:k});setSS('ok');}catch(e){setSS('err','Sync gagal');}
-  // Also update orders if name changed
-  if(oldName!==name){
-    const affected=orders.filter(o=>o.batch===name);
-    for(const o of affected)try{await apiCall({action:'updateOrder',data:o});}catch(e){}
-  }
-}
+async function saveEditKloter(){const k=findK(_editKloterId);if(!k)return;const name=document.getElementById('ek-name')?.value.trim();if(!name){toast('⚠️ Nama kloter wajib!',true);return;}const oldName=k.name;k.name=name;k.rate=+document.getElementById('ek-rate')?.value||0;k.bagasi=document.getElementById('ek-bagasi')?.value.trim()||'';k.eta=document.getElementById('ek-eta')?.value||'';k.status=document.getElementById('ek-status')?.value||'open';if(oldName!==name){orders.forEach(o=>{if(o.batch===oldName)o.batch=name;});stokList.forEach(s=>{if(s.kloter===oldName)s.kloter=name;});saveStok();}sl();closeEditKloter();refreshAll();toast('✅ Kloter diupdate!');try{await apiCall({action:'updateKloter',data:k});setSS('ok');}catch(e){setSS('err','Sync gagal');}if(oldName!==name){const aff=orders.filter(o=>o.batch===name);for(const o of aff)try{await apiCall({action:'updateOrder',data:o});}catch(e){}}}
 async function delKloter(id){
   if(!confirm('Hapus kloter + semua pesanannya?'))return;
   const k=findK(id);
@@ -1801,26 +1624,10 @@ function renderBeli(){
         <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:${KSC[k?.status||'']||'#94a3b8'}"></div><span style="font-size:13px;font-weight:800">📦 ${kName}</span>${k?.bagasi?`<span style="font-size:11px;color:var(--t3)">🧳 ${k.bagasi}</span>`:''}</div>
         ${mkBadge(items.length+' item','rgba(91,94,244,.1)','var(--acc)','rgba(91,94,244,.2)')}
       </div>
-      ${items.map(o=>`<div class="beli-item" id="beli-${o.id}" style="align-items:flex-start;flex-wrap:wrap;gap:10px;padding:12px 0">
-        <button class="beli-check" onclick="beliCheck('${o.id}')" style="margin-top:2px;flex-shrink:0"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
-        <div class="beli-item-info" style="flex:1;min-width:140px">
-          <div class="beli-item-name">${o.item}</div>
-          <div class="beli-item-sub">${o.cust}${o.qty>1?' · Qty '+o.qty:''}</div>
-          <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--bor);border-radius:8px;overflow:hidden">
-              <span style="padding:4px 8px;font-size:10px;font-weight:700;color:var(--t3);white-space:nowrap;border-right:1px solid var(--bor)">¥ Modal</span>
-              <input type="number" value="${o.jpy||''}" placeholder="0" style="width:70px;padding:4px 8px;border:none;background:transparent;font-family:var(--mono);font-size:12px;outline:none;color:var(--txt)" onchange="updateBeliModal('${o.id}','jpy',this.value)"/>
-            </div>
-            <div style="display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--bor);border-radius:8px;overflow:hidden">
-              <span style="padding:4px 8px;font-size:10px;font-weight:700;color:var(--t3);white-space:nowrap;border-right:1px solid var(--bor)">Rp Jual</span>
-              <input type="number" value="${o.jual||''}" placeholder="0" style="width:80px;padding:4px 8px;border:none;background:transparent;font-family:var(--mono);font-size:12px;outline:none;color:var(--txt)" onchange="updateBeliModal('${o.id}','jual',this.value)"/>
-            </div>
-          </div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono)">${fr(o.jual*o.qty)}</div>
-          ${o.jpy?`<div style="font-size:10px;color:var(--t3)">¥${fn(o.jpy)}/item</div>`:''}
-        </div>
+      ${items.map(o=>`<div class="beli-item" id="beli-${o.id}">
+        <button class="beli-check" onclick="beliCheck('${o.id}')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+        <div class="beli-item-info"><div class="beli-item-name">${o.item}</div><div class="beli-item-sub">${o.cust}${o.qty>1?' · Qty '+o.qty:''}${o.jpy?' · ¥'+fn(o.jpy):''}</div></div>
+        <div style="text-align:right;flex-shrink:0"><div style="font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono)">${fr(o.jual*o.qty)}</div></div>
       </div>`).join('')}
     </div>`;
   }).join('');
@@ -1828,12 +1635,6 @@ function renderBeli(){
 async function beliCheck(id){
   const el=document.getElementById('beli-'+id);if(el){el.style.transition='all .25s';el.style.opacity='0';el.style.transform='translateX(16px)';}
   setTimeout(async()=>{const o=findO(id);if(!o)return;o.sudahBeli=true;sl();renderBeli();renderKloter();updateBadge();try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}},220);
-}
-async function updateBeliModal(id,field,val){
-  const o=findO(id);if(!o)return;
-  o[field]=Number(val)||0;
-  sl();renderLap();
-  try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1877,89 +1678,71 @@ function renderLap(){
     const totalSisa=Object.values(piGroups).reduce((s,g)=>s+Math.max(0,g.totalJual-g.dp),0);
     const b2=document.getElementById('pi-total-badge');if(b2)b2.textContent=fr(totalSisa);
     const pilist=document.getElementById('pilist');
-    if(pilist){
-      pilist.innerHTML='';
-      Object.entries(piGroups).forEach(function(entry){
-        var cust=entry[0], g=entry[1];
-        var sisa=Math.max(0,g.totalJual-g.dp);
-        var rowId='pirow-'+btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
-        var encC=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
-        var div=document.createElement('div');
-        div.className='pi-cust-row';
-        div.id=rowId;
-        div.style.cssText='flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px';
-        div.innerHTML=
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">'+
-            '<div>'+
-              '<div class="pirn">'+cust+'</div>'+
-              '<div class="piri">'+g.items.length+' item &middot; <span style="color:var(--amb);font-weight:600">'+g.sbayar+'</span> &middot; Total: <b style="font-family:var(--mono)">'+fr(g.totalJual)+'</b></div>'+
-            '</div>'+
-            '<div style="display:flex;align-items:center;gap:8px">'+
-              '<div class="piamt">'+fr(sisa)+'</div>'+
-              '<button data-cust="'+encodeURIComponent(cust)+'" class="pi-goto-btn" style="padding:5px 10px;background:rgba(91,94,244,.1);border:1px solid rgba(91,94,244,.2);border-radius:7px;color:var(--acc);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">📋 Pesanan</button>'+
-            '</div>'+
-          '</div>'+
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
-            '<div style="display:flex;flex-direction:column;gap:3px">'+
-              '<label style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Bayar Masuk (Rp)</label>'+
-              '<input type="number" id="pi-bayar-'+encC+'" placeholder="0" value="'+(g.dp>0?g.dp:'')+'" style="padding:7px 10px;background:var(--s2);border:1.5px solid var(--bor);border-radius:8px;font-family:var(--mono);font-size:12px;outline:none"/>'+
-            '</div>'+
-            '<div style="display:flex;flex-direction:column;gap:3px">'+
-              '<label style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Ongkir (Rp)</label>'+
-              '<input type="number" id="pi-ongkir-'+encC+'" placeholder="0" style="padding:7px 10px;background:var(--s2);border:1.5px solid var(--bor);border-radius:8px;font-family:var(--mono);font-size:12px;outline:none"/>'+
-            '</div>'+
-          '</div>'+
-          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
-            '<div style="flex:1;font-size:12px;font-weight:700;font-family:var(--mono);color:'+(sisa>0?'var(--amb)':'var(--grn)')+'">'+(sisa>0?'&darr; Kurang: '+fr(sisa):'&check; Lunas')+'</div>'+
-            '<button data-encc="'+encC+'" data-cust="'+encodeURIComponent(cust)+'" class="pi-save-btn" style="padding:7px 14px;background:var(--g4);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">&#128190; Simpan</button>'+
-            '<button data-cust="'+encodeURIComponent(cust)+'" class="pi-lunas-btn pi-lunas-btn2"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Lunas</button>'+
-          '</div>';
-        // bind events after creating element
-        var gotoBtn=div.querySelector('.pi-goto-btn');
-        if(gotoBtn) gotoBtn.addEventListener('click',function(){goToPiCust(decodeURIComponent(this.dataset.cust));});
-        var saveBtn=div.querySelector('.pi-save-btn');
-        if(saveBtn) saveBtn.addEventListener('click',function(){savePiutangBayar(decodeURIComponent(this.dataset.cust),this.dataset.encc);});
-        var lunasBtn=div.querySelector('.pi-lunas-btn2');
-        if(lunasBtn) lunasBtn.addEventListener('click',function(){markLunas(decodeURIComponent(this.dataset.cust));});
-        pilist.appendChild(div);
-      });
+    if(pilist){pilist.innerHTML=Object.entries(piGroups).map(([cust,g])=>{
+      const sisa=Math.max(0,g.totalJual-g.dp);
+      const rowId='pirow-'+btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
+      const encC=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
+      return '<div class="pi-cust-row" id="'+rowId+'" style="background:var(--sur);border:1px solid var(--bor);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
+        '<div style="flex:1;min-width:100px">'+
+          '<div class="pirn">'+cust+'</div>'+
+          '<div class="piri">'+g.items.length+' item &middot; <span style="color:var(--amb);font-weight:600">'+g.sbayar+'</span> &middot; Total: <b style="font-family:var(--mono)">'+fr(g.totalJual)+'</b></div>'+
+        '</div>'+
+        '<div style="font-size:17px;font-weight:800;font-family:var(--mono);color:var(--amb)">'+fr(sisa)+'</div>'+
+        '<button data-cust="'+encodeURIComponent(cust)+'" data-encc="'+encC+'" data-total="'+g.totalJual+'" data-dp="'+g.dp+'" class="pi-update-btn" style="padding:7px 14px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">✏️ Update</button>'+
+      '</div>';
+    }).join('');}
+      pilist.querySelectorAll('.pi-update-btn').forEach(function(btn){btn.addEventListener('click',function(){openPiUpdate(decodeURIComponent(this.dataset.cust),this.dataset.encc,Number(this.dataset.total),Number(this.dataset.dp));});});
+    // ── Sudah Bayar list ──
+    const paidG={};f.filter(o=>o.sbayar==='Paid'&&o.ostatus!=='CANCELLED').forEach(o=>{if(!paidG[o.cust])paidG[o.cust]={n:0,total:0,dp:0};paidG[o.cust].n++;paidG[o.cust].total+=o.jual*o.qty;if(o.dp>0)paidG[o.cust].dp=o.dp;});
+    const paidCard=document.getElementById('paidcard'),paidList=document.getElementById('paidlist');
+    if(paidCard){
+      if(Object.keys(paidG).length){
+        paidCard.style.display='block';
+        const pb=document.getElementById('paid-total-badge');if(pb)pb.textContent=Object.keys(paidG).length+' customer';
+        if(paidList)paidList.innerHTML=Object.entries(paidG).map(([cust,g])=>{
+          const bayar=g.dp>=g.total?g.dp:g.total;
+          return '<div style="background:var(--sur);border:1px solid rgba(34,197,94,.2);border-left:3px solid var(--grn);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--dark)">'+cust+'</div>'+
+            '<div style="font-size:11px;color:var(--t2);margin-top:1px">'+g.n+' item &middot; Bayar: <b style="font-family:var(--mono);color:var(--grn)">'+fr(bayar)+'</b></div></div>'+
+            '<span style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:7px;padding:3px 10px;font-size:11px;font-weight:700;flex-shrink:0">✓ Lunas</span></div>';
+        }).join('');
+      }else paidCard.style.display='none';
     }
   }else pc.style.display='none';
 }
-async function savePiutangBayar(cust, encC){
-  const bayar=Number(document.getElementById('pi-bayar-'+encC)?.value)||0;
-  const ongkir=Number(document.getElementById('pi-ongkir-'+encC)?.value)||0;
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
-  if(!cos.length)return;
-  const totalJual=cos.reduce((s,o)=>s+o.jual*o.qty,0);
-  cos.forEach(o=>{
-    o.dp=bayar;
-    if(ongkir>0) o.admin=(o.admin||0)+ongkir;
-    if(bayar>=totalJual) o.sbayar='Paid';
-    else if(bayar>0) o.sbayar='Down Payment';
-  });
-  sl();renderLap();renderKloter();
-  toast('✅ Bayar '+fr(bayar)+' disimpan!');
-  for(const o of cos) try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}
-}
-function goToPiCust(cust){
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
-  if(!cos.length){sw('kloter');return;}
-  const kName=cos[0].batch;
-  const k=kloters.find(k=>k.name===kName);
-  sw('kloter');
-  setTimeout(function(){
-    if(k){
-      selectKloter(String(k.id));
-      setTimeout(function(){
-        const key=encKey(cust,kName);
-        custOpen[key]=true;
-        renderKloterDetail(String(k.id));
-      },200);
-    }
-  },150);
-}
 function rstLap(){['r-from','r-to'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const rkl=document.getElementById('r-kl');if(rkl)rkl.value='';renderLap();}
+let paidOpen=false;
+function togPaidList(){paidOpen=!paidOpen;const el=document.getElementById('paidlist'),cv=document.getElementById('paid-chev');if(el)el.style.display=paidOpen?'flex':'none';if(cv)cv.style.transform=paidOpen?'rotate(180deg)':'';}
+function openPiUpdate(cust,encC,totalJual,dp){
+  const el=document.getElementById('piupdatemod');if(!el)return;
+  const sisa=Math.max(0,totalJual-dp);
+  document.getElementById('pu-title').textContent=cust;
+  document.getElementById('pu-total').textContent=fr(totalJual);
+  const se=document.getElementById('pu-sisa');if(se){se.textContent=sisa>0?'↓ Kurang: '+fr(sisa):'✓ Lunas';se.style.color=sisa>0?'var(--amb)':'var(--grn)';}
+  const be=document.getElementById('pu-bayar');if(be)be.value=dp>0?dp:'';
+  const oe=document.getElementById('pu-ongkir');if(oe)oe.value='';
+  el.dataset.cust=encodeURIComponent(cust);el.dataset.total=totalJual;
+  el.style.display='flex';setTimeout(()=>be?.focus(),100);
+}
+function closePiUpdate(){document.getElementById('piupdatemod').style.display='none';}
+function calcPiUpdate(){
+  const totalJual=Number(document.getElementById('piupdatemod')?.dataset.total)||0;
+  const bayar=Number(document.getElementById('pu-bayar')?.value)||0;
+  const sisa=Math.max(0,totalJual-bayar);
+  const se=document.getElementById('pu-sisa');if(se){se.textContent=sisa>0?'↓ Kurang: '+fr(sisa):'✓ Lunas';se.style.color=sisa>0?'var(--amb)':'var(--grn)';}
+}
+async function savePiUpdate(toLunas){
+  const el=document.getElementById('piupdatemod');
+  const cust=decodeURIComponent(el?.dataset.cust||'');
+  const totalJual=Number(el?.dataset.total)||0;
+  const bayar=Number(document.getElementById('pu-bayar')?.value)||0;
+  const ongkir=Number(document.getElementById('pu-ongkir')?.value)||0;
+  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');if(!cos.length){toast('Tidak ada pesanan',true);return;}
+  cos.forEach(o=>{o.dp=bayar;if(ongkir>0)o.admin=(o.admin||0)+ongkir;if(toLunas||bayar>=totalJual)o.sbayar='Paid';else if(bayar>0)o.sbayar='Down Payment';else o.sbayar='Unpaid';});
+  sl();closePiUpdate();renderLap();renderKloter();
+  toast(toLunas?'✅ '+cust+' Lunas!':'✅ Bayar '+fr(bayar)+' disimpan!');
+  for(const o of cos)try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}
+}
 function togPiutang(){piutangOpen=!piutangOpen;const el=document.getElementById('pilist'),chev=document.getElementById('pi-chev');if(el)el.style.display=piutangOpen?'block':'none';if(chev)chev.style.transform=piutangOpen?'rotate(180deg)':'';}
 async function markLunas(cust){
   if(!confirm(`Tandai ${cust} sudah LUNAS?`))return;
@@ -2022,84 +1805,15 @@ function generateLaporan(kn,from,to){
 <div class="sg"><div class="sc scg"><div class="sv" style="color:#22c55e">${fr(tOm)}</div><div class="sl">Total Omzet</div><div class="ss">${act.length} pesanan</div></div><div class="sc scr"><div class="sv" style="color:#ef4444">${fr(tMo+tPg)}</div><div class="sl">Total Pengeluaran</div></div><div class="sc scp"><div class="sv" style="color:#8b5cf6">${fr(tUnt)}</div><div class="sl">Untung Bersih</div><div class="ss">Margin ${mg.toFixed(1)}%</div></div><div class="sc scg"><div class="sv" style="color:#22c55e">${fr(tPaid)}</div><div class="sl">Sudah Diterima</div></div><div class="sc scy"><div class="sv" style="color:#f59e0b">${fr(tUnp)}</div><div class="sl">Piutang</div></div><div class="sc scb"><div class="sv" style="color:#3b82f6">${act.filter(o=>o.sudahBeli).length}/${act.length}</div><div class="sl">Sudah Dibeli</div></div></div>
 ${kloterRows?`<div class="div"></div><div class="stit">Rekap Per Kloter</div><table class="tb"><thead><tr><th>Kloter</th><th style="text-align:right">Omzet</th><th style="text-align:right">Modal+Biaya</th><th style="text-align:right">Untung</th><th style="text-align:center">Margin</th><th style="text-align:center">Lunas</th><th style="text-align:center">Status</th></tr></thead><tbody>${kloterRows}</tbody><tfoot><tr class="tr-tot"><td>TOTAL</td><td style="text-align:right;font-family:monospace;color:#22c55e">${fr(tOm)}</td><td style="text-align:right;font-family:monospace;color:#ef4444">${fr(tMo+tPg)}</td><td style="text-align:right;font-family:monospace;color:${tUnt>=0?'#8b5cf6':'#ef4444'}">${fr(tUnt)}</td><td style="text-align:center;font-family:monospace">${mg.toFixed(1)}%</td><td style="text-align:center">${f.filter(o=>o.sbayar==='Paid').length}/${f.length}</td><td></td></tr></tfoot></table>`:''}
 ${piRows?`<div class="div"></div><div class="stit" style="color:#f59e0b">⚠️ Piutang</div><table class="tb"><thead><tr><th>Customer</th><th>Item</th><th>Kloter</th><th style="text-align:right">Total</th><th style="text-align:right">Sudah Bayar</th><th style="text-align:right">Sisa</th><th>Status</th></tr></thead><tbody>${piRows}</tbody></table>`:''}
-<div class="ft"><span>Sukido Jastip Manager</span><span>${now}</span></div></div>
-<!-- BULK ISI RESI MODAL -->
-<div class="mov" id="bulkisimod" style="display:none" onclick="if(event.target===this)closeBulkIsiPopup()">
-  <div class="mbox" onclick="event.stopPropagation()" style="max-width:560px;max-height:85vh;display:flex;flex-direction:column">
-    <div class="mhdr">
-      <div>
-        <div class="mtit">📝 Isi Paket — Print Masal</div>
-        <div style="font-size:12px;color:var(--t3);margin-top:2px">Isi keterangan isi paket untuk setiap customer sebelum print</div>
-      </div>
-      <button class="mclose" onclick="closeBulkIsiPopup()">✕</button>
-    </div>
-    <div style="flex:1;overflow-y:auto;padding:16px 20px">
-      <div id="bulk-isi-list"></div>
-    </div>
-    <div style="padding:14px 20px;border-top:1px solid var(--bor);display:flex;gap:10px">
-      <button onclick="closeBulkIsiPopup()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
-      <button onclick="confirmBulkPrint()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);display:flex;align-items:center;justify-content:center;gap:8px">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Print Sekarang
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT KLOTER MODAL -->
-<div class="mov" id="editklotermod" style="display:none" onclick="if(event.target===this)closeEditKloter()">
-  <div class="mbox" onclick="event.stopPropagation()" style="max-width:480px">
-    <div class="mhdr">
-      <div><div class="mtit">✏️ Edit Kloter</div><div id="ek-subtitle" style="font-size:12px;color:var(--t3);margin-top:2px"></div></div>
-      <button class="mclose" onclick="closeEditKloter()">✕</button>
-    </div>
-    <div style="padding:20px">
-      <div class="g2" style="margin-bottom:14px">
-        <div class="fl" style="grid-column:1/-1">
-          <label>Nama Kloter</label>
-          <input id="ek-name" placeholder="e.g. Cariang Express"/>
-        </div>
-        <div class="fl">
-          <label>Rate ¥ → Rp</label>
-          <input type="number" id="ek-rate" placeholder="110"/>
-        </div>
-        <div class="fl">
-          <label>Kapasitas Bagasi</label>
-          <input id="ek-bagasi" placeholder="e.g. 30kg"/>
-        </div>
-        <div class="fl">
-          <label>ETA (Tgl Tiba)</label>
-          <input type="date" id="ek-eta"/>
-        </div>
-        <div class="fl">
-          <label>Status</label>
-          <select id="ek-status" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
-            <option value="open">🟢 Open</option>
-            <option value="transit">✈️ Transit</option>
-            <option value="arrived">📦 Tiba</option>
-            <option value="closed">🔴 Closed</option>
-          </select>
-        </div>
-      </div>
-      <div style="display:flex;gap:10px">
-        <button onclick="closeEditKloter()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
-        <button onclick="saveEditKloter()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);display:flex;align-items:center;justify-content:center;gap:8px">
-          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
-          Simpan Perubahan
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-</body></html>`);
+<div class="ft"><span>Sukido Jastip Manager</span><span>${now}</span></div></div></body></html>`);
   w.document.close();
 }
 
 // ═══════════════════════════════════════════════════════
 //  KIRIM & RESI
 // ═══════════════════════════════════════════════════════
-function saveCfg(){try{localStorage.setItem('sk_cfg',JSON.stringify({url:document.getElementById('cfg-url')?.value||'',nm:document.getElementById('cfg-nm')?.value||'',hp:document.getElementById('cfg-hp')?.value||''}));}catch(e){}}
-function loadCfg(){try{const c=JSON.parse(localStorage.getItem('sk_cfg')||'{}');if(c.url){const el=document.getElementById('cfg-url');if(el)el.value=c.url;}if(c.nm){const el=document.getElementById('cfg-nm');if(el)el.value=c.nm;}if(c.hp){const el=document.getElementById('cfg-hp');if(el)el.value=c.hp;}}catch(e){}}
+function saveCfg(){try{localStorage.setItem('sk_cfg',JSON.stringify({url:document.getElementById('cfg-url')?.value||''}));}catch(e){}}
+function loadCfg(){try{const c=JSON.parse(localStorage.getItem('sk_cfg')||'{}');if(c.url){const el=document.getElementById('cfg-url');if(el)el.value=c.url;}}catch(e){}}
 function getCfg(){try{return JSON.parse(localStorage.getItem('sk_cfg')||'{}');}catch(e){return{};}}
 function getAddr(cust){const key='alamat_cust_'+cust.trim().toLowerCase().replace(/\s+/g,'_');try{const d=localStorage.getItem(key);if(d)return JSON.parse(d);}catch(e){}return null;}
 function saveAddr(cust,data){const key='alamat_cust_'+cust.trim().toLowerCase().replace(/\s+/g,'_');try{localStorage.setItem(key,JSON.stringify({...data,custName:cust,timestamp:new Date().toISOString()}));}catch(e){}}
@@ -2120,20 +1834,8 @@ function togKirimOpen(cust){
   kirimOpen[cust]=!kirimOpen[cust];
   renderKirim();
 }
-function togKirimSent(cust){
-  kirimSent[cust]=!kirimSent[cust];
-  if(kirimSent[cust]) kirimPacked[cust]=true;
-  slKirim();
-  syncKirimStatus(cust);
-  renderKirim();
-}
-function togKirimPacked(cust){
-  kirimPacked[cust]=!kirimPacked[cust];
-  if(!kirimPacked[cust]) kirimSent[cust]=false;
-  slKirim();
-  syncKirimStatus(cust);
-  renderKirim();
-}
+function togKirimSent(cust){kirimSent[cust]=!kirimSent[cust];if(kirimSent[cust])kirimPacked[cust]=true;slKirim();syncKirimStatus(cust);renderKirim();}
+function togKirimPacked(cust){kirimPacked[cust]=!kirimPacked[cust];if(!kirimPacked[cust])kirimSent[cust]=false;slKirim();syncKirimStatus(cust);renderKirim();}
 
 function renderKirim(){
   const kn = document.getElementById('k-kl')?.value || '';
@@ -2185,15 +1887,8 @@ function renderKirim(){
   // Active group content
   const activeGroup = groups[kirimTab] || groups.siap;
   const activeItems = activeGroup.items;
-  // Sort: not sent/packed first, packed second, sent last
-  const sortedItems = [...activeItems].sort(function(a,b){
-    var sa=kirimSent[a.cust]?2:kirimPacked[a.cust]?1:0;
-    var sb=kirimSent[b.cust]?2:kirimPacked[b.cust]?1:0;
-    return sa-sb;
-  });
-  const listHtml = sortedItems.length
-    ? sortedItems.map(e => renderKirimCard(e)).join('')
-    : '<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">'+activeGroup.ico+' Tidak ada pesanan di kategori ini</div>';
+  const sortedItems=[...activeItems].sort(function(a,b){var sa=kirimSent[a.cust]?2:kirimPacked[a.cust]?1:0,sb=kirimSent[b.cust]?2:kirimPacked[b.cust]?1:0;return sa-sb;});
+  const listHtml=sortedItems.length?sortedItems.map(e=>renderKirimCard(e)).join(''):'<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">'+activeGroup.ico+' Tidak ada pesanan</div>';
 
   el.innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
@@ -2212,65 +1907,37 @@ function renderKirimCard(c){
   var tj=c.orders.reduce(function(s,o){return s+o.jual*o.qty;},0);
   var isOpen=!!kirimOpen[c.cust],isSent=!!kirimSent[c.cust],isPacked=!!kirimPacked[c.cust];
   var ckId='kchk-'+encKey(c.cust,'chk');
-  var cardStyle='margin-bottom:8px;'+(isSent?'opacity:.6;border-left:3px solid var(--grn);':isPacked?'border-left:3px solid var(--amb);':'');
-
-  var packBorder=isPacked||isSent?'var(--amb)':'var(--bor)';
-  var packBg=isPacked||isSent?'#fef9c3':'transparent';
-  var packColor=isPacked||isSent?'var(--amb)':'var(--t3)';
-  var sentBorder=isSent?'var(--grn)':'var(--bor)';
-  var sentBg=isSent?'#dcfce7':'transparent';
-  var sentColor=isSent?'var(--grn)':'var(--t3)';
-
-  var namePart=isSent?'<span style="text-decoration:line-through;color:var(--t3)">'+c.cust+'</span>':c.cust;
-  var addrBadge=hasA?'<span class="ccbadge ccbhas">✅ Alamat</span>':isPlat?'<span class="ccbadge" style="background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe">📱 Platform</span>':'<span class="ccbadge ccbnone">⏳ Belum</span>';
-  var packedBadge=isPacked&&!isSent?'<span class="ccbadge" style="background:#fef9c3;color:#854d0e;border:1px solid #fef08a">📦 Packed</span>':'';
-  var sentBadge=isSent?'<span class="ccbadge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">✈️ Terkirim</span>':'';
-
-  var resiBtn=(hasA||isPlat)
-    ?'<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(91,94,244,.25)">🖨️ Resi</button>'
-    :'<button disabled style="padding:6px 10px;background:#fef9c3;border:1.5px solid #fef08a;border-radius:8px;color:#854d0e;font-family:var(--fn);font-size:11px;cursor:not-allowed">⏳</button>';
-
-  var linkBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s" onmouseover="this.style.borderColor=\'var(--acc)\'" onmouseout="this.style.borderColor=\'var(--bor2)\'">🔗 Link</button>':'';
-  var editBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor=\'var(--acc)\'" onmouseout="this.style.borderColor=\'var(--bor2)\'">✏️</button>':'';
-
-  var chevron='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\')" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;flex-shrink:0;cursor:pointer;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
-
-  var itemsList='<div class="ccitems">'+c.orders.map(function(o){return'<div class="ccir"><span class="ccin">• '+o.item+'</span><span class="cciv">Qty '+o.qty+' · '+fr(o.jual*o.qty)+'</span></div>';}).join('')+'</div>';
-  var addrSection=hasA?'<div class="ccaddr"><div class="ccatit">📍 Alamat</div><div class="ccanm">'+addr.nama+' · '+addr.hp+'</div><div class="ccadt">'+addr.alamat+'<br>'+addr.kota+(addr.kota?', ':'')+addr.provinsi+' '+addr.kodepos+(addr.catatan?'<br><span style="color:var(--t3)">📝 '+addr.catatan+'</span>':'')+'</div></div>':'';
-  var platSection=isPlat?'<div style="background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:10px 14px;font-size:12px;color:#5b21b6;font-weight:600">📱 Pengiriman via platform — alamat otomatis dari aplikasi</div>':'';
-
-  return '<div class="ccard'+(hasA||isPlat?' hasaddr':'')+'" style="'+cardStyle+'">'+
-    '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">'+
-      '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'+
-        '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
-          '<button onclick="togKirimPacked(\''+esc(c.cust)+'\')" title="Packing" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+packBorder+';background:'+packBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">'+
-            '<span style="font-size:15px">📦</span>'+
-          '</button>'+
-          '<span style="font-size:8px;font-weight:700;color:'+packColor+'">PACK</span>'+
-        '</div>'+
-        '<svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:var(--bor2);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
-        '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
-          '<button onclick="togKirimSent(\''+esc(c.cust)+'\')" title="Sudah Kirim" style="width:32px;height:32px;border-radius:8px;border:1.5px solid '+sentBorder+';background:'+sentBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">'+
-            '<span style="font-size:15px">'+(isSent?'✅':'🚚')+'</span>'+
-          '</button>'+
-          '<span style="font-size:8px;font-weight:700;color:'+sentColor+'">KIRIM</span>'+
-        '</div>'+
-      '</div>'+
-      '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\')">'+
-        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+
-          '<div class="ccn">'+namePart+'</div>'+addrBadge+packedBadge+sentBadge+
-        '</div>'+
-        '<div class="ccm">'+c.orders.length+' item · '+fr(tj)+' · '+(c.ship||'—')+' · '+(SI[c.stype]||'')+' '+(c.stype||'')+'</div>'+
-      '</div>'+
-      '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'+
-        '<input type="checkbox" id="'+ckId+'" class="kirim-checkbox" value="'+esc(c.cust)+'" style="width:16px;height:16px;accent-color:var(--acc);cursor:pointer" title="Pilih untuk print"/>'+
-        linkBtn+resiBtn+editBtn+chevron+
-      '</div>'+
-    '</div>'+
-    '<div style="display:'+(isOpen?'block':'none')+';margin-top:12px;padding-top:12px;border-top:1px solid var(--bor)">'+
-      itemsList+addrSection+platSection+
-    '</div>'+
-  '</div>';
+  var cs='margin-bottom:8px;'+(isSent?'opacity:.6;border-left:3px solid var(--grn);':isPacked?'border-left:3px solid var(--amb);':'');
+  var pB=isPacked||isSent?'var(--amb)':'var(--bor)',pBg=isPacked||isSent?'#fef9c3':'transparent',pC=isPacked||isSent?'var(--amb)':'var(--t3)';
+  var sB=isSent?'var(--grn)':'var(--bor)',sBg=isSent?'#dcfce7':'transparent',sC=isSent?'var(--grn)':'var(--t3)';
+  var nP=isSent?'<span style="text-decoration:line-through;color:var(--t3)">'+c.cust+'</span>':c.cust;
+  var aB=hasA?'<span class="ccbadge ccbhas">✅ Alamat</span>':isPlat?'<span class="ccbadge" style="background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe">📱 Platform</span>':'<span class="ccbadge ccbnone">⏳ Belum</span>';
+  var pkB=isPacked&&!isSent?'<span class="ccbadge" style="background:#fef9c3;color:#854d0e;border:1px solid #fef08a">📦 Packed</span>':'';
+  var snB=isSent?'<span class="ccbadge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">✈️ Terkirim</span>':'';
+  var rBtn=(hasA||isPlat)?'<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🖨️ Resi</button>':'<button disabled style="padding:6px 10px;background:#fef9c3;border:1.5px solid #fef08a;border-radius:8px;color:#854d0e;font-family:var(--fn);font-size:11px;cursor:not-allowed">⏳</button>';
+  var lBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">🔗 Link</button>':'';
+  var eBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">✏️</button>':'';
+  var chv='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\')" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;flex-shrink:0;cursor:pointer;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  var itms='<div class="ccitems">'+c.orders.map(function(o){return'<div class="ccir"><span class="ccin">• '+o.item+'</span><span class="cciv">Qty '+o.qty+' · '+fr(o.jual*o.qty)+'</span></div>';}).join('')+'</div>';
+  var adrS=hasA?'<div class="ccaddr"><div class="ccatit">📍 Alamat</div><div class="ccanm">'+addr.nama+' · '+addr.hp+'</div><div class="ccadt">'+addr.alamat+'<br>'+addr.kota+(addr.kota?', ':'')+addr.provinsi+' '+addr.kodepos+(addr.catatan?'<br><span style="color:var(--t3)">📝 '+addr.catatan+'</span>':'')+'</div></div>':'';
+  var pltS=isPlat?'<div style="background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:10px 14px;font-size:12px;color:#5b21b6;font-weight:600">📱 Pengiriman via platform</div>':'';
+  return '<div class="ccard'+(hasA||isPlat?' hasaddr':'')+'" style="'+cs+'">'+
+    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+    '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'+
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:1px">'+
+    '<button onclick="togKirimPacked(\''+esc(c.cust)+'\')" style="width:30px;height:30px;border-radius:8px;border:1.5px solid '+pB+';background:'+pBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s">📦</button>'+
+    '<span style="font-size:7px;font-weight:700;color:'+pC+'">PACK</span></div>'+
+    '<svg viewBox="0 0 24 24" style="width:9px;height:9px;stroke:var(--bor2);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:1px">'+
+    '<button onclick="togKirimSent(\''+esc(c.cust)+'\')" style="width:30px;height:30px;border-radius:8px;border:1.5px solid '+sB+';background:'+sBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s">'+(isSent?'✅':'🚚')+'</button>'+
+    '<span style="font-size:7px;font-weight:700;color:'+sC+'">KIRIM</span></div></div>'+
+    '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\')">'+
+    '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><div class="ccn">'+nP+'</div>'+aB+pkB+snB+'</div>'+
+    '<div class="ccm">'+c.orders.length+' item · '+fr(tj)+' · '+(c.ship||'—')+' · '+(SI[c.stype]||'')+' '+(c.stype||'')+'</div></div>'+
+    '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'+
+    '<input type="checkbox" id="'+ckId+'" class="kirim-checkbox" value="'+esc(c.cust)+'" style="width:15px;height:15px;accent-color:var(--acc);cursor:pointer"/>'+
+    lBtn+rBtn+eBtn+chv+'</div></div>'+
+    '<div style="display:'+(isOpen?'block':'none')+';margin-top:10px;padding-top:10px;border-top:1px solid var(--bor)">'+itms+adrS+pltS+'</div></div>';
 }
 
 function selectAllKirim(sel){document.querySelectorAll('.kirim-checkbox').forEach(el=>el.checked=sel);}
@@ -2278,47 +1945,15 @@ function selectAllKirim(sel){document.querySelectorAll('.kirim-checkbox').forEac
 function printSelected(){
   const checked=[...document.querySelectorAll('.kirim-checkbox:checked')].map(el=>el.value);
   if(!checked.length){toast('⚠️ Pilih minimal 1 customer',true);return;}
-  // Print langsung - isi paket = nama barang otomatis
-  _printResiList(checked, {});
+  _printResiList(checked,{});
 }
 function printAll(){
   const kn=document.getElementById('k-kl')?.value||'';
   const filt=orders.filter(o=>o.ostatus!=='CANCELLED'&&(!kn||o.batch===kn));
   const custs={};filt.forEach(o=>{if(!custs[o.cust])custs[o.cust]=[];custs[o.cust].push(o);});
-  _printResiList(Object.keys(custs), {});
+  _printResiList(Object.keys(custs),{});
 }
-let _bulkList=[];
-function showBulkIsiPopup(list){
-  _bulkList=list;
-  const el=document.getElementById('bulkisimod');if(!el)return;
-  const cont=document.getElementById('bulk-isi-list');
-  if(cont){
-    cont.innerHTML=list.map(function(cust){
-      var cos=orders.filter(function(o){return o.cust===cust&&o.ostatus!=='CANCELLED';});
-      var autoIl=cos.map(function(o){return o.item+(o.qty>1?' ('+o.qty+'x)':'');}).join(', ');
-      var encK=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
-      return '<div style="padding:10px 0;border-bottom:1px solid var(--bor)">'+
-        '<div style="font-weight:700;font-size:12px;color:var(--dark);margin-bottom:4px">'+cust+'</div>'+
-        '<div style="font-size:10px;color:var(--t3);margin-bottom:6px">'+autoIl+'</div>'+
-        '<input type="text" id="bulk-isi-'+encK+'" placeholder="Isi paket untuk resi (e.g. Pakaian, Sepatu)" '+
-        'style="width:100%;padding:7px 10px;background:var(--s2);border:1.5px solid var(--bor);border-radius:8px;font-family:var(--fn);font-size:12px;outline:none"/>'+
-      '</div>';
-    }).join('');
-  }
-  el.style.display='flex';
-}
-function closeBulkIsiPopup(){document.getElementById('bulkisimod').style.display='none';}
-function confirmBulkPrint(){
-  var map={};
-  _bulkList.forEach(function(cust){
-    var encK=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
-    var el=document.getElementById('bulk-isi-'+encK);
-    if(el) map[cust]=el.value.trim();
-  });
-  closeBulkIsiPopup();
-  _printResiList(_bulkList,map);
-}
-function _printResiList(custList, bulkIsiMap){
+function _printResiList(custList,bulkIsiMap){
   const cfg=getCfg(),pn=cfg.nm||'SUKIDO STORE',ph=cfg.hp||'—';
   const all=custList.map(cust=>{
     const addr=getAddr(cust),cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');if(!cos.length)return'';
@@ -2332,7 +1967,7 @@ function _printResiList(custList, bulkIsiMap){
   }).filter(Boolean);
   if(!all.length){toast('⚠️ Belum ada alamat untuk customer dipilih',true);return;}
   const w=window.open('','_blank');
-  if(!w){toast('⚠️ Popup diblokir browser! Izinkan popup untuk halaman ini.',true);return;}
+  if(!w){toast('⚠️ Popup diblokir browser! Izinkan popup.',true);return;}
   w.document.write(`<!DOCTYPE html><html><head><title>Resi</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#fff;}.page{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;width:297mm;height:210mm;page-break-after:always;}.rp{padding:6mm 8mm;border:0.5px solid #ccc;overflow:hidden;font-size:10px;}.last-page{grid-template-rows:auto;}@media print{@page{size:A4 landscape;margin:3mm;}.page{width:100%;height:100%;}}</style></head><body>${Array.from({length:Math.ceil(all.length/4)},(_,i)=>`<div class="page${Math.ceil(all.length/4)===i+1?' last-page':''}">${all.slice(i*4,(i+1)*4).map(r=>`<div class="rp">${r}</div>`).join('')}</div>`).join('')}<script>window.onload=function(){window.print();};<\/script></body></html>`);
   w.document.close();
 }
@@ -2363,9 +1998,7 @@ function closeResiDetail(){document.getElementById('residetailmod').style.displa
 function confirmResiDetail(){
   const cust=resiCust;const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
   const get=id=>document.getElementById(id)?.value||'';
-  // Validate rd-items
-  const isiEl=document.getElementById('rd-items');
-  if(isiEl&&!isiEl.value.trim()){isiEl.style.borderColor='var(--red)';isiEl.focus();toast('⚠️ Isi barang di resi wajib diisi!',true);return;}
+  const isiEl=document.getElementById('rd-items');if(isiEl&&!isiEl.value.trim()){isiEl.style.borderColor='var(--red)';isiEl.focus();toast('⚠️ Isi barang di resi wajib!',true);return;}
   const nama=get('rd-nama'),hp=get('rd-hp');
   if(nama&&hp)saveAddr(cust,{nama,hp,alamat:get('rd-alamat'),kota:get('rd-kota'),provinsi:get('rd-prov'),kodepos:get('rd-kodepos'),catatan:get('rd-catatan')});
   const autoItems=cos.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', ');
@@ -2767,9 +2400,9 @@ function renderStok(){
   // Populate kloter dropdowns
   const klOpts = kloters.map(k => `<option value="${k.name}">${k.name}${k.rate?' (¥'+k.rate+')':''}</option>`).join('');
   const skKl = document.getElementById('sk-kloter');
-  if(skKl){ const pv=skKl.value; skKl.innerHTML = '<option value="">— Tanpa Kloter —</option>' + klOpts; if(pv) skKl.value=pv; }
+  if(skKl && skKl.children.length <= 1) skKl.innerHTML = '<option value="">— Tanpa Kloter —</option>' + klOpts;
   const filterEl = document.getElementById('stok-kloter-filter');
-  if(filterEl){ const pv=filterEl.value; filterEl.innerHTML = '<option value="">📦 Semua Kloter</option>' + kloters.map(k=>`<option value="${k.name}">${k.name}</option>`).join(''); if(pv) filterEl.value=pv; }
+  if(filterEl && filterEl.children.length <= 1) filterEl.innerHTML = '<option value="">📦 Semua Kloter</option>' + kloters.map(k=>`<option value="${k.name}">${k.name}</option>`).join('');
 
   const q  = (document.getElementById('stok-search')?.value || '').toLowerCase();
   const kf = document.getElementById('stok-kloter-filter')?.value || '';
@@ -2781,13 +2414,11 @@ function renderStok(){
 
   // ── Empty state ──
   if(!stokList.length){
-    // Auto-open form if empty
-    const sf=document.getElementById('stokform');
-    if(sf&&sf.style.display!=='block'){sf.style.display='block';const sc=document.getElementById('stokchev');if(sc)sc.style.transform='rotate(180deg)';}
-    el.innerHTML = `<div style="background:linear-gradient(135deg,rgba(91,94,244,.04),rgba(139,92,246,.04));border:2px dashed rgba(91,94,244,.2);border-radius:16px;text-align:center;padding:40px 20px;margin:0">
-      <div style="font-size:40px;margin-bottom:10px">📦</div>
-      <div style="font-size:15px;font-weight:800;color:var(--dark);margin-bottom:6px">Belum Ada Stok</div>
-      <div style="font-size:12px;color:var(--t3)">Isi form "Tambah Barang Stok" di atas untuk mulai</div>
+    el.innerHTML = `<div style="background:#ffffff;border:2px solid #5b5ef4;border-radius:16px;text-align:center;padding:48px 20px;margin:0">
+      <div style="font-size:44px;margin-bottom:12px">📦</div>
+      <div style="font-size:16px;font-weight:800;color:#1a1d4e;margin-bottom:8px">Belum Ada Stok</div>
+      <div style="font-size:13px;color:#6b7a99;margin-bottom:20px">Klik "Tambah Barang Stok" di atas untuk mulai</div>
+      <button onclick="togStokForm()" style="padding:10px 22px;background:linear-gradient(135deg,#5b5ef4,#8b5cf6);border:none;border-radius:10px;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(91,94,244,.3)">+ Tambah Barang Pertama</button>
     </div>`;
     return;
   }
@@ -2973,5 +2604,115 @@ function pickStokPopup(id){
 }
 
 </script>
+
+<!-- TAMBAH PESANAN MODAL -->
+<div class="mov" id="tambahmod" style="display:none" onclick="if(event.target===this)closeTambahModal()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:600px;max-height:92vh;overflow-y:auto">
+    <div class="mhdr" style="position:sticky;top:0;background:var(--sur);z-index:1">
+      <div><div class="mtit">+ Tambah Pesanan</div></div>
+      <button class="mclose" onclick="closeTambahModal()">✕</button>
+    </div>
+    <div style="padding:20px">
+    <!-- Hero stat mini cards -->
+    <div class="hero-cards" id="add-hero" style="display:none"></div>
+    <div class="card">
+      <div class="card-ttl"><div class="ct-ico i1"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Info Customer</div>
+      <div class="g2"><div class="fl"><label>Nama Pembeli</label>
+          <div style="display:flex;gap:6px">
+            <input id="f-cust" placeholder="e.g. Tartaranta" style="flex:1"/>
+            <button onclick="openKontakPopup()" style="height:44px;padding:0 13px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(91,94,244,.25);display:flex;align-items:center;gap:5px">
+              <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Kontak
+            </button>
+          </div>
+        </div><div class="fl"><label>Sosmed</label><select id="f-stype"><option value="WhatsApp">💬 WhatsApp</option><option value="Threads">🧵 Threads</option><option value="Instagram">📷 Instagram</option><option value="Shopee">🟠 Shopee</option><option value="Tokopedia">🟢 Tokopedia</option><option value="Direct">🤝 Direct</option></select></div></div>
+      <div class="g2"><div class="fl"><label>PIC</label><select id="f-pic"><option>Sukido</option><option>Dodo</option><option>Sukhita</option></select></div><div class="fl"><label>Pengiriman</label><select id="f-ship"><option>Regular JNT</option><option>Shopee</option><option>Tokopedia</option><option>Toco</option><option>Instant Urgent</option><option>Instant</option><option>COD</option></select></div></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl"><div class="ct-ico i2"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>Detail Barang & Harga</div>
+      <div class="g1r"><div class="fl"><label>Nama Barang</label>
+      <div style="display:flex;gap:6px">
+        <input id="f-item" placeholder="e.g. Salomon Active Skin 8 Black M" style="flex:1"/>
+        <button onclick="openStokPopup()" style="padding:0 12px;background:var(--g2);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.25)" title="Pilih dari Stok">📦 Stok</button>
+      </div>
+    </div></div>
+    <!-- Stok Picker Dropdown -->
+    <div id="stok-picker" style="display:none;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);margin-bottom:14px;overflow:hidden;box-shadow:var(--sh)">
+      <div style="padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--bor);font-size:11px;font-weight:700;color:var(--t2)">Pilih barang dari stok — stok akan berkurang otomatis</div>
+      <div id="stok-picker-list" style="max-height:220px;overflow-y:auto"></div>
+    </div>
+      <div class="g2"><div class="fl"><label>QTY</label><input type="number" id="f-qty" min="1" value="1" oninput="calc()"/></div><div class="fl"><label>Kloter</label><select id="f-batch" onchange="onBC()"><option value="">— Pilih Kloter —</option></select></div></div>
+      <div class="g2"><div class="fl"><label>Modal (JPY)/Item</label><input type="number" id="f-jpy" placeholder="0" oninput="calc()"/></div><div class="fl"><label>Rate ¥→Rp</label><div class="rrow"><input type="number" id="f-rate" readonly style="opacity:.45;cursor:not-allowed;flex:1" placeholder="—"/><span class="rbadge" id="rbadge">Pilih Kloter</span></div><div class="hint" id="rhint">Rate otomatis dari kloter</div></div></div>
+      <div class="g1r"><div class="fl"><label>Harga Jual (Rp)/Item</label><input type="number" id="f-jual" placeholder="0" oninput="calc()"/></div></div>
+      <div class="pp"><div class="ppi"><div class="ppl">Modal IDR</div><div class="ppv" id="pp-mo" style="color:var(--red)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Total Jual</div><div class="ppv" id="pp-ju" style="color:var(--grn)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Untung Est.</div><div class="ppv" id="pp-un" style="color:var(--amb)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Margin</div><div class="ppv" id="pp-mg" style="color:var(--pur)">0%</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl"><div class="ct-ico i3"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>Status Pembayaran</div>
+      <div class="g2"><div class="fl"><label>Status Bayar</label><select id="f-sbayar"><option value="Unpaid">⏳ Unpaid</option><option value="Paid">✅ Paid</option><option value="Down Payment">💰 Down Payment</option><option value="Hold Tokopedia">🔒 Hold Tokopedia</option><option value="Hold Shopee">🔒 Hold Shopee</option></select></div><div class="fl"><label>DP/Jumlah Bayar (Rp)</label><input type="number" id="f-dp" placeholder="0"/></div></div>
+    </div>
+    <button class="sbtn" onclick="showPreview()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Preview & Simpan</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- PIUTANG UPDATE MODAL -->
+<div class="mov" id="piupdatemod" style="display:none" onclick="if(event.target===this)closePiUpdate()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:420px">
+    <div class="mhdr">
+      <div><div class="mtit" id="pu-title"></div><div style="font-size:12px;color:var(--t3);margin-top:2px">Update Pembayaran</div></div>
+      <button class="mclose" onclick="closePiUpdate()">✕</button>
+    </div>
+    <div style="padding:20px">
+      <div style="background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;color:var(--t2);font-weight:600">Total Tagihan</span>
+        <span id="pu-total" style="font-size:16px;font-weight:800;font-family:var(--mono);color:var(--dark)"></span>
+      </div>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="fl"><label>Bayar Masuk (Rp)</label>
+          <input type="number" id="pu-bayar" placeholder="0" oninput="calcPiUpdate()" style="width:100%;padding:10px 13px;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);font-family:var(--mono);font-size:14px;font-weight:700;outline:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+        </div>
+        <div class="fl"><label>Ongkir (Rp)</label>
+          <input type="number" id="pu-ongkir" placeholder="0" style="width:100%;padding:10px 13px;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);font-family:var(--mono);font-size:13px;outline:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+        </div>
+      </div>
+      <div id="pu-sisa" style="font-size:14px;font-weight:700;font-family:var(--mono);text-align:center;padding:10px;background:var(--bg);border-radius:8px;margin-bottom:14px"></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="closePiUpdate()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
+        <button onclick="savePiUpdate(false)" style="flex:1.5;padding:12px;background:var(--g4);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer">💾 Update</button>
+        <button onclick="savePiUpdate(true)" style="flex:1.5;padding:12px;background:var(--grn);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer">✓ Lunas</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT KLOTER MODAL -->
+<div class="mov" id="editklotermod" style="display:none" onclick="if(event.target===this)closeEditKloter()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:480px">
+    <div class="mhdr">
+      <div><div class="mtit">✏️ Edit Kloter</div></div>
+      <button class="mclose" onclick="closeEditKloter()">✕</button>
+    </div>
+    <div style="padding:20px">
+      <div class="g2" style="margin-bottom:14px">
+        <div class="fl" style="grid-column:1/-1"><label>Nama Kloter</label><input id="ek-name" placeholder="e.g. Cariang Express"/></div>
+        <div class="fl"><label>Rate ¥ → Rp</label><input type="number" id="ek-rate" placeholder="110"/></div>
+        <div class="fl"><label>Kapasitas Bagasi</label><input id="ek-bagasi" placeholder="e.g. 30kg"/></div>
+        <div class="fl"><label>ETA (Tgl Tiba)</label><input type="date" id="ek-eta"/></div>
+        <div class="fl"><label>Status</label>
+          <select id="ek-status" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
+            <option value="open">🟢 Open</option>
+            <option value="transit">✈️ Transit</option>
+            <option value="arrived">📦 Tiba</option>
+            <option value="closed">🔴 Closed</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button onclick="closeEditKloter()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
+        <button onclick="saveEditKloter()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
