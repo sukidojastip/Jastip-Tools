@@ -279,7 +279,7 @@ select.si option{background:#fff;color:var(--txt);}
 .item-pr{text-align:right;flex-shrink:0;}
 .item-jual{font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono);}
 .item-unt{font-size:11px;font-weight:700;font-family:var(--mono);margin-top:1px;}
-.item-acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:36px;}
+.item-acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .belibtn{height:32px;padding:0 12px;border-radius:8px;border:1.5px solid var(--bor);background:transparent;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;color:var(--t2);transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
 .belibtn.on{background:#dcfce7;border-color:#bbf7d0;color:#166534;}
 .editbtn{height:32px;width:32px;background:var(--bg);border:1.5px solid var(--bor);border-radius:8px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
@@ -450,7 +450,7 @@ select.si option{background:#fff;color:var(--txt);}
 .pi-cust-row{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 16px;
-  background:var(--bg);border:1.5px solid var(--bor);border-radius:12px;
+  background:var(--sur);border:1px solid var(--bor);border-radius:12px;
   transition:all .3s;
 }
 .pi-cust-row:hover{border-color:var(--bor2);box-shadow:0 2px 10px rgba(26,29,78,.07);}
@@ -1503,7 +1503,7 @@ function itemRow(o){
     </div>
     <div class="item-acts">
       <button class="belibtn${o.sudahBeli?' on':''}" onclick="togBeli('${o.id}')">${o.sudahBeli?'✅ Dibeli':'⬜ Beli'}</button>
-      <span class="tag ${OSC[o.ostatus]||'torder'}" style="height:32px;display:inline-flex;align-items:center;gap:4px">${OSE[o.ostatus]||'📋'} ${o.ostatus||'ORDER'}</span>
+      <span class="tag ${OSC[o.ostatus]||'torder'}" style="height:32px;padding:0 12px;font-size:11px;display:inline-flex;align-items:center;gap:4px;border-radius:8px">${OSE[o.ostatus]||'📋'} ${o.ostatus||'ORDER'}</span>
       <button style="width:32px;height:32px;background:var(--bg);border:1.5px solid var(--bor);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0" onclick="openEdit('${o.id}')" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--bor)'">✏️</button>
       <button style="width:32px;height:32px;background:transparent;border:1.5px solid rgba(239,68,68,.2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onclick="delOrder('${o.id}')" onmouseover="this.style.background='rgba(239,68,68,.07)';this.style.borderColor='var(--red)'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(239,68,68,.2)'">
         <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
@@ -2257,13 +2257,14 @@ function selectAllKirim(sel){document.querySelectorAll('.kirim-checkbox').forEac
 function printSelected(){
   const checked=[...document.querySelectorAll('.kirim-checkbox:checked')].map(el=>el.value);
   if(!checked.length){toast('⚠️ Pilih minimal 1 customer',true);return;}
-  showBulkIsiPopup(checked);
+  // Print langsung - isi paket = nama barang otomatis
+  _printResiList(checked, {});
 }
 function printAll(){
   const kn=document.getElementById('k-kl')?.value||'';
   const filt=orders.filter(o=>o.ostatus!=='CANCELLED'&&(!kn||o.batch===kn));
   const custs={};filt.forEach(o=>{if(!custs[o.cust])custs[o.cust]=[];custs[o.cust].push(o);});
-  showBulkIsiPopup(Object.keys(custs));
+  _printResiList(Object.keys(custs), {});
 }
 let _bulkList=[];
 function showBulkIsiPopup(list){
@@ -2310,6 +2311,7 @@ function _printResiList(custList, bulkIsiMap){
   }).filter(Boolean);
   if(!all.length){toast('⚠️ Belum ada alamat untuk customer dipilih',true);return;}
   const w=window.open('','_blank');
+  if(!w){toast('⚠️ Popup diblokir browser! Izinkan popup untuk halaman ini.',true);return;}
   w.document.write(`<!DOCTYPE html><html><head><title>Resi</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#fff;}.page{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;width:297mm;height:210mm;page-break-after:always;}.rp{padding:6mm 8mm;border:0.5px solid #ccc;overflow:hidden;font-size:10px;}.last-page{grid-template-rows:auto;}@media print{@page{size:A4 landscape;margin:3mm;}.page{width:100%;height:100%;}}</style></head><body>${Array.from({length:Math.ceil(all.length/4)},(_,i)=>`<div class="page${Math.ceil(all.length/4)===i+1?' last-page':''}">${all.slice(i*4,(i+1)*4).map(r=>`<div class="rp">${r}</div>`).join('')}</div>`).join('')}<script>window.onload=function(){window.print();};<\/script></body></html>`);
   w.document.close();
 }
