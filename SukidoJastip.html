@@ -1164,9 +1164,19 @@ let kirimPacked={};
 try{orders=JSON.parse(localStorage.getItem('sk_o')||'[]');}catch(e){orders=[];}
 try{kloters=JSON.parse(localStorage.getItem('sk_k')||'[]');}catch(e){kloters=[];}
 try{stokList=JSON.parse(localStorage.getItem('sk_stok')||'[]');}catch(e){stokList=[];}
+// kirimPacked/kirimSent loaded from Sheets via syncNow
 
 // ─── SAVE ──────────────────────────────────────────────
 function sl(){try{localStorage.setItem('sk_o',JSON.stringify(orders));localStorage.setItem('sk_k',JSON.stringify(kloters));}catch(e){}}
+function slKirim(){
+  try{localStorage.setItem('sk_packed',JSON.stringify(kirimPacked));localStorage.setItem('sk_sent',JSON.stringify(kirimSent));}catch(e){}
+}
+async function syncKirimStatus(cust){
+  try{
+    await apiCall({action:'saveKirimStatus',data:{custName:cust,packed:!!kirimPacked[cust],sent:!!kirimSent[cust]}});
+    setSS('ok');
+  }catch(e){setSS('err','Sync gagal');}
+}
 
 
 // ─── HELPERS ───────────────────────────────────────────
@@ -1226,6 +1236,13 @@ async function syncNow(){
   try{
     const d=await apiCall({action:'getAll'});
     orders=d.orders||[];kloters=d.kloters||[];sl();
+    // Load kirimStatus from Sheets
+    if(d.kirimStatus){
+      Object.entries(d.kirimStatus).forEach(([cust,s])=>{
+        kirimPacked[cust]=!!s.packed;
+        kirimSent[cust]=!!s.sent;
+      });
+    }
     // Load addresses from Sheets into localStorage
     if(d.addresses&&d.addresses.length){
       d.addresses.forEach(addr=>{
@@ -2106,11 +2123,15 @@ function togKirimOpen(cust){
 function togKirimSent(cust){
   kirimSent[cust]=!kirimSent[cust];
   if(kirimSent[cust]) kirimPacked[cust]=true;
+  slKirim();
+  syncKirimStatus(cust);
   renderKirim();
 }
 function togKirimPacked(cust){
   kirimPacked[cust]=!kirimPacked[cust];
   if(!kirimPacked[cust]) kirimSent[cust]=false;
+  slKirim();
+  syncKirimStatus(cust);
   renderKirim();
 }
 
