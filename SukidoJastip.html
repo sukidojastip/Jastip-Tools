@@ -640,6 +640,10 @@ input,select,textarea{font-size:16px!important;}
       <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Laporan
     </button>
+    <button class="nb" onclick="sw('katalog')" id="nb-katalog">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Katalog
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="sync-row" onclick="syncNow()">
@@ -744,9 +748,7 @@ input,select,textarea{font-size:16px!important;}
       <button class="abtn" onclick="exportCSV()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
       <button class="abtn" onclick="showLapModal()" style="background:var(--g1);border-color:transparent;color:#fff;box-shadow:0 4px 16px rgba(91,94,244,.28);"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>Generate Laporan PDF</button>
     </div>
-  </div>
-
-  <!-- SUDAH BAYAR LIST -->
+<!-- SUDAH BAYAR LIST -->
   <div class="card" id="paidcard" style="display:none;margin-top:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0" onclick="togPaidList()">
       <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i2"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Sudah Bayar / Lunas</div>
@@ -756,6 +758,7 @@ input,select,textarea{font-size:16px!important;}
       </div>
     </div>
     <div id="paidlist" style="margin-top:14px;display:none;flex-direction:column;gap:8px"></div>
+  </div>
   </div>
 
   <!-- KIRIM -->
@@ -805,9 +808,59 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div id="kirimlist"></div>
 
-  <!-- STOK -->
+  </div><!-- close sec-kirim -->
 
+  <!-- KATALOG BARANG -->
+  <div class="sec" id="sec-katalog">
 
+    <!-- Form tambah/edit -->
+    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:22px 24px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div class="card-ttl">
+        <div class="ct-ico" style="background:linear-gradient(135deg,#f59e0b,#f97316)">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        Tambah / Edit Barang
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:14px">
+        <div>
+          <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Nama Barang</label>
+          <input id="kt-nama" placeholder="e.g. Salomon Active Skin 8 Black M"
+            style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;box-sizing:border-box"
+            onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Modal JPY / item <span style="font-weight:400;text-transform:none">(opsional)</span></label>
+            <input type="number" id="kt-jpy" placeholder="0"
+              style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;box-sizing:border-box"
+              onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+          </div>
+          <div>
+            <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Harga Jual (Rp) / item</label>
+            <input type="number" id="kt-jual" placeholder="0"
+              style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;box-sizing:border-box"
+              onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button id="kt-cancel-btn" onclick="cancelKatalogEdit()" style="display:none;padding:10px 16px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
+        <button id="kt-save-btn" onclick="saveKatalogItem()" style="flex:1;padding:10px;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(245,158,11,.3)">+ Tambah Barang</button>
+      </div>
+    </div>
+
+    <!-- Daftar barang -->
+    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <input id="kt-search" placeholder="🔍 Cari nama barang..." oninput="renderKatalog()"
+          style="flex:1;background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--fn);font-size:13px;outline:none;transition:border .15s"
+          onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+        <span id="kt-count" style="font-size:12px;color:var(--t3);white-space:nowrap;font-weight:600"></span>
+      </div>
+      <div id="katalog-list"></div>
+    </div>
+
+  </div>
 </div><!-- end .content -->
 </div><!-- end .main -->
 </div><!-- end .layout -->
@@ -873,7 +926,7 @@ input,select,textarea{font-size:16px!important;}
 </div>
 
 <!-- PREVIEW CONFIRM MODAL -->
-<div class="mov" id="previewmod" style="display:none" onclick="if(event.target===this)closePreview()">
+<div class="mov" id="previewmod" style="display:none;z-index:300" onclick="if(event.target===this)closePreview()">
   <div class="mbox" onclick="event.stopPropagation()" style="max-width:480px">
     <div class="mhdr">
       <span class="mtit">📋 Konfirmasi Pesanan</span>
@@ -981,7 +1034,7 @@ input,select,textarea{font-size:16px!important;}
 </div>
 
 <!-- KONTAK POPUP MODAL -->
-<div class="mov" id="kontakpopmod" style="display:none" onclick="if(event.target===this)closeKontakPopup()">
+<div class="mov" id="kontakpopmod" style="display:none;z-index:300" onclick="if(event.target===this)closeKontakPopup()">
   <div class="mbox" onclick="event.stopPropagation()" style="max-width:480px;max-height:80vh;display:flex;flex-direction:column">
     <div class="mhdr"><span class="mtit">👥 Pilih Customer</span><button class="mclose" onclick="closeKontakPopup()">✕</button></div>
     <input id="kontak-popup-search" placeholder="🔍 Cari nama customer..." oninput="renderKontakPopup()"
@@ -992,7 +1045,7 @@ input,select,textarea{font-size:16px!important;}
 </div>
 
 <!-- STOK PICKER POPUP -->
-<div class="mov" id="stokpopmod" style="display:none" onclick="if(event.target===this)closeStokPopup()">
+<div class="mov" id="stokpopmod" style="display:none;z-index:300" onclick="if(event.target===this)closeStokPopup()">
   <div class="mbox" onclick="event.stopPropagation()" style="max-width:500px;max-height:80vh;display:flex;flex-direction:column">
     <div class="mhdr">
       <span class="mtit">📦 Pilih dari Stok</span>
@@ -1042,7 +1095,7 @@ async function syncKirimStatus(cust){try{await apiCall({action:'saveKirimStatus'
 // ─── HELPERS ───────────────────────────────────────────
 const fn  = n => Math.round(n).toLocaleString('id-ID');
 const fr  = n => 'Rp ' + fn(n);
-const unt = o => (o.jual*o.qty) - (o.jpy*o.qty*(o.rate||109)) - (o.admin||0);
+const unt = o => (o.jual*o.qty) - (o.jpy*o.qty*(o.rate||109)) - (o.ongkirPayer!=='customer'?(o.admin||0):0);
 const kr  = k => k.rate||109;
 const pgidr = (p,r) => p.currency==='JPY' ? Math.round((p.amountJPY||0)*r) : (p.amountIDR||p.amount||0);
 const kunt = k => { const r=kr(k),pt=(k.pengeluaran||[]).reduce((s,p)=>s+pgidr(p,r),0); return orders.filter(o=>o.batch===k.name&&o.ostatus!=='CANCELLED').reduce((s,o)=>s+unt(o),0)-pt; };
@@ -1115,6 +1168,17 @@ async function syncNow(){
         }catch(e){}
       });
     }
+    // Load katalog from Sheets
+    if(d.katalog && d.katalog.length) {
+      katalogList = d.katalog.map(k=>({
+        id: String(k.id),
+        nama: k.nama,
+        jpy: Number(k.jpy)||0,
+        jual: Number(k.jual)||0
+      }));
+      saveKatalogLS();
+      if(document.getElementById('katalog-list')) renderKatalog();
+    }
     setSS('ok',`${orders.length} pesanan · ${kloters.length} kloter`);
     refreshAll();
   }catch(e){setSS('err',e.name==='AbortError'?'Timeout':'Offline');}
@@ -1139,17 +1203,17 @@ function refreshAll(){
 // ═══════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════
-const TITLES={kloter:'Kloter Pengiriman',beli:'Daftar Beli',stok:'Stok Barang',kirim:'Kirim & Resi',lap:'Laporan Keuangan'};
-const LABELS={kloter:'Manajemen',beli:'Shopping List',stok:'Inventori',kirim:'Pengiriman',lap:'Finansial'};
+const TITLES={kloter:'Kloter Pengiriman',beli:'Daftar Beli',kirim:'Kirim & Resi',lap:'Laporan Keuangan',katalog:'Katalog Barang'};
+const LABELS={kloter:'Manajemen',beli:'Shopping List',stok:'Inventori',kirim:'Pengiriman',lap:'Finansial',katalog:'Harga & Produk'};
 
 function sw(t){
-  ['kloter','beli','kirim','lap'].forEach(s=>{
+  ['kloter','beli','kirim','lap','katalog'].forEach(s=>{
     document.getElementById('sec-'+s)?.classList.toggle('on',s===t);
     const nb=document.getElementById('nb-'+s);if(nb)nb.className='nb'+(s===t?' on':'');
   });
   const title=document.getElementById('topbar-title');if(title)title.textContent=TITLES[t]||t;
   const lbl=document.getElementById('page-lbl');if(lbl)lbl.textContent=LABELS[t]||'';
-  const renderers={kloter:renderKloter,beli:renderBeli,kirim:renderKirim,lap:renderLap};
+  const renderers={kloter:renderKloter,beli:renderBeli,kirim:renderKirim,lap:renderLap,katalog:renderKatalog};
   renderers[t]?.();
   closeSidebar();
 }
@@ -1293,18 +1357,31 @@ async function saveCustPay(cust,kloterName){
   const sbayar=document.getElementById('cb-st-'+key)?.value||'Unpaid';
   const admin=+document.getElementById('cb-adm-'+key)?.value||0;
   const dp=+document.getElementById('cb-pay-'+key)?.value||0;
+  const payer=(document.querySelector('input[name="cb-payer-'+key+'"]:checked')?.value)||'seller';
   const cos=orders.filter(o=>o.cust===cust&&o.batch===kloterName&&o.ostatus!=='CANCELLED');
   if(!cos.length){toast('Tidak ada pesanan aktif',true);return;}
-  cos.forEach(o=>{o.sbayar=sbayar;o.admin=admin;o.dp=dp;});sl();
+  cos.forEach(o=>{o.sbayar=sbayar;o.admin=admin;o.dp=dp;o.ongkirPayer=payer;});sl();
   if(activeKid)renderKloterDetail(activeKid);else renderKloter();renderLap();toast('✅ Status bayar disimpan!');
   for(const o of cos){try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 }
 function calcSisa(key,totalJual){
   const bayar=+document.getElementById('cb-pay-'+key)?.value||0;
+  const admin=+document.getElementById('cb-adm-'+key)?.value||0;
+  const payer=(document.querySelector('input[name="cb-payer-'+key+'"]:checked')?.value)||'seller';
+  // If customer pays ongkir → add to their bill (sisa bayar naik)
+  // If seller pays ongkir → doesn't affect customer bill (sudah dipotong dari untung via unt())
+  const effectiveTotal = payer==='customer' ? totalJual+admin : totalJual;
   const sisaEl=document.getElementById('cb-sisa-'+key);if(!sisaEl)return;
-  const sisa=totalJual-bayar,lunas=bayar>=totalJual,lebih=bayar>totalJual;
+  const hintEl=document.getElementById('cb-hint-'+key);
+  if(hintEl){
+    if(payer==='customer'&&admin>0)
+      hintEl.textContent='Total: '+fr(totalJual)+' + Ongkir '+fr(admin)+' = '+fr(effectiveTotal);
+    else
+      hintEl.textContent='Total: '+fr(totalJual);
+  }
+  const sisa=effectiveTotal-bayar,lunas=bayar>=effectiveTotal,lebih=bayar>effectiveTotal;
   sisaEl.className='sisa-val '+(lunas?(lebih?'sv-lebih':'sv-lunas'):'sv-kurang');
-  sisaEl.textContent=lunas?(lebih?'↑ Lebih '+fr(bayar-totalJual):'✓ Lunas'):'↓ Kurang '+fr(Math.abs(sisa));
+  sisaEl.textContent=lunas?(lebih?'↑ Lebih '+fr(bayar-effectiveTotal):'✓ Lunas'):'↓ Kurang '+fr(Math.abs(sisa));
 }
 
 // ─── EDIT MODAL ────────────────────────────────────────
@@ -1393,7 +1470,7 @@ function custCard(cust,custOrders,kloterName){
   const kid=kloters.find(k=>k.name===kloterName)?.id||0,key=encKey(cust,kloterName),isOpen=!!custOpen[key];
   const totalJual=custOrders.reduce((s,o)=>s+o.jual*o.qty,0),ref=custOrders[0]||{};
   const curSbayar=ref.sbayar||'Unpaid',curAdmin=ref.admin||0,curDp=ref.dp||0;
-  const totalUnt=custOrders.reduce((s,o)=>s+unt(o),0)-curAdmin;
+  const totalUnt=custOrders.reduce((s,o)=>s+unt(o),0);
   const sisa=totalJual-curDp,lunas=curDp>=totalJual,lebih=curDp>totalJual,allBeli=custOrders.every(o=>o.sudahBeli);
   const sbO=['Unpaid','Paid','Down Payment','Hold Tokopedia','Hold Shopee'].map(s=>`<option value="${s}"${curSbayar===s?' selected':''}>${s}</option>`).join('');
   const previewItems=custOrders.map(o=>`<div class="cprow"><div class="cprow-dot" style="background:${OSCLR[o.ostatus]||'var(--amb)'}"></div><span class="cprow-name">${o.sudahBeli?'✅ ':''}${o.item}</span><span style="font-size:10px;font-weight:600;color:var(--t3);font-family:var(--mono);flex-shrink:0">×${o.qty}</span><span class="cprow-price">${fr(o.jual*o.qty)}</span></div>`).join('');
@@ -1422,10 +1499,23 @@ function custCard(cust,custOrders,kloterName){
             <select id="cb-st-${key}" style="background:${SBG[curSbayar]||'#fef9c3'};color:${SCL[curSbayar]||'#854d0e'};border:1.5px solid ${SBO[curSbayar]||'#fef08a'};border-radius:var(--rs);padding:10px 12px;font-family:var(--fn);font-size:13px;font-weight:700;outline:none;width:100%;cursor:pointer;-webkit-appearance:none"
               onchange="(()=>{this.style.background=${JSON.stringify(SBG)}[this.value]||'#fef9c3';this.style.color=${JSON.stringify(SCL)}[this.value]||'#854d0e';this.style.borderColor=${JSON.stringify(SBO)}[this.value]||'#fef08a';})()">${sbO}</select>
           </div>
-          <div class="fl"><label>Admin / Ongkir (Rp)</label><input type="number" id="cb-adm-${key}" value="${curAdmin||''}" placeholder="0" class="pay-inp"/></div>
+          <div class="fl">
+            <label>Admin / Ongkir (Rp)</label>
+            <input type="number" id="cb-adm-${key}" value="${curAdmin||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/>
+            <div style="display:flex;gap:12px;margin-top:7px">
+              <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2)">
+                <input type="radio" name="cb-payer-${key}" value="seller" ${(ref.ongkirPayer||'seller')==='seller'?'checked':''} onchange="calcSisa('${key}',${totalJual})"/>
+                <span>🏪 Seller (kurangi untung)</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2)">
+                <input type="radio" name="cb-payer-${key}" value="customer" ${(ref.ongkirPayer||'seller')==='customer'?'checked':''} onchange="calcSisa('${key}',${totalJual})"/>
+                <span>👤 Customer (tambah tagihan)</span>
+              </label>
+            </div>
+          </div>
         </div>
         <div class="pay-grid" style="margin-top:10px">
-          <div class="fl"><label>Jumlah Dibayar (Rp)</label><input type="number" id="cb-pay-${key}" value="${curDp||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/><div class="hint">Total: ${fr(totalJual)}</div></div>
+          <div class="fl"><label>Jumlah Dibayar (Rp)</label><input type="number" id="cb-pay-${key}" value="${curDp||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/><div class="hint" id="cb-hint-${key}">Total: ${fr(totalJual)}</div></div>
           <div class="sisa-box"><div class="sisa-lbl">Sisa / Lebih</div><div class="sisa-val ${lunas?(lebih?'sv-lebih':'sv-lunas'):'sv-kurang'}" id="cb-sisa-${key}">${lunas?(lebih?'↑ Lebih '+fr(curDp-totalJual):'✓ Lunas'):'↓ Kurang '+fr(Math.abs(sisa))}</div></div>
         </div>
         <button class="pay-sbtn" onclick="saveCustPay('${esc(cust)}','${esc(kloterName)}')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Status Bayar</button>
@@ -1624,8 +1714,19 @@ function renderBeli(){
         <div style="display:flex;align-items:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:${KSC[k?.status||'']||'#94a3b8'}"></div><span style="font-size:13px;font-weight:800">📦 ${kName}</span>${k?.bagasi?`<span style="font-size:11px;color:var(--t3)">🧳 ${k.bagasi}</span>`:''}</div>
         ${mkBadge(items.length+' item','rgba(91,94,244,.1)','var(--acc)','rgba(91,94,244,.2)')}
       </div>
-      ${items.map(o=>`<div class="beli-item" id="beli-${o.id}">
-        <button class="beli-check" onclick="beliCheck('${o.id}')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+      ${items.map(o=>`<div class="beli-item" id="beli-${o.id}" style="gap:8px">
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button onclick="beliOrder('${o.id}')"
+            style="width:28px;height:28px;border-radius:8px;flex-shrink:0;border:2px solid ${o.sudahDipesan?'var(--grn)':'var(--bor2)'};background:${o.sudahDipesan?'rgba(34,197,94,.1)':'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s"
+            title="Order">
+            ${o.sudahDipesan?'<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--grn);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points=\"20 6 9 17 4 12\"/></svg>':'<span style="font-size:9px;font-weight:700;color:var(--t3)">ORD</span>'}
+          </button>
+          <button onclick="beliReady('${o.id}')"
+            style="width:28px;height:28px;border-radius:8px;flex-shrink:0;border:2px solid ${o.sudahReady?'var(--acc)':'var(--bor2)'};background:${o.sudahReady?'rgba(91,94,244,.1)':'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s"
+            title="Ready">
+            ${o.sudahReady?'<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--acc);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points=\"20 6 9 17 4 12\"/></svg>':'<span style="font-size:9px;font-weight:700;color:var(--t3)">RDY</span>'}
+          </button>
+        </div>
         <div class="beli-item-info"><div class="beli-item-name">${o.item}</div><div class="beli-item-sub">${o.cust}${o.qty>1?' · Qty '+o.qty:''}${o.jpy?' · ¥'+fn(o.jpy):''}</div></div>
         <div style="text-align:right;flex-shrink:0"><div style="font-size:13px;font-weight:800;color:var(--grn);font-family:var(--mono)">${fr(o.jual*o.qty)}</div></div>
       </div>`).join('')}
@@ -1635,6 +1736,33 @@ function renderBeli(){
 async function beliCheck(id){
   const el=document.getElementById('beli-'+id);if(el){el.style.transition='all .25s';el.style.opacity='0';el.style.transform='translateX(16px)';}
   setTimeout(async()=>{const o=findO(id);if(!o)return;o.sudahBeli=true;sl();renderBeli();renderKloter();updateBadge();try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}},220);
+}
+async function beliOrder(id){
+  const o=findO(id);if(!o)return;
+  o.sudahDipesan=!o.sudahDipesan;
+  sl();
+  if(o.sudahDipesan&&o.sudahReady){
+    // Both checked → animate out and mark as bought
+    const el=document.getElementById('beli-'+id);
+    if(el){el.style.transition='all .25s';el.style.opacity='0';el.style.transform='translateX(16px)';}
+    setTimeout(async()=>{o.sudahBeli=true;sl();renderBeli();renderKloter();updateBadge();try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}},220);
+  } else {
+    renderBeli();
+    try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}
+  }
+}
+async function beliReady(id){
+  const o=findO(id);if(!o)return;
+  o.sudahReady=!o.sudahReady;
+  sl();
+  if(o.sudahDipesan&&o.sudahReady){
+    const el=document.getElementById('beli-'+id);
+    if(el){el.style.transition='all .25s';el.style.opacity='0';el.style.transform='translateX(16px)';}
+    setTimeout(async()=>{o.sudahBeli=true;sl();renderBeli();renderKloter();updateBadge();try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}},220);
+  } else {
+    renderBeli();
+    try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2603,6 +2731,167 @@ function pickStokPopup(id){
   toast('✅ '+s.nama+' dipilih!');
 }
 
+
+// ═══════════════════════════════════════════════════════
+//  KATALOG BARANG
+// ═══════════════════════════════════════════════════════
+
+let katalogList = [];
+let _editKatalogId = null;
+
+// Load from localStorage
+try { katalogList = JSON.parse(localStorage.getItem('sk_katalog') || '[]'); } catch(e) { katalogList = []; }
+
+function saveKatalogLS() {
+  try { localStorage.setItem('sk_katalog', JSON.stringify(katalogList)); } catch(e) {}
+}
+
+// ── Tab Katalog renderer ─────────────────────────────
+function renderKatalog() {
+  const el = document.getElementById('katalog-list'); if(!el) return;
+  const q = (document.getElementById('kt-search')?.value || '').toLowerCase();
+  const filtered = katalogList.filter(k => !q || k.nama.toLowerCase().includes(q));
+  const cntEl = document.getElementById('kt-count');
+  if(cntEl) cntEl.textContent = katalogList.length + ' barang';
+  if(!filtered.length) {
+    el.innerHTML = '<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">Belum ada barang di katalog.<br>Tambah barang baru di atas.</div>';
+    return;
+  }
+  el.innerHTML = '';
+  filtered.forEach(function(k) {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--bor)';
+    const infoHtml =
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:700;font-size:13px;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + k.nama + '</div>' +
+        '<div style="font-size:11px;color:var(--t2);margin-top:2px">' +
+          (k.jpy ? '&yen;' + fn(k.jpy) + '/item &middot; ' : '') +
+          'Jual <b style="font-family:var(--mono);color:var(--grn)">' + fr(k.jual) + '</b>' +
+        '</div>' +
+      '</div>';
+    const btnsHtml =
+      '<div style="display:flex;gap:6px;flex-shrink:0">' +
+        '<button class="kt-pick" style="padding:5px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">Pilih</button>' +
+        '<button class="kt-edit" style="padding:5px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;cursor:pointer">&#9999;&#65039;</button>' +
+        '<button class="kt-del" style="padding:5px 10px;background:transparent;border:1.5px solid rgba(239,68,68,.2);border-radius:8px;color:var(--red);font-family:var(--fn);font-size:11px;cursor:pointer">&#128465;&#65039;</button>' +
+      '</div>';
+    div.innerHTML = infoHtml + btnsHtml;
+    (function(kid) {
+      div.querySelector('.kt-pick').onclick = function() { pickKatalogIntoForm(kid); };
+      div.querySelector('.kt-edit').onclick = function() { editKatalogItem(kid); };
+      div.querySelector('.kt-del').onclick  = function() { delKatalogItem(kid); };
+    })(k.id);
+    el.appendChild(div);
+  });
+}
+
+async function saveKatalogItem() {
+  const nama = document.getElementById('kt-nama')?.value.trim();
+  if(!nama) { toast('⚠️ Nama barang wajib!', true); return; }
+  const jpy  = +document.getElementById('kt-jpy')?.value || 0;
+  const jual = +document.getElementById('kt-jual')?.value || 0;
+  if(!jual) { toast('⚠️ Harga jual wajib diisi!', true); return; }
+  if(_editKatalogId !== null) {
+    const k = katalogList.find(x => String(x.id) === String(_editKatalogId));
+    if(k) { k.nama = nama; k.jpy = jpy; k.jual = jual; }
+    const editedId = _editKatalogId;
+    _editKatalogId = null;
+    const btn = document.getElementById('kt-save-btn'); if(btn) btn.textContent = '+ Tambah Barang';
+    const cbtn = document.getElementById('kt-cancel-btn'); if(cbtn) cbtn.style.display = 'none';
+    saveKatalogLS(); renderKatalog();
+    toast('✅ Barang diupdate!');
+    try { await apiCall({action:'updateKatalog', data:{id:String(editedId),nama,jpy,jual}}); setSS('ok'); }
+    catch(e) { setSS('err','Sync katalog gagal'); }
+  } else {
+    const newItem = { id: Date.now(), nama, jpy, jual };
+    katalogList.push(newItem);
+    saveKatalogLS(); renderKatalog();
+    toast('✅ ' + nama + ' ditambahkan!');
+    try { await apiCall({action:'saveKatalog', data:newItem}); setSS('ok'); }
+    catch(e) { setSS('err','Sync katalog gagal'); }
+  }
+  ['kt-nama','kt-jpy','kt-jual'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+}
+
+function editKatalogItem(id) {
+  const k = katalogList.find(x => String(x.id) === String(id)); if(!k) return;
+  _editKatalogId = id;
+  const s = (elId, val) => { const el=document.getElementById(elId); if(el) el.value=val||''; };
+  s('kt-nama', k.nama); s('kt-jpy', k.jpy||''); s('kt-jual', k.jual||'');
+  const btn = document.getElementById('kt-save-btn'); if(btn) btn.textContent = 'Simpan Perubahan';
+  const cbtn = document.getElementById('kt-cancel-btn'); if(cbtn) cbtn.style.display = 'inline-block';
+  document.getElementById('kt-nama')?.focus();
+  document.getElementById('kt-nama')?.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function cancelKatalogEdit() {
+  _editKatalogId = null;
+  ['kt-nama','kt-jpy','kt-jual'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  const btn = document.getElementById('kt-save-btn'); if(btn) btn.textContent = '+ Tambah Barang';
+  const cbtn = document.getElementById('kt-cancel-btn'); if(cbtn) cbtn.style.display = 'none';
+}
+
+async function delKatalogItem(id) {
+  if(!confirm('Hapus barang dari katalog?')) return;
+  katalogList = katalogList.filter(x => String(x.id) !== String(id));
+  saveKatalogLS(); renderKatalog();
+  toast('🗑️ Barang dihapus');
+  try { await apiCall({action:'deleteKatalog', id:String(id)}); setSS('ok'); }
+  catch(e) { setSS('err','Sync katalog gagal'); }
+}
+
+// ── Katalog Popup (for tambah pesanan form) ──────────
+function openKatalogPopup() {
+  const mod = document.getElementById('katalogmod'); if(!mod) return;
+  mod.style.display = 'flex';
+  const si = document.getElementById('katalog-popup-search');
+  if(si) { si.value = ''; si.focus(); }
+  renderKatalogPopup();
+}
+function closeKatalogPopup() {
+  document.getElementById('katalogmod').style.display = 'none';
+}
+function renderKatalogPopup() {
+  const el = document.getElementById('katalog-popup-list'); if(!el) return;
+  const q = (document.getElementById('katalog-popup-search')?.value || '').toLowerCase();
+  const filtered = katalogList.filter(k => !q || k.nama.toLowerCase().includes(q));
+  if(!filtered.length) {
+    el.innerHTML = '<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">' +
+      (katalogList.length === 0 ? 'Katalog masih kosong.<br>Tambah barang di tab Katalog.' : 'Tidak ditemukan.') +
+      '</div>';
+    return;
+  }
+  el.innerHTML = '';
+  filtered.forEach(k => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bor);cursor:pointer;transition:background .15s';
+    div.onmouseover = () => div.style.background = 'var(--bg)';
+    div.onmouseout = () => div.style.background = 'transparent';
+    div.innerHTML =
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:700;font-size:13px;color:var(--dark)">' + k.nama + '</div>' +
+        '<div style="font-size:11px;color:var(--t2);margin-top:2px">' +
+          (k.jpy ? '¥' + fn(k.jpy) + '/item · ' : '') +
+          '<b style="font-family:var(--mono);color:var(--grn)">' + fr(k.jual) + '</b>/item' +
+        '</div>' +
+      '</div>' +
+      '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>';
+    div.onclick = () => pickKatalogIntoForm(k.id);
+    el.appendChild(div);
+  });
+}
+
+function pickKatalogIntoForm(id) {
+  const k = katalogList.find(x => String(x.id) === String(id)); if(!k) return;
+  const set = (elId, val) => { const el=document.getElementById(elId); if(el) el.value=val; };
+  set('f-item', k.nama);
+  set('f-jual', k.jual);
+  if(k.jpy) set('f-jpy', k.jpy); else set('f-jpy', '');
+  closeKatalogPopup();
+  calc();
+  toast('✅ ' + k.nama + ' dipilih!');
+}
+
 </script>
 
 <!-- TAMBAH PESANAN MODAL -->
@@ -2632,7 +2921,7 @@ function pickStokPopup(id){
       <div class="g1r"><div class="fl"><label>Nama Barang</label>
       <div style="display:flex;gap:6px">
         <input id="f-item" placeholder="e.g. Salomon Active Skin 8 Black M" style="flex:1"/>
-        <button onclick="openStokPopup()" style="padding:0 12px;background:var(--g2);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.25)" title="Pilih dari Stok">📦 Stok</button>
+        <button onclick="openKatalogPopup()" style="padding:0 12px;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(245,158,11,.3)" title="Pilih dari Katalog" onclick="openKatalogPopup()">📋 Katalog</button>
       </div>
     </div></div>
     <!-- Stok Picker Dropdown -->
@@ -2711,6 +3000,30 @@ function pickStokPopup(id){
         <button onclick="closeEditKloter()" style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
         <button onclick="saveEditKloter()" style="flex:2;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.3);display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>Simpan Perubahan</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- KATALOG POPUP (z-index:300, above tambahmod) -->
+<div class="mov" id="katalogmod" style="display:none;z-index:300" onclick="if(event.target===this)closeKatalogPopup()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:480px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="mhdr">
+      <div>
+        <div class="mtit">📋 Pilih dari Katalog</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">Klik barang untuk autofill form</div>
+      </div>
+      <button class="mclose" onclick="closeKatalogPopup()">✕</button>
+    </div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--bor)">
+      <input id="katalog-popup-search" placeholder="🔍 Cari nama barang..." oninput="renderKatalogPopup()"
+        style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--fn);font-size:13px;outline:none;transition:border .15s"
+        onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+    </div>
+    <div style="flex:1;overflow-y:auto" id="katalog-popup-list"></div>
+    <div style="padding:10px 14px;border-top:1px solid var(--bor)">
+      <button onclick="closeKatalogPopup();sw('katalog')" style="width:100%;padding:9px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer">
+        ✏️ Kelola Katalog →
+      </button>
     </div>
   </div>
 </div>
