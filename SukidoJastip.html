@@ -1744,7 +1744,16 @@ function renderKloterDetail(sid){
           <option value="COD"${sf==='COD'?' selected':''}>COD</option>
         </select>
       </div>
-      ${filtGroups.length?[...filtGroups].sort(([,a],[,b])=>{const pa=a[0]?.sbayar==='Paid'?1:0,pb=b[0]?.sbayar==='Paid'?1:0;return pa-pb;}).map(([c,cos])=>custCard(c,cos,k.name)).join(''):'<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Tidak ada hasil</div>'}
+      ${filtGroups.length?[...filtGroups].sort(([,a],[,b])=>{
+      function isPaid(cos){
+        if(!cos.length)return false;
+        const ref=cos[0],totalJual=cos.reduce((s,o)=>s+o.jual*o.qty,0);
+        const admin=ref.admin||0,dp=ref.dp||0,payer=ref.ongkirPayer||'seller';
+        const eff=payer==='customer'?totalJual+admin:totalJual;
+        return ref.sbayar==='Paid'||dp>=eff;
+      }
+      return (isPaid(a)?1:0)-(isPaid(b)?1:0);
+    }).map(([c,cos])=>custCard(c,cos,k.name)).join(''):'<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Tidak ada hasil</div>'}
     </div>
   </div>
   <div class="kd-body-card">
