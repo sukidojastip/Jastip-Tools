@@ -30,6 +30,29 @@ h1{font-size:18px;font-weight:800;color:#1e2235;}
 .reset-btn{width:100%;padding:13px;background:linear-gradient(135deg,#e11d48,#9f1239);border:none;border-radius:11px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(225,29,72,.3);transition:opacity .2s,transform .1s;}
 .reset-btn:hover{opacity:.9;}.reset-btn:active{transform:scale(.98);}
 .reset-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── PIN LOCK ────────────────────────── */
+#pin-overlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#1a1d4e,#2d1b69,#1a1d4e);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .35s;}
+#pin-overlay.hiding{opacity:0;pointer-events:none;}
+.pin-box{width:100%;max-width:340px;text-align:center;}
+.pin-logo2{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#5b5ef4,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;box-shadow:0 6px 24px rgba(91,94,244,.5);}
+.pin-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;}
+.pin-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:26px;min-height:20px;}
+.pin-sub.err{color:#f87171;}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:28px;}
+.pin-dot{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:transparent;transition:all .15s;}
+.pin-dot.filled{background:#fff;border-color:#fff;}
+.pin-dot.err{border-color:#f87171;background:#f87171;}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px;}
+.pin-key{height:60px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.08);color:#fff;font-family:'DM Sans',sans-serif;font-size:21px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.pin-key:hover{background:rgba(255,255,255,.16);transform:scale(1.04);}
+.pin-key:active{transform:scale(.96);}
+.pin-key.del{font-size:16px;}
+.pin-key.empty{background:transparent;border-color:transparent;cursor:default;pointer-events:none;}
+.pin-forget{font-size:12px;color:rgba(255,255,255,.35);cursor:pointer;text-decoration:underline;display:inline-block;margin-top:4px;}
+.pin-forget:hover{color:rgba(255,255,255,.6);}
+@keyframes pinShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.pin-dots.shake{animation:pinShake .35s ease;}
 .reset-btn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 .progress{display:none;padding:16px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;margin-bottom:14px;}
 .prog-title{font-size:13px;font-weight:700;color:#1e2235;margin-bottom:12px;}
@@ -46,6 +69,25 @@ h1{font-size:18px;font-weight:800;color:#1e2235;}
 </style>
 </head>
 <body>
+<!-- PIN LOCK -->
+<div id="pin-overlay">
+  <div class="pin-box">
+    <div class="pin-logo2">🔐</div>
+    <div class="pin-title" id="pin-title">Sukido Jastip</div>
+    <div class="pin-sub" id="pin-sub">Masukkan PIN untuk lanjut</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinKey(1)">1</button><button class="pin-key" onclick="pinKey(2)">2</button><button class="pin-key" onclick="pinKey(3)">3</button>
+      <button class="pin-key" onclick="pinKey(4)">4</button><button class="pin-key" onclick="pinKey(5)">5</button><button class="pin-key" onclick="pinKey(6)">6</button>
+      <button class="pin-key" onclick="pinKey(7)">7</button><button class="pin-key" onclick="pinKey(8)">8</button><button class="pin-key" onclick="pinKey(9)">9</button>
+      <button class="pin-key empty"></button><button class="pin-key" onclick="pinKey(0)">0</button><button class="pin-key del" onclick="pinDel()">⌫</button>
+    </div>
+    <a class="pin-forget" id="pin-forget" onclick="pinForget()" style="display:none">Lupa PIN?</a>
+  </div>
+</div>
 <div class="wrap">
   <div class="hdr">
     <div class="logo">🗑️</div>
@@ -110,6 +152,30 @@ h1{font-size:18px;font-weight:800;color:#1e2235;}
 </div>
 
 <script>
+// ── PIN MODULE ──────────────────────────────────────────
+const PIN_HASH_KEY='sk_pin_hash',PIN_SESS_KEY='sk_pin_unlocked',PIN_SALT='sukido_jastip_v5';
+let _pinBuf='',_pinMode='enter',_pinSetup1='';
+async function pinHash(p){const enc=new TextEncoder().encode(p+PIN_SALT);const buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+function pinIsSet(){return!!localStorage.getItem(PIN_HASH_KEY);}
+function pinUnlocked(){return sessionStorage.getItem(PIN_SESS_KEY)==='1';}
+function pinUpdateDots(buf){for(let i=0;i<4;i++){const el=document.getElementById('pd'+i);if(el){el.classList.toggle('filled',i<buf.length);el.classList.remove('err');}}}
+function pinKey(n){if(_pinBuf.length>=4)return;_pinBuf+=String(n);pinUpdateDots(_pinBuf);if(_pinBuf.length===4)setTimeout(()=>pinSubmit(),80);}
+function pinDel(){_pinBuf=_pinBuf.slice(0,-1);pinUpdateDots(_pinBuf);}
+async function pinSubmit(){
+  const sub=document.getElementById('pin-sub'),dots=document.getElementById('pin-dots');
+  if(_pinMode==='enter'){
+    const hash=await pinHash(_pinBuf);
+    if(hash===localStorage.getItem(PIN_HASH_KEY)){sessionStorage.setItem(PIN_SESS_KEY,'1');const ov=document.getElementById('pin-overlay');ov.classList.add('hiding');setTimeout(()=>{ov.style.display='none';ov.classList.remove('hiding');},350);}
+    else{_pinBuf='';sub.textContent='❌ PIN salah';sub.classList.add('err');dots.classList.add('shake');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}setTimeout(()=>{dots.classList.remove('shake');sub.textContent='Masukkan PIN untuk lanjut';sub.classList.remove('err');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');}},1000);}
+  } else if(_pinMode==='setup'){_pinSetup1=_pinBuf;_pinBuf='';_pinMode='setup2';document.getElementById('pin-title').textContent='Konfirmasi PIN';sub.textContent='Masukkan PIN yang sama lagi';sub.classList.remove('err');pinUpdateDots('');}
+  else if(_pinMode==='setup2'){if(_pinBuf===_pinSetup1){const hash=await pinHash(_pinBuf);localStorage.setItem(PIN_HASH_KEY,hash);sessionStorage.setItem(PIN_SESS_KEY,'1');const ov=document.getElementById('pin-overlay');ov.classList.add('hiding');setTimeout(()=>{ov.style.display='none';ov.classList.remove('hiding');},350);}else{_pinBuf='';_pinSetup1='';_pinMode='setup';sub.textContent='❌ Tidak cocok, mulai ulang';sub.classList.add('err');dots.classList.add('shake');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}document.getElementById('pin-title').textContent='Buat PIN Baru';setTimeout(()=>{dots.classList.remove('shake');sub.textContent='Buat 4-digit PIN';sub.classList.remove('err');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');}},1100);pinUpdateDots('');}}
+}
+function pinForget(){if(!confirm('Reset PIN?\nKamu perlu membuat PIN baru.'))return;localStorage.removeItem(PIN_HASH_KEY);sessionStorage.removeItem(PIN_SESS_KEY);_pinBuf='';_pinMode='setup';document.getElementById('pin-title').textContent='Buat PIN Baru';document.getElementById('pin-sub').textContent='Buat 4-digit PIN';document.getElementById('pin-sub').classList.remove('err');document.getElementById('pin-forget').style.display='none';const ov=document.getElementById('pin-overlay');ov.style.display='flex';ov.style.opacity='1';pinUpdateDots('');}
+// Init
+(function(){const ov=document.getElementById('pin-overlay');if(!ov)return;if(pinUnlocked()){ov.style.display='none';return;}if(!pinIsSet()){_pinMode='setup';document.getElementById('pin-title').textContent='Buat PIN Baru';document.getElementById('pin-sub').textContent='Buat 4-digit PIN untuk keamanan';document.getElementById('pin-forget').style.display='none';}else{document.getElementById('pin-forget').style.display='inline';}})();
+document.addEventListener('keydown',e=>{const ov=document.getElementById('pin-overlay');if(ov&&ov.style.display!=='none'&&!ov.classList.contains('hiding')){if(e.key>='0'&&e.key<='9')pinKey(parseInt(e.key));else if(e.key==='Backspace')pinDel();}});
+// ── END PIN MODULE ──────────────────────────────────────
+
 const API = "https://script.google.com/macros/s/AKfycbwDJyCwuE0lIxbS4Iuso7SoW1JDtlkRkZ9k2bRmzK26GJIPOr_A7QCES9NXb_nTYlo/exec";
 
 const LOCAL_KEYS = ['sk_o','sk_k','sk_orders','sk_kloters','sk_cfg','jv_gs','jv_gsk','jv14','jv14k','jv13','jv13k','jv12','jv12k','jv11','jv11k'];
