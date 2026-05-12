@@ -1426,10 +1426,13 @@ async function saveCustPay(cust,kloterName){
   if(!cos.length){toast('Tidak ada pesanan aktif',true);return;}
   const totalJual2=cos.reduce((s,o)=>s+o.jual*o.qty,0);
   const effectiveTotal2=payer==='customer'?totalJual2+admin:totalJual2;
-  // Auto-correct sbayar if it says Paid but sisa still exists
-  let finalSbayar=sbayar;
-  if(sbayar==='Paid'&&dp<effectiveTotal2) finalSbayar='Down Payment';
-  if(dp===0) finalSbayar='Unpaid';
+  // Auto-determine correct sbayar based on actual payment
+  let finalSbayar;
+  if(dp>=effectiveTotal2&&dp>0) finalSbayar='Paid';           // fully paid → Paid
+  else if(dp>0)                  finalSbayar='Down Payment';   // partial → DP
+  else                           finalSbayar='Unpaid';         // nothing paid → Unpaid
+  // But respect manual Hold statuses
+  if((sbayar==='Hold Tokopedia'||sbayar==='Hold Shopee')&&dp<effectiveTotal2) finalSbayar=sbayar;
   cos.forEach(o=>{o.sbayar=finalSbayar;o.admin=admin;o.dp=dp;o.ongkirPayer=payer;});sl();
   if(activeKid)renderKloterDetail(activeKid);else renderKloter();renderLap();toast('✅ Status bayar disimpan!');
   for(const o of cos){try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
@@ -1452,6 +1455,13 @@ function calcSisa(key,totalJual){
   const sisa=effectiveTotal-bayar,lunas=bayar>=effectiveTotal,lebih=bayar>effectiveTotal;
   sisaEl.className='sisa-val '+(lunas?(lebih?'sv-lebih':'sv-lunas'):'sv-kurang');
   sisaEl.textContent=lunas?(lebih?'↑ Lebih '+fr(bayar-effectiveTotal):'✓ Lunas'):'↓ Kurang '+fr(Math.abs(sisa));
+  // Auto-set status dropdown to Paid when lunas
+  const stEl=document.getElementById('cb-st-'+key);
+  if(stEl){
+    if(lunas&&stEl.value!=='Paid') stEl.value='Paid';
+    else if(!lunas&&bayar>0&&stEl.value==='Paid') stEl.value='Down Payment';
+    else if(!lunas&&bayar===0&&stEl.value==='Paid') stEl.value='Unpaid';
+  }
 }
 
 // ─── EDIT MODAL ────────────────────────────────────────
