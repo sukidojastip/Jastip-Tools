@@ -243,6 +243,7 @@ select.si option{background:#fff;color:var(--txt);}
 
 /* CUSTOMER CARD */
 .cust-card{background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:all .18s;}
+.cust-card.paid-card{border-left:4px solid var(--grn);background:rgba(34,197,94,.03);opacity:.85;}
 .cust-card:hover{box-shadow:var(--sh2);}
 .cust-card.open{border-color:rgba(91,94,244,.25);box-shadow:var(--sh2);}
 .cust-hdr{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;cursor:pointer;user-select:none;transition:background .18s;}
@@ -1383,6 +1384,38 @@ async function updOrder(id,f,v){const o=findO(id);if(!o)return;o[f]=v;sl();if(ac
 async function togBeli(id){const o=findO(id);if(!o)return;o.sudahBeli=!o.sudahBeli;sl();if(activeKid)renderKloterDetail(activeKid);else renderKloter();renderBeli();updateBadge();try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 async function delOrder(id){if(!confirm('Hapus pesanan ini?'))return;orders=orders.filter(o=>String(o.id)!==String(id));sl();refreshAll();try{await apiCall({action:'deleteOrder',id:String(id)});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 
+function goToPiCust(cust, kloterName){
+  // Find the kloter that has this customer
+  let kid = null;
+  if(kloterName){
+    const k=kloters.find(k=>k.name===kloterName);
+    if(k) kid=k.id;
+  }
+  if(!kid){
+    // Fallback: find first kloter with this customer
+    for(const k of kloters){
+      if(orders.some(o=>o.cust===cust&&o.batch===k.name&&o.ostatus!=='CANCELLED')){
+        kid=k.id; break;
+      }
+    }
+  }
+  if(!kid){toast('Kloter tidak ditemukan',true);return;}
+  sw('kloter');
+  setTimeout(()=>{
+    selectKloter(kid);
+    // After kloter detail loads, expand this customer's card
+    setTimeout(()=>{
+      const key=encKey(cust,kloterName||kloters.find(k=>k.id===kid)?.name||'');
+      if(!custOpen[key]){
+        custOpen[key]=true;
+        renderKloterDetail(kid);
+      }
+      // Scroll to customer card
+      const el=document.getElementById('cust-'+key);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+    },300);
+  },100);
+}
 async function saveCustPay(cust,kloterName){
   const key=encKey(cust,kloterName);
   const sbayar=document.getElementById('cb-st-'+key)?.value||'Unpaid';
@@ -1513,12 +1546,12 @@ function custCard(cust,custOrders,kloterName){
   const sisa=effectiveTotal-curDp,lunas=curDp>=effectiveTotal,lebih=curDp>effectiveTotal,allBeli=custOrders.every(o=>o.sudahBeli);
   const sbO=['Unpaid','Paid','Down Payment','Hold Tokopedia','Hold Shopee'].map(s=>`<option value="${s}"${curSbayar===s?' selected':''}>${s}</option>`).join('');
   const previewItems=custOrders.map(o=>`<div class="cprow"><div class="cprow-dot" style="background:${OSCLR[o.ostatus]||'var(--amb)'}"></div><span class="cprow-name">${o.sudahBeli?'✅ ':''}${o.item}</span><span style="font-size:10px;font-weight:600;color:var(--t3);font-family:var(--mono);flex-shrink:0">×${o.qty}</span><span class="cprow-price">${fr(o.jual*o.qty)}</span></div>`).join('');
-  return`<div class="cust-card${isOpen?' open':''}">
+  return`<div class="cust-card${isOpen?' open':''} ${lunas?'paid-card':''}" id="cust-${key}">
     <div class="cust-hdr" onclick="togCust('${key}')">
       <div class="cust-info">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
           <span class="cust-name">${cust}</span>
-          ${allBeli?'<span class="chip chip-g">✅ Dibeli</span>':''}
+          ${allBeli?'<span class="chip chip-g">✅ Dibeli</span>':''} ${lunas?'<span class="chip" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;font-weight:700">✓ Lunas</span>':''}
           <span class="chip" style="background:${SBG[curSbayar]||'#fef9c3'};color:${SCL[curSbayar]||'#854d0e'};border:1px solid ${SBO[curSbayar]||'#fef08a'}">${curSbayar==='Paid'?'💰 Lunas':curSbayar==='Down Payment'?'💳 DP':curSbayar==='Unpaid'?'⏳ Belum':'🔒 '+curSbayar}</span>
         </div>
         <div class="cust-meta">${custOrders.length} item · ${SI[ref.stype]||''}&nbsp;${ref.stype||''} · ${ref.pic||''} · ${ref.ship||''}</div>
@@ -1711,7 +1744,7 @@ function renderKloterDetail(sid){
           <option value="COD"${sf==='COD'?' selected':''}>COD</option>
         </select>
       </div>
-      ${filtGroups.length?filtGroups.map(([c,cos])=>custCard(c,cos,k.name)).join(''):'<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Tidak ada hasil</div>'}
+      ${filtGroups.length?[...filtGroups].sort(([,a],[,b])=>{const pa=a[0]?.sbayar==='Paid'?1:0,pb=b[0]?.sbayar==='Paid'?1:0;return pa-pb;}).map(([c,cos])=>custCard(c,cos,k.name)).join(''):'<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Tidak ada hasil</div>'}
     </div>
   </div>
   <div class="kd-body-card">
@@ -1827,7 +1860,7 @@ function renderLap(){
     <div class="sc scg"><div class="ico2">✅</div><div class="scv" style="color:var(--grn)">${fr(tPaid)}</div><div class="scl">Sudah Diterima</div><div class="scs">${f.filter(o=>o.sbayar==='Paid').length} lunas</div></div>
     <div class="sc scy"><div class="ico2">⏳</div><div class="scv" style="color:var(--amb)">${fr(tUnp)}</div><div class="scl">Piutang</div><div class="scs">${Object.values(piG).filter(g=>g.tj>g.dp).length} customer</div></div>
     <div class="sc scb"><div class="ico2">📦</div><div class="scv" style="color:var(--acc)">${sB}<span style="color:var(--t3);font-size:14px"> / ${act.length}</span></div><div class="scl">Sudah Dibeli</div><div class="scs" style="color:${bB>0?'var(--amb)':'var(--grn)'}">${bB} belum</div></div>`;
-  const bns=[...new Set([...kloters.map(k=>k.name),...f.filter(o=>o.batch).map(o=>o.batch)])];
+  const bns=[...new Set(kloters.map(k=>k.name))]; // only show kloters that still exist
   const rows=bns.map(n=>{
     const bo=f.filter(o=>o.batch===n&&o.ostatus!=='CANCELLED');if(!bo.length)return'';
     const k=kloters.find(k=>k.name===n),r=k?kr(k):109;
@@ -1845,20 +1878,40 @@ function renderLap(){
     const totalSisa=Object.values(piGroups).reduce((s,g)=>s+Math.max(0,g.totalJual-g.dp),0);
     const b2=document.getElementById('pi-total-badge');if(b2)b2.textContent=fr(totalSisa);
     const pilist=document.getElementById('pilist');
-    if(pilist){pilist.innerHTML=Object.entries(piGroups).map(([cust,g])=>{
-      const sisa=Math.max(0,g.totalJual-g.dp);
-      const rowId='pirow-'+btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
-      const encC=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
-      return '<div class="pi-cust-row" id="'+rowId+'" style="background:var(--sur);border:1px solid var(--bor);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
-        '<div style="flex:1;min-width:100px">'+
-          '<div class="pirn">'+cust+'</div>'+
-          '<div class="piri">'+g.items.length+' item &middot; <span style="color:var(--amb);font-weight:600">'+g.sbayar+'</span> &middot; Total: <b style="font-family:var(--mono)">'+fr(g.totalJual)+'</b></div>'+
-        '</div>'+
-        '<div style="font-size:17px;font-weight:800;font-family:var(--mono);color:var(--amb)">'+fr(sisa)+'</div>'+
-        '<button data-cust="'+encodeURIComponent(cust)+'" data-encc="'+encC+'" data-total="'+g.totalJual+'" data-dp="'+g.dp+'" class="pi-update-btn" style="padding:7px 14px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">✏️ Update</button>'+
-      '</div>';
-    }).join('');}
+    if(pilist){
+      // Sort: Unpaid first, Down Payment below, then by sisa desc
+      const piEntries=Object.entries(piGroups).sort(([,a],[,b])=>{
+        const order={Unpaid:0,'Hold Tokopedia':1,'Hold Shopee':1,'Down Payment':2};
+        const oa=order[a.sbayar]??0, ob=order[b.sbayar]??0;
+        if(oa!==ob) return oa-ob;
+        return (b.totalJual-b.dp)-(a.totalJual-a.dp); // bigger sisa first
+      });
+      pilist.innerHTML=piEntries.map(([cust,g])=>{
+        const sisa=Math.max(0,g.totalJual-g.dp);
+        const rowId='pirow-'+btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
+        const encC=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
+        const isDP=g.sbayar==='Down Payment';
+        const borderColor=isDP?'var(--acc)':'var(--bor)';
+        const custKloter=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED')[0]?.batch||'';
+        return '<div class="pi-cust-row" id="'+rowId+'" style="background:var(--sur);border:1px solid '+borderColor+';border-left:3px solid '+(isDP?'var(--acc)':'var(--amb)')+';border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
+          '<div class="pi-nav-btn" data-cust="'+encodeURIComponent(cust)+'" data-kloter="'+encodeURIComponent(custKloter)+'" style="flex:1;min-width:100px;cursor:pointer" title="Lihat pesanan →">'+
+            '<div class="pirn" style="display:flex;align-items:center;gap:6px">'+cust+
+              (isDP?'<span style="font-size:9px;background:rgba(91,94,244,.1);color:var(--acc);border-radius:4px;padding:2px 6px;font-weight:700">DP</span>':'')+
+              '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
+            '</div>'+
+            '<div class="piri">'+g.items.length+' item &middot; <span style="color:var(--amb);font-weight:600">'+g.sbayar+'</span>'+
+              (g.dp>0?' &middot; DP <b style="font-family:var(--mono);color:var(--acc)">'+fr(g.dp)+'</b>':'')+
+            '</div>'+
+          '</div>'+
+          '<div style="text-align:right">'+
+            '<div style="font-size:16px;font-weight:800;font-family:var(--mono);color:var(--amb)">'+fr(sisa)+'</div>'+
+            '<div style="font-size:10px;color:var(--t3)">kurang</div>'+
+          '</div>'+
+          '<button data-cust="'+encodeURIComponent(cust)+'" data-encc="'+encC+'" data-total="'+g.totalJual+'" data-dp="'+g.dp+'" class="pi-update-btn" style="padding:7px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">✏️ Update</button>'+
+        '</div>';
+      }).join('');}
       pilist.querySelectorAll('.pi-update-btn').forEach(function(btn){btn.addEventListener('click',function(){openPiUpdate(decodeURIComponent(this.dataset.cust),this.dataset.encc,Number(this.dataset.total),Number(this.dataset.dp));});});
+      pilist.querySelectorAll('.pi-nav-btn').forEach(function(btn){btn.addEventListener('click',function(){goToPiCust(decodeURIComponent(this.dataset.cust),decodeURIComponent(this.dataset.kloter));});});
     // ── Sudah Bayar list ──
     const paidG={};f.filter(o=>o.sbayar==='Paid'&&o.ostatus!=='CANCELLED').forEach(o=>{if(!paidG[o.cust])paidG[o.cust]={n:0,total:0,dp:0};paidG[o.cust].n++;paidG[o.cust].total+=o.jual*o.qty;if(o.dp>0)paidG[o.cust].dp=o.dp;});
     const paidCard=document.getElementById('paidcard'),paidList=document.getElementById('paidlist');
