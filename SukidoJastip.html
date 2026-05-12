@@ -1360,7 +1360,13 @@ async function saveCustPay(cust,kloterName){
   const payer=(document.querySelector('input[name="cb-payer-'+key+'"]:checked')?.value)||'seller';
   const cos=orders.filter(o=>o.cust===cust&&o.batch===kloterName&&o.ostatus!=='CANCELLED');
   if(!cos.length){toast('Tidak ada pesanan aktif',true);return;}
-  cos.forEach(o=>{o.sbayar=sbayar;o.admin=admin;o.dp=dp;o.ongkirPayer=payer;});sl();
+  const totalJual2=cos.reduce((s,o)=>s+o.jual*o.qty,0);
+  const effectiveTotal2=payer==='customer'?totalJual2+admin:totalJual2;
+  // Auto-correct sbayar if it says Paid but sisa still exists
+  let finalSbayar=sbayar;
+  if(sbayar==='Paid'&&dp<effectiveTotal2) finalSbayar='Down Payment';
+  if(dp===0) finalSbayar='Unpaid';
+  cos.forEach(o=>{o.sbayar=finalSbayar;o.admin=admin;o.dp=dp;o.ongkirPayer=payer;});sl();
   if(activeKid)renderKloterDetail(activeKid);else renderKloter();renderLap();toast('✅ Status bayar disimpan!');
   for(const o of cos){try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 }
@@ -1471,7 +1477,9 @@ function custCard(cust,custOrders,kloterName){
   const totalJual=custOrders.reduce((s,o)=>s+o.jual*o.qty,0),ref=custOrders[0]||{};
   const curSbayar=ref.sbayar||'Unpaid',curAdmin=ref.admin||0,curDp=ref.dp||0;
   const totalUnt=custOrders.reduce((s,o)=>s+unt(o),0);
-  const sisa=totalJual-curDp,lunas=curDp>=totalJual,lebih=curDp>totalJual,allBeli=custOrders.every(o=>o.sudahBeli);
+  const curOngkirPayer=ref.ongkirPayer||'seller';
+  const effectiveTotal=curOngkirPayer==='customer'?totalJual+curAdmin:totalJual;
+  const sisa=effectiveTotal-curDp,lunas=curDp>=effectiveTotal,lebih=curDp>effectiveTotal,allBeli=custOrders.every(o=>o.sudahBeli);
   const sbO=['Unpaid','Paid','Down Payment','Hold Tokopedia','Hold Shopee'].map(s=>`<option value="${s}"${curSbayar===s?' selected':''}>${s}</option>`).join('');
   const previewItems=custOrders.map(o=>`<div class="cprow"><div class="cprow-dot" style="background:${OSCLR[o.ostatus]||'var(--amb)'}"></div><span class="cprow-name">${o.sudahBeli?'✅ ':''}${o.item}</span><span style="font-size:10px;font-weight:600;color:var(--t3);font-family:var(--mono);flex-shrink:0">×${o.qty}</span><span class="cprow-price">${fr(o.jual*o.qty)}</span></div>`).join('');
   return`<div class="cust-card${isOpen?' open':''}">
@@ -1515,8 +1523,8 @@ function custCard(cust,custOrders,kloterName){
           </div>
         </div>
         <div class="pay-grid" style="margin-top:10px">
-          <div class="fl"><label>Jumlah Dibayar (Rp)</label><input type="number" id="cb-pay-${key}" value="${curDp||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/><div class="hint" id="cb-hint-${key}">Total: ${fr(totalJual)}</div></div>
-          <div class="sisa-box"><div class="sisa-lbl">Sisa / Lebih</div><div class="sisa-val ${lunas?(lebih?'sv-lebih':'sv-lunas'):'sv-kurang'}" id="cb-sisa-${key}">${lunas?(lebih?'↑ Lebih '+fr(curDp-totalJual):'✓ Lunas'):'↓ Kurang '+fr(Math.abs(sisa))}</div></div>
+          <div class="fl"><label>Jumlah Dibayar (Rp)</label><input type="number" id="cb-pay-${key}" value="${curDp||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/><div class="hint" id="cb-hint-${key}">${curOngkirPayer==='customer'&&curAdmin>0?'Total: '+fr(totalJual)+' + Ongkir '+fr(curAdmin)+' = '+fr(effectiveTotal):'Total: '+fr(effectiveTotal)}</div></div>
+          <div class="sisa-box"><div class="sisa-lbl">Sisa / Lebih</div><div class="sisa-val ${lunas?(lebih?'sv-lebih':'sv-lunas'):'sv-kurang'}" id="cb-sisa-${key}">${lunas?(lebih?'↑ Lebih '+fr(curDp-effectiveTotal):'✓ Lunas'):'↓ Kurang '+fr(Math.abs(sisa))}</div></div>
         </div>
         <button class="pay-sbtn" onclick="saveCustPay('${esc(cust)}','${esc(kloterName)}')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Status Bayar</button>
       </div>
