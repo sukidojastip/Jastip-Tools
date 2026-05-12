@@ -245,7 +245,7 @@ select.si option{background:#fff;color:var(--txt);}
 .cust-card{background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:all .18s;}
 .cust-card:hover{box-shadow:var(--sh2);}
 .cust-card.open{border-color:rgba(91,94,244,.25);box-shadow:var(--sh2);}
-.cust-hdr{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;transition:background .18s;}
+.cust-hdr{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;cursor:pointer;user-select:none;transition:background .18s;}
 .cust-hdr:hover,.cust-card.open .cust-hdr{background:var(--bg);}
 .cust-info{flex:1;min-width:0;}
 .cust-name{font-size:17px;font-weight:800;letter-spacing:-.4px;line-height:1.2;}
@@ -350,7 +350,10 @@ select.si option{background:#fff;color:var(--txt);}
 .kfiltbar select option{background:#fff;}
 .printbtn{padding:11px 18px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 4px 16px rgba(91,94,244,.3);align-self:flex-end;display:flex;align-items:center;gap:7px;transition:all .18s;}
 .printbtn:hover{transform:translateY(-1px);}
-.ccard{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:18px 20px;margin-bottom:10px;box-shadow:var(--sh);transition:all .18s;}
+.ccard{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);transition:all .18s;}
+.ccard.sent-card{background:rgba(34,197,94,.02);}
+.ccard.packed-card{background:rgba(245,158,11,.02);}
+.ccard.hasaddr{border-left:3px solid var(--grn);}
 .ccard:hover{box-shadow:var(--sh2);}
 .ccard.hasaddr{border-color:rgba(34,197,94,.25);}
 .cchd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;}
@@ -603,7 +606,17 @@ select.si option{background:#fff;color:var(--txt);}
 /* Prevent text zoom on iOS */
 input,select,textarea{font-size:16px!important;}
 @media(min-width:541px){input,select,textarea{font-size:13px!important;}}
-</style>
+
+@media(max-width:640px){
+  .content{padding:14px 14px 24px;}
+  .ccard{padding:12px 13px;}
+  .cust-hdr{padding:12px 14px;gap:8px;}
+  .cust-name{font-size:15px;}
+  .topbar{padding:0 14px;}
+  .kloter-detail{padding:12px;}
+  .kd-body{padding:12px 14px;}
+  .item-row{padding:12px 14px;}
+}</style>
 </head>
 <body>
 <div class="mob-ov" id="mob-ov" onclick="closeSidebar()"></div>
@@ -1152,7 +1165,20 @@ async function syncNow(){
   setSS('ld','Sinkronisasi...');
   try{
     const d=await apiCall({action:'getAll'});
-    orders=d.orders||[];kloters=d.kloters||[];sl();
+    // Merge: preserve local sudahDipesan/sudahReady if server doesn't have them
+    const incoming=d.orders||[];
+    const localMap={};
+    orders.forEach(o=>{localMap[String(o.id)]=o;});
+    orders=incoming.map(o=>{
+      const local=localMap[String(o.id)];
+      if(local){
+        // If server says false but local has true → keep local (sheet may be outdated)
+        if(!o.sudahDipesan&&local.sudahDipesan) o.sudahDipesan=true;
+        if(!o.sudahReady&&local.sudahReady) o.sudahReady=true;
+      }
+      return o;
+    });
+    kloters=d.kloters||[];sl();
     if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([cust,s])=>{kirimPacked[cust]=!!s.packed;kirimSent[cust]=!!s.sent;});}
     // Load addresses from Sheets into localStorage
     if(d.addresses&&d.addresses.length){
@@ -2041,7 +2067,7 @@ function renderKirim(){
   const listHtml=sortedItems.length?sortedItems.map(e=>renderKirimCard(e)).join(''):'<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">'+activeGroup.ico+' Tidak ada pesanan</div>';
 
   el.innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
       ${tabBtns}
     </div>
     <div id="kirim-tab-content">${listHtml}</div>`;
@@ -2057,37 +2083,75 @@ function renderKirimCard(c){
   var tj=c.orders.reduce(function(s,o){return s+o.jual*o.qty;},0);
   var isOpen=!!kirimOpen[c.cust],isSent=!!kirimSent[c.cust],isPacked=!!kirimPacked[c.cust];
   var ckId='kchk-'+encKey(c.cust,'chk');
-  var cs='margin-bottom:8px;'+(isSent?'opacity:.6;border-left:3px solid var(--grn);':isPacked?'border-left:3px solid var(--amb);':'');
-  var pB=isPacked||isSent?'var(--amb)':'var(--bor)',pBg=isPacked||isSent?'#fef9c3':'transparent',pC=isPacked||isSent?'var(--amb)':'var(--t3)';
-  var sB=isSent?'var(--grn)':'var(--bor)',sBg=isSent?'#dcfce7':'transparent',sC=isSent?'var(--grn)':'var(--t3)';
-  var nP=isSent?'<span style="text-decoration:line-through;color:var(--t3)">'+c.cust+'</span>':c.cust;
-  var aB=hasA?'<span class="ccbadge ccbhas">✅ Alamat</span>':isPlat?'<span class="ccbadge" style="background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe">📱 Platform</span>':'<span class="ccbadge ccbnone">⏳ Belum</span>';
-  var pkB=isPacked&&!isSent?'<span class="ccbadge" style="background:#fef9c3;color:#854d0e;border:1px solid #fef08a">📦 Packed</span>':'';
-  var snB=isSent?'<span class="ccbadge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">✈️ Terkirim</span>':'';
-  var rBtn=(hasA||isPlat)?'<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🖨️ Resi</button>':'<button disabled style="padding:6px 10px;background:#fef9c3;border:1.5px solid #fef08a;border-radius:8px;color:#854d0e;font-family:var(--fn);font-size:11px;cursor:not-allowed">⏳</button>';
-  var lBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">🔗 Link</button>':'';
-  var eBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\')" style="padding:6px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">✏️</button>':'';
-  var chv='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\')" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;flex-shrink:0;cursor:pointer;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
-  var itms='<div class="ccitems">'+c.orders.map(function(o){return'<div class="ccir"><span class="ccin">• '+o.item+'</span><span class="cciv">Qty '+o.qty+' · '+fr(o.jual*o.qty)+'</span></div>';}).join('')+'</div>';
-  var adrS=hasA?'<div class="ccaddr"><div class="ccatit">📍 Alamat</div><div class="ccanm">'+addr.nama+' · '+addr.hp+'</div><div class="ccadt">'+addr.alamat+'<br>'+addr.kota+(addr.kota?', ':'')+addr.provinsi+' '+addr.kodepos+(addr.catatan?'<br><span style="color:var(--t3)">📝 '+addr.catatan+'</span>':'')+'</div></div>':'';
-  var pltS=isPlat?'<div style="background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:10px 14px;font-size:12px;color:#5b21b6;font-weight:600">📱 Pengiriman via platform</div>':'';
-  return '<div class="ccard'+(hasA||isPlat?' hasaddr':'')+'" style="'+cs+'">'+
-    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
-    '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'+
-    '<div style="display:flex;flex-direction:column;align-items:center;gap:1px">'+
-    '<button onclick="togKirimPacked(\''+esc(c.cust)+'\')" style="width:30px;height:30px;border-radius:8px;border:1.5px solid '+pB+';background:'+pBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s">📦</button>'+
-    '<span style="font-size:7px;font-weight:700;color:'+pC+'">PACK</span></div>'+
-    '<svg viewBox="0 0 24 24" style="width:9px;height:9px;stroke:var(--bor2);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
-    '<div style="display:flex;flex-direction:column;align-items:center;gap:1px">'+
-    '<button onclick="togKirimSent(\''+esc(c.cust)+'\')" style="width:30px;height:30px;border-radius:8px;border:1.5px solid '+sB+';background:'+sBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s">'+(isSent?'✅':'🚚')+'</button>'+
-    '<span style="font-size:7px;font-weight:700;color:'+sC+'">KIRIM</span></div></div>'+
-    '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\')">'+
-    '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><div class="ccn">'+nP+'</div>'+aB+pkB+snB+'</div>'+
-    '<div class="ccm">'+c.orders.length+' item · '+fr(tj)+' · '+(c.ship||'—')+' · '+(SI[c.stype]||'')+' '+(c.stype||'')+'</div></div>'+
-    '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'+
-    '<input type="checkbox" id="'+ckId+'" class="kirim-checkbox" value="'+esc(c.cust)+'" style="width:15px;height:15px;accent-color:var(--acc);cursor:pointer"/>'+
-    lBtn+rBtn+eBtn+chv+'</div></div>'+
-    '<div style="display:'+(isOpen?'block':'none')+';margin-top:10px;padding-top:10px;border-top:1px solid var(--bor)">'+itms+adrS+pltS+'</div></div>';
+  // Card style
+  var cs='margin-bottom:8px;'+(isSent?'opacity:.55;border-left:4px solid var(--grn);':isPacked?'border-left:4px solid var(--amb);':'');
+  // Pack button
+  var pB=isPacked||isSent?'var(--amb)':'var(--bor2)';
+  var pBg=isPacked||isSent?'#fef9c3':'var(--bg)';
+  // Sent button
+  var sB=isSent?'var(--grn)':'var(--bor2)';
+  var sBg=isSent?'#dcfce7':'var(--bg)';
+  var sIco=isSent?'✅':'🚚';
+  // Name
+  var nP=isSent?'<s style="color:var(--t3)">'+c.cust+'</s>':
+         '<b style="font-size:14px;font-weight:800;color:var(--dark)">'+c.cust+'</b>';
+  // Badges
+  var addrBadge=hasA?'<span class="ccbadge ccbhas">✅ Alamat</span>':
+    isPlat?'<span class="ccbadge" style="background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe">📱 Platform</span>':
+    '<span class="ccbadge ccbnone">⏳ Belum</span>';
+  var statusBadge=isSent?'<span class="ccbadge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">✈️ Terkirim</span>':
+    isPacked?'<span class="ccbadge" style="background:#fef9c3;color:#854d0e;border:1px solid #fef08a">📦 Packed</span>':'';
+  // Action buttons
+  var rBtn=(hasA||isPlat)?
+    '<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\')" style="padding:7px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🖨️ Resi</button>':
+    '<button disabled style="padding:7px 10px;background:#fef9c3;border:1.5px solid #fef08a;border-radius:8px;color:#854d0e;font-family:var(--fn);font-size:11px;cursor:not-allowed">⏳</button>';
+  var lBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">🔗</button>':'';
+  var eBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;cursor:pointer">✏️</button>':'';
+  var chv='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\')" style="width:18px;height:18px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;cursor:pointer;flex-shrink:0;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  // Detail items
+  var itms='<div class="ccitems">'+c.orders.map(function(o){
+    return'<div class="ccir"><span class="ccin">• '+o.item+'</span><span class="cciv">Qty '+o.qty+' · '+fr(o.jual*o.qty)+'</span></div>';
+  }).join('')+'</div>';
+  var adrS=hasA?'<div class="ccaddr"><div class="ccatit">📍 Alamat Pengiriman</div>'+
+    '<div class="ccanm">'+addr.nama+' &middot; '+fixPhone(addr.hp)+'</div>'+
+    '<div class="ccadt">'+addr.alamat+(addr.kota?', '+addr.kota:'')+(addr.provinsi?', '+addr.provinsi:'')+(addr.kodepos?' '+addr.kodepos:'')+(addr.catatan?'<br><span style="color:var(--t3);font-size:10px">📝 '+addr.catatan+'</span>':'')+'</div></div>':'';
+  var pltS=isPlat?'<div style="background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:10px 14px;font-size:12px;color:#5b21b6;font-weight:600;margin-top:10px">📱 Pengiriman diproses via platform</div>':'';
+
+  return '<div class="ccard'+(hasA||isPlat?' hasaddr':'')+(isSent?' sent-card':'')+(isPacked&&!isSent?' packed-card':'')+'" style="'+cs+'padding:14px 16px">'+
+    // Row 1: controls + name + actions
+    '<div style="display:flex;align-items:center;gap:10px">'+
+      // Pack → Kirim
+      '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'+
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
+          '<button onclick="togKirimPacked(\''+esc(c.cust)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+pB+';background:'+pBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">📦</button>'+
+          '<span style="font-size:7px;font-weight:700;color:'+(isPacked||isSent?'var(--amb)':'var(--t3)')+'">PACK</span>'+
+        '</div>'+
+        '<svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:var(--bor2);fill:none;stroke-width:2.5;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
+          '<button onclick="togKirimSent(\''+esc(c.cust)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+sB+';background:'+sBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">'+sIco+'</button>'+
+          '<span style="font-size:7px;font-weight:700;color:'+(isSent?'var(--grn)':'var(--t3)')+'">KIRIM</span>'+
+        '</div>'+
+      '</div>'+
+      // Name + info (clickable)
+      '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\')">'+
+        nP+
+        '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">'+
+          addrBadge+statusBadge+
+        '</div>'+
+        '<div style="font-size:11px;color:var(--t2);margin-top:3px">'+c.orders.length+' item &middot; '+fr(tj)+'</div>'+
+      '</div>'+
+      // Right: checkbox + actions + chevron
+      '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'+
+        '<input type="checkbox" id="'+ckId+'" class="kirim-checkbox" value="'+esc(c.cust)+'" style="width:16px;height:16px;accent-color:var(--acc);cursor:pointer"/>'+
+        lBtn+rBtn+eBtn+chv+
+      '</div>'+
+    '</div>'+
+    // Detail (expanded)
+    '<div style="display:'+(isOpen?'block':'none')+';margin-top:12px;padding-top:12px;border-top:1px solid var(--bor)">'+
+      '<div style="font-size:11px;color:var(--t2);margin-bottom:8px">'+(c.ship||'—')+' &middot; '+(SI[c.stype]||'')+' '+(c.stype||'')+'</div>'+
+      itms+adrS+pltS+
+    '</div>'+
+  '</div>';
 }
 
 function selectAllKirim(sel){document.querySelectorAll('.kirim-checkbox').forEach(el=>el.checked=sel);}
