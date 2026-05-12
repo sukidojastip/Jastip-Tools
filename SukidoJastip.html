@@ -770,6 +770,10 @@ input,select,textarea{font-size:16px!important;}
       </div>
       <div class="kconfbdy" id="kconfbdy">
         <div class="fl"><label>URL FormAlamat.html</label><input id="cfg-url" placeholder="https://sukidojastip.github.io/Jastip-Tools/FormAlamat.html" oninput="saveCfg()"/><div class="hint">Paste URL FormAlamat dari GitHub Pages</div></div>
+        <div class="g2" style="margin-top:10px">
+          <div class="fl"><label>Nama Pengirim (Resi)</label><input id="cfg-nm" placeholder="Sukido Store" oninput="saveCfg()"/></div>
+          <div class="fl"><label>HP Pengirim (Resi)</label><input id="cfg-hp" placeholder="085121096673" oninput="saveCfg()"/></div>
+        </div>
       </div>
     </div>
     <div class="kfiltbar" style="flex-wrap:wrap;gap:8px">
@@ -1154,6 +1158,7 @@ async function syncNow(){
     if(d.addresses&&d.addresses.length){
       d.addresses.forEach(addr=>{
         if(!addr.custName)return;
+        if(addr.hp) addr.hp=String(addr.hp); // ensure leading zero preserved
         const key='alamat_cust_'+addr.custName.trim().toLowerCase().replace(/\s+/g,'_');
         try{
           // Only update if Sheet has newer or local doesn't exist
@@ -1948,11 +1953,11 @@ ${piRows?`<div class="div"></div><div class="stit" style="color:#f59e0b">⚠️ 
 // ═══════════════════════════════════════════════════════
 //  KIRIM & RESI
 // ═══════════════════════════════════════════════════════
-function saveCfg(){try{localStorage.setItem('sk_cfg',JSON.stringify({url:document.getElementById('cfg-url')?.value||''}));}catch(e){}}
-function loadCfg(){try{const c=JSON.parse(localStorage.getItem('sk_cfg')||'{}');if(c.url){const el=document.getElementById('cfg-url');if(el)el.value=c.url;}}catch(e){}}
+function saveCfg(){try{localStorage.setItem('sk_cfg',JSON.stringify({url:document.getElementById('cfg-url')?.value||'',nm:document.getElementById('cfg-nm')?.value||'',hp:document.getElementById('cfg-hp')?.value||''}));}catch(e){}}
+function loadCfg(){try{const c=JSON.parse(localStorage.getItem('sk_cfg')||'{}');if(c.url){const el=document.getElementById('cfg-url');if(el)el.value=c.url;}if(c.nm){const el=document.getElementById('cfg-nm');if(el)el.value=c.nm;}if(c.hp){const el=document.getElementById('cfg-hp');if(el)el.value=c.hp;}}catch(e){}}
 function getCfg(){try{return JSON.parse(localStorage.getItem('sk_cfg')||'{}');}catch(e){return{};}}
 function getAddr(cust){const key='alamat_cust_'+cust.trim().toLowerCase().replace(/\s+/g,'_');try{const d=localStorage.getItem(key);if(d)return JSON.parse(d);}catch(e){}return null;}
-function saveAddr(cust,data){const key='alamat_cust_'+cust.trim().toLowerCase().replace(/\s+/g,'_');try{localStorage.setItem(key,JSON.stringify({...data,custName:cust,timestamp:new Date().toISOString()}));}catch(e){}}
+function saveAddr(cust,data){const key='alamat_cust_'+cust.trim().toLowerCase().replace(/\s+/g,'_');try{const d={...data,custName:cust,timestamp:new Date().toISOString()};if(d.hp)d.hp=String(d.hp);localStorage.setItem(key,JSON.stringify(d));}catch(e){}}
 
 function buildLink(cust,cos){
   const cfg=getCfg();let base=cfg.url||'';
