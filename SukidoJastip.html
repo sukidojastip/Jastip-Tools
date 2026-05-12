@@ -1554,6 +1554,7 @@ function custCard(cust,custOrders,kloterName){
   const curOngkirPayer=ref.ongkirPayer||'seller';
   const effectiveTotal=curOngkirPayer==='customer'?totalJual+curAdmin:totalJual;
   const sisa=effectiveTotal-curDp,lunas=curDp>=effectiveTotal,lebih=curDp>effectiveTotal,allBeli=custOrders.every(o=>o.sudahBeli);
+  const isDP=!lunas&&curDp>0;
   const sbO=['Unpaid','Paid','Down Payment','Hold Tokopedia','Hold Shopee'].map(s=>`<option value="${s}"${curSbayar===s?' selected':''}>${s}</option>`).join('');
   const previewItems=custOrders.map(o=>`<div class="cprow"><div class="cprow-dot" style="background:${OSCLR[o.ostatus]||'var(--amb)'}"></div><span class="cprow-name">${o.sudahBeli?'✅ ':''}${o.item}</span><span style="font-size:10px;font-weight:600;color:var(--t3);font-family:var(--mono);flex-shrink:0">×${o.qty}</span><span class="cprow-price">${fr(o.jual*o.qty)}</span></div>`).join('');
   return`<div class="cust-card${isOpen?' open':''} ${lunas?'paid-card':''}" id="cust-${key}">
@@ -1561,7 +1562,7 @@ function custCard(cust,custOrders,kloterName){
       <div class="cust-info">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
           <span class="cust-name">${cust}</span>
-          ${allBeli?'<span class="chip chip-g">✅ Dibeli</span>':''} ${lunas?'<span class="chip" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;font-weight:700">✓ Lunas</span>':''}
+          ${allBeli?'<span class="chip chip-g">✅ Dibeli</span>':''} ${lunas?'<span class="chip" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;font-weight:700">✓ Lunas</span>':isDP?'<span class="chip" style="background:rgba(91,94,244,.1);color:var(--acc);border:1px solid rgba(91,94,244,.25);font-weight:700">💳 DP</span>':''}
           <span class="chip" style="background:${SBG[curSbayar]||'#fef9c3'};color:${SCL[curSbayar]||'#854d0e'};border:1px solid ${SBO[curSbayar]||'#fef08a'}">${curSbayar==='Paid'?'💰 Lunas':curSbayar==='Down Payment'?'💳 DP':curSbayar==='Unpaid'?'⏳ Belum':'🔒 '+curSbayar}</span>
         </div>
         <div class="cust-meta">${custOrders.length} item · ${SI[ref.stype]||''}&nbsp;${ref.stype||''} · ${ref.pic||''} · ${ref.ship||''}</div>
@@ -1755,14 +1756,16 @@ function renderKloterDetail(sid){
         </select>
       </div>
       ${filtGroups.length?[...filtGroups].sort(([,a],[,b])=>{
-      function isPaid(cos){
-        if(!cos.length)return false;
+      function getOrder(cos){
+        if(!cos.length)return 0;
         const ref=cos[0],totalJual=cos.reduce((s,o)=>s+o.jual*o.qty,0);
         const admin=ref.admin||0,dp=ref.dp||0,payer=ref.ongkirPayer||'seller';
         const eff=payer==='customer'?totalJual+admin:totalJual;
-        return ref.sbayar==='Paid'||dp>=eff;
+        if(ref.sbayar==='Paid'||dp>=eff) return 2; // Paid → bottom
+        if(dp>0) return 1;                          // DP → middle
+        return 0;                                    // Unpaid → top
       }
-      return (isPaid(a)?1:0)-(isPaid(b)?1:0);
+      return getOrder(a)-getOrder(b);
     }).map(([c,cos])=>custCard(c,cos,k.name)).join(''):'<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Tidak ada hasil</div>'}
     </div>
   </div>
