@@ -877,46 +877,32 @@ input,select,textarea{font-size:16px!important;}
     </div>
     <div class="sgrid" id="sgrid"></div>
     <div class="bkwrap" id="bkwrap"></div>
-    <div class="card" id="payallcard" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;margin-bottom:0" onclick="togPayAll()">
-        <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i1"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>Piutang & Pembayaran</div>
+    <div class="card" id="picard" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none" onclick="togPiutang()">
+        <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i3"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>Piutang Belum Lunas</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <span id="payall-badge-unp" style="background:rgba(245,158,11,.1);color:var(--amb);border:1px solid rgba(245,158,11,.25);border-radius:7px;padding:3px 10px;font-size:11px;font-weight:700;font-family:var(--mono)"></span>
-          <span id="payall-badge-paid" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:7px;padding:3px 10px;font-size:11px;font-weight:700"></span>
-          <svg id="payall-chev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
+          <span id="pi-total-badge" style="background:rgba(245,158,11,.1);color:var(--amb);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:5px 13px;font-size:12px;font-weight:700;font-family:var(--mono)"></span>
+          <svg id="pi-chev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
-      <!-- Search + Filter bar -->
-      <div id="payall-filter" style="display:none;margin-top:14px;margin-bottom:10px;display:none;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="payall-search" placeholder="🔍 Cari nama customer..." oninput="filterPayAll()" style="flex:1;min-width:150px;background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:8px 12px;font-family:var(--fn);font-size:12px;color:var(--txt);outline:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-        <select id="payall-status" onchange="filterPayAll()" style="background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:8px 12px;font-family:var(--fn);font-size:12px;color:var(--t2);outline:none;cursor:pointer;-webkit-appearance:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'">
-          <option value="">Semua Status</option>
-          <option value="unpaid">⏳ Belum Bayar</option>
-          <option value="dp">💳 Down Payment</option>
-          <option value="paid">✅ Lunas</option>
-        </select>
-      </div>
-      <!-- Table header -->
-      <div id="payall-table" style="display:none;margin-top:0">
-        <div style="display:grid;grid-template-columns:1fr 80px 90px 100px 100px 100px 110px;gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--bor)">
-          <div style="background:var(--s2);padding:9px 14px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor)">Customer</div>
-          <div style="background:var(--s2);padding:9px 8px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor);text-align:center">Item</div>
-          <div style="background:var(--s2);padding:9px 8px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor);text-align:right">Total</div>
-          <div style="background:var(--s2);padding:9px 8px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor);text-align:right">Bayar / DP</div>
-          <div style="background:var(--s2);padding:9px 8px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor);text-align:right">Sisa</div>
-          <div style="background:var(--s2);padding:9px 8px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor);text-align:center">Status</div>
-          <div style="background:var(--s2);padding:9px 8px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor);text-align:center">Aksi</div>
-        </div>
-        <div id="payall-rows" style="display:flex;flex-direction:column;border:1px solid var(--bor);border-top:none;border-radius:0 0 10px 10px;overflow:hidden"></div>
-      </div>
+      <div id="pilist" style="margin-top:14px;display:none"></div>
     </div>
     <div class="arow">
       <button class="abtn" onclick="exportCSV()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
       <button class="abtn" onclick="showLapModal()" style="background:var(--g1);border-color:transparent;color:#fff;box-shadow:0 4px 16px rgba(91,94,244,.28);"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>Generate Laporan PDF</button>
     </div>
+<!-- SUDAH BAYAR LIST -->
+  <div class="card" id="paidcard" style="display:none;margin-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0" onclick="togPaidList()">
+      <div class="card-ttl" style="margin-bottom:0"><div class="ct-ico i2"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Sudah Bayar / Lunas</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="paid-total-badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:8px;padding:3px 12px;font-size:12px;font-weight:700"></span>
+        <svg id="paid-chev" viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div id="paidlist" style="margin-top:14px;display:none;flex-direction:column;gap:8px"></div>
   </div>
-
-  <!-- KIRIM -->
+  </div>
 
   <!-- KIRIM -->
   <div class="sec" id="sec-kirim">
@@ -1064,26 +1050,11 @@ input,select,textarea{font-size:16px!important;}
   <div class="mbox" onclick="event.stopPropagation()">
     <div class="mhdr"><span class="mtit" id="qi-tit">+ Tambah Item</span><button class="mclose" onclick="closeQI()">✕</button></div>
     <div class="qiinfo" id="qi-info"></div>
-    <div style="margin-bottom:12px">
-      <button id="qi-stok-btn" onclick="openStokPicker(qiKid)" style="width:100%;padding:10px;background:linear-gradient(135deg,rgba(8,145,178,.08),rgba(8,145,178,.04));border:1.5px dashed rgba(8,145,178,.5);border-radius:10px;color:#0891b2;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .18s" onmouseover="this.style.background='rgba(8,145,178,.1)'" onmouseout="this.style.background='linear-gradient(135deg,rgba(8,145,178,.08),rgba(8,145,178,.04))'">
-        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        📦 Pilih dari Stok Kloter
-      </button>
-    </div>
     <div class="g1r"><div class="fl"><label>Nama Barang</label><input id="qi-item" placeholder="e.g. Salomon Vest Running"/></div></div>
     <div class="g2"><div class="fl"><label>QTY</label><input type="number" id="qi-qty" min="1" value="1" oninput="calcQI()"/></div><div class="fl"><label>Modal (JPY)/Item</label><input type="number" id="qi-jpy" placeholder="0" oninput="calcQI()"/></div></div>
     <div class="g1r"><div class="fl"><label>Harga Jual (Rp)/Item</label><input type="number" id="qi-jual" placeholder="0" oninput="calcQI()"/></div></div>
     <div class="pp" style="margin-bottom:14px"><div class="ppi"><div class="ppl">Modal</div><div class="ppv" id="qi-mo" style="color:var(--red)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Jual</div><div class="ppv" id="qi-ju" style="color:var(--grn)">Rp 0</div></div><div class="ppd"></div><div class="ppi"><div class="ppl">Untung</div><div class="ppv" id="qi-un" style="color:var(--amb)">Rp 0</div></div></div>
     <button class="sbtn" onclick="saveQI()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Simpan Item</button>
-  </div>
-</div>
-
-<!-- STOK PICKER MODAL -->
-<div class="mov" id="stokpickmod" style="display:none" onclick="if(event.target===this)closeStokPicker()">
-  <div class="mbox" onclick="event.stopPropagation()" style="max-width:400px">
-    <div class="mhdr"><span class="mtit">📦 Pilih dari Stok</span><button class="mclose" onclick="closeStokPicker()">✕</button></div>
-    <div style="font-size:11px;color:var(--t2);margin-bottom:12px">Stok yang dipilih akan otomatis mengurangi qty sisa.</div>
-    <div id="sp-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
 </div>
 
@@ -1498,7 +1469,7 @@ const PLATFORM_SHIPS = ['Shopee','Tokopedia','Toco'];
 let orders=[], kloters=[], stokList=[];
 let editId=null, qiCust=null, qiKid=null, resiCust=null;
 let activeKid=null, _pendingOrder=null, _pickedStokId=null, _editResiCust=null;
-let expP={}, expPG={}, expST={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={}, kirimPacked={};
+let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={}, kirimPacked={};
 let piutangOpen=false;
 let kloterSearch={}, kloterShipFilter={};
 
@@ -1869,24 +1840,6 @@ function calcSisa(key,totalJual){
   }
 }
 
-// Update payer chip visual state when radio changes
-function updPayerChip(key){
-  const isSeller=(document.querySelector('input[name="cb-payer-'+key+'"]:checked')?.value||'seller')==='seller';
-  const cs=document.getElementById('chip-seller-'+key),cc=document.getElementById('chip-customer-'+key);
-  if(cs){
-    cs.style.border='2px solid '+(isSeller?'#16a34a':'var(--bor)');
-    cs.style.background=isSeller?'#dcfce7':'var(--bg)';
-    cs.style.color=isSeller?'#166534':'var(--t2)';
-    cs.innerHTML=(isSeller?'<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>':'<span style="width:12px;height:12px;border-radius:50%;border:2px solid var(--t3);display:inline-block"></span>')+'🏪 Seller<span style="font-weight:500;font-size:10px">(- untung)</span>';
-  }
-  if(cc){
-    cc.style.border='2px solid '+(!isSeller?'#1d4ed8':'var(--bor)');
-    cc.style.background=!isSeller?'#dbeafe':'var(--bg)';
-    cc.style.color=!isSeller?'#1e40af':'var(--t2)';
-    cc.innerHTML=(!isSeller?'<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>':'<span style="width:12px;height:12px;border-radius:50%;border:2px solid var(--t3);display:inline-block"></span>')+'👤 Customer<span style="font-weight:500;font-size:10px">(+ tagihan)</span>';
-  }
-}
-
 // ─── EDIT MODAL ────────────────────────────────────────
 function openEdit(id){
   editId=String(id);const o=findO(id);if(!o)return;
@@ -1918,7 +1871,7 @@ function openQI(kid,custName){
   const qq=document.getElementById('qi-qty');if(qq)qq.value=1;calcQI();
   document.getElementById('qimod').style.display='flex';setTimeout(()=>document.getElementById('qi-item')?.focus(),100);
 }
-function closeQI(){qiKid=null;qiCust=null;_pickedStokId=null;document.getElementById('qimod').style.display='none';}
+function closeQI(){qiKid=null;qiCust=null;document.getElementById('qimod').style.display='none';}
 function calcQI(){
   const qty=+document.getElementById('qi-qty')?.value||1,jpy=+document.getElementById('qi-jpy')?.value||0,jual=+document.getElementById('qi-jual')?.value||0;
   const k=findK(qiKid),rate=k?kr(k):0,mo=jpy*qty*rate,tj=jual*qty,u=tj-mo;
@@ -1937,18 +1890,7 @@ async function saveQI(){
   }
   const ref=orders.find(o=>o.cust===cust&&o.batch===k.name)||orders.find(o=>o.batch===k.name)||{};
   const o={id:Date.now(),date:new Date().toISOString().split('T')[0],cust,stype:ref.stype||'WhatsApp',pic:ref.pic||'Sukido',ship:ref.ship||'Regular JNT',item,qty:+document.getElementById('qi-qty')?.value||1,jpy:+document.getElementById('qi-jpy')?.value||0,rate:kr(k),jual:+document.getElementById('qi-jual')?.value||0,admin:ref.admin||0,dp:ref.dp||0,sbayar:ref.sbayar||'Unpaid',ostatus:'ORDER',sudahBeli:false,batch:k.name};
-  orders.push(o);
-  // Deduct stok if picked from stok
-  if(_pickedStokId){
-    const kObj=findK(qiKid);
-    if(kObj&&kObj.stockBarang){
-      const st=kObj.stockBarang.find(s=>String(s.id)===String(_pickedStokId));
-      if(st)st.qtySisa=Math.max(0,(st.qtySisa||0)-(o.qty||1));
-    }
-    _pickedStokId=null;
-    try{await apiCall({action:'updateKloter',data:kObj});setSS('ok');}catch(e){}
-  }
-  sl();closeQI();refreshAll();toast(`✅ Item untuk ${cust}!`);
+  orders.push(o);sl();closeQI();refreshAll();toast(`✅ Item untuk ${cust}!`);
   try{await apiCall({action:'saveOrder',data:o});setSS('ok');}catch(e){setSS('err','Offline');}
 }
 
@@ -2019,16 +1961,14 @@ function custCard(cust,custOrders,kloterName){
           <div class="fl">
             <label>Admin / Ongkir (Rp)</label>
             <input type="number" id="cb-adm-${key}" value="${curAdmin||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <input type="radio" name="cb-payer-${key}" id="cb-pay-sel-${key}" value="seller" ${(ref.ongkirPayer||'seller')==='seller'?'checked':''} onchange="calcSisa('${key}',${totalJual});updPayerChip('${key}')" style="display:none"/>
-              <label id="chip-seller-${key}" for="cb-pay-sel-${key}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:11px;font-weight:700;transition:all .2s;border:2px solid ${(ref.ongkirPayer||'seller')==='seller'?'#16a34a':'var(--bor)'};background:${(ref.ongkirPayer||'seller')==='seller'?'#dcfce7':'var(--bg)'};color:${(ref.ongkirPayer||'seller')==='seller'?'#166534':'var(--t2)'}">
-                ${(ref.ongkirPayer||'seller')==='seller'?'<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>':'<span style="width:12px;height:12px;border-radius:50%;border:2px solid var(--t3);display:inline-block"></span>'}
-                🏪 Seller<span style="font-weight:500;font-size:10px">(- untung)</span>
+            <div style="display:flex;gap:12px;margin-top:7px">
+              <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2)">
+                <input type="radio" name="cb-payer-${key}" value="seller" ${(ref.ongkirPayer||'seller')==='seller'?'checked':''} onchange="calcSisa('${key}',${totalJual})"/>
+                <span>🏪 Seller (kurangi untung)</span>
               </label>
-              <input type="radio" name="cb-payer-${key}" id="cb-pay-cus-${key}" value="customer" ${(ref.ongkirPayer||'seller')==='customer'?'checked':''} onchange="calcSisa('${key}',${totalJual});updPayerChip('${key}')" style="display:none"/>
-              <label id="chip-customer-${key}" for="cb-pay-cus-${key}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:11px;font-weight:700;transition:all .2s;border:2px solid ${(ref.ongkirPayer||'seller')==='customer'?'#1d4ed8':'var(--bor)'};background:${(ref.ongkirPayer||'seller')==='customer'?'#dbeafe':'var(--bg)'};color:${(ref.ongkirPayer||'seller')==='customer'?'#1e40af':'var(--t2)'}">
-                ${(ref.ongkirPayer||'seller')==='customer'?'<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>':'<span style="width:12px;height:12px;border-radius:50%;border:2px solid var(--t3);display:inline-block"></span>'}
-                👤 Customer<span style="font-weight:500;font-size:10px">(+ tagihan)</span>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2)">
+                <input type="radio" name="cb-payer-${key}" value="customer" ${(ref.ongkirPayer||'seller')==='customer'?'checked':''} onchange="calcSisa('${key}',${totalJual})"/>
+                <span>👤 Customer (tambah tagihan)</span>
               </label>
             </div>
           </div>
@@ -2224,141 +2164,8 @@ function renderKloterDetail(sid){
       ${isY&&k.rate?`<div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--mono)">¥1 = <span style="color:var(--amb);font-weight:600">Rp ${fn(r)}</span></div>`:''}
       <button class="addpgbtn" onclick="addPG('${sid}')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Tambah Pengeluaran</button>
     </div>
-  </div>
-  ${renderStokCard(k,sid,r)}`;
-}
-}
-
-// ═══════════════════════════════════════════════════════
-//  STOCK BARANG PER KLOTER
-// ═══════════════════════════════════════════════════════
-function renderStokCard(k,sid,r){
-  const isST=!!expST[sid],stok=k.stockBarang||[];
-  const totalItem=stok.length,totalSisa=stok.reduce((s,i)=>s+(i.qtySisa||0),0);
-  const stokRows=stok.map(s=>{
-    const modalIdr=s.modalJpy?(s.modalJpy*(r||109)):s.modalIdr||0;
-    const margin=s.hargaJual>0?Math.round((s.hargaJual-modalIdr)/s.hargaJual*100):0;
-    const terjual=(s.qty||0)-(s.qtySisa||0);
-    const pctSisa=(s.qty||0)>0?Math.round((s.qtySisa||0)/(s.qty||0)*100):0;
-    return`<div style="background:var(--bg);border:1px solid var(--bor);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="flex:1;min-width:120px">
-        <div style="font-size:13px;font-weight:700;color:var(--dark)">${s.nama}</div>
-        <div style="font-size:10px;color:var(--t2);margin-top:3px">
-          Modal: ${s.modalJpy?`¥${fn(s.modalJpy)} = <b style="font-family:var(--mono)">${fr(modalIdr)}</b>`:`<b style="font-family:var(--mono)">${fr(s.modalIdr||0)}</b>`} &middot;
-          Jual: <b style="font-family:var(--mono);color:var(--grn)">${fr(s.hargaJual||0)}</b> &middot;
-          Margin: <b style="color:${margin>=15?'var(--grn)':'var(--amb)'}">${margin}%</b>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <div style="text-align:center">
-          <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700">Terjual</div>
-          <div style="font-size:15px;font-weight:800;color:var(--acc);font-family:var(--mono)">${terjual}</div>
-        </div>
-        <div style="width:1px;height:30px;background:var(--bor)"></div>
-        <div style="text-align:center">
-          <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700">Sisa</div>
-          <div style="font-size:15px;font-weight:800;font-family:var(--mono);color:${(s.qtySisa||0)===0?'var(--red)':(s.qtySisa||0)<3?'var(--amb)':'var(--grn)'}">${s.qtySisa||0}<span style="font-size:10px;color:var(--t3);font-weight:500">/${s.qty||0}</span></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <button onclick="adjStok('${sid}','${s.id}',1)" style="width:26px;height:26px;border-radius:6px;border:1.5px solid var(--bor2);background:var(--sur);cursor:pointer;font-size:14px;font-weight:800;color:var(--grn);display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.borderColor='var(--grn)'" onmouseout="this.style.borderColor='var(--bor2)'">+</button>
-          <button onclick="adjStok('${sid}','${s.id}',-1)" style="width:26px;height:26px;border-radius:6px;border:1.5px solid var(--bor2);background:var(--sur);cursor:pointer;font-size:14px;font-weight:800;color:var(--red);display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor='var(--bor2)'">−</button>
-        </div>
-        <button onclick="delStok('${sid}','${s.id}')" style="width:26px;height:26px;background:transparent;border:1.5px solid rgba(239,68,68,.2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onmouseover="this.style.background='rgba(239,68,68,.07)'" onmouseout="this.style.background='transparent'">
-          <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--red);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    </div>`;
-  }).join('');
-  return`<div class="kd-body-card">
-    <div style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;margin-bottom:${isST?'14px':'0'}" onclick="togST('${sid}')">
-      <div class="ct-ico" style="background:linear-gradient(135deg,#0891b2,#0e7490);flex-shrink:0"><svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
-      <span style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;flex:1">Stock Barang Ready</span>
-      ${totalItem?`<span style="background:rgba(8,145,178,.1);color:#0891b2;border:1px solid rgba(8,145,178,.25);border-radius:7px;padding:3px 10px;font-size:11px;font-weight:700">${totalItem} item · ${totalSisa} sisa</span>`:''}
-      <svg style="width:12px;height:12px;stroke:var(--t3);fill:none;stroke-width:2.5;flex-shrink:0;transition:transform .18s;${isST?'transform:rotate(180deg)':''}" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div style="display:${isST?'block':'none'}">
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">${stokRows||'<div style="text-align:center;padding:12px 0;font-size:11px;color:var(--t3)">Belum ada stok. Tambahkan barang ready di bawah.</div>'}</div>
-      <div style="background:var(--bg);border:1.5px dashed var(--bor2);border-radius:10px;padding:14px">
-        <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">+ Tambah Stok Baru</div>
-        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px">
-          <input id="st-nama-${sid}" placeholder="Nama barang" style="background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--fn);font-size:12px;color:var(--txt);outline:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-          <input id="st-qty-${sid}" type="number" placeholder="Qty" min="1" value="1" style="width:70px;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--mono);font-size:12px;color:var(--txt);outline:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-          <div>
-            <div style="font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Modal (¥ JPY)</div>
-            <input id="st-jpy-${sid}" type="number" placeholder="0" style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--mono);font-size:12px;color:var(--txt);outline:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-          </div>
-          <div>
-            <div style="font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Harga Jual (Rp)</div>
-            <input id="st-jual-${sid}" type="number" placeholder="0" style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--mono);font-size:12px;color:var(--txt);outline:none;transition:border .15s" onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
-          </div>
-        </div>
-        <button onclick="addStok('${sid}')" style="width:100%;padding:10px;background:linear-gradient(135deg,#0891b2,#0e7490);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 12px rgba(8,145,178,.3);transition:all .2s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
-          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Tambah ke Stok
-        </button>
-      </div>
-    </div>
   </div>`;
 }
-function togST(id){expST[String(id)]=!expST[String(id)];if(activeKid===String(id))renderKloterDetail(String(id));else renderKloter();}
-async function addStok(kid){
-  const k=findK(kid);if(!k)return;
-  const nama=document.getElementById('st-nama-'+kid)?.value.trim();
-  if(!nama){toast('⚠️ Nama barang wajib',true);return;}
-  const qty=+document.getElementById('st-qty-'+kid)?.value||1;
-  const modalJpy=+document.getElementById('st-jpy-'+kid)?.value||0;
-  const hargaJual=+document.getElementById('st-jual-'+kid)?.value||0;
-  if(!k.stockBarang)k.stockBarang=[];
-  k.stockBarang.push({id:Date.now(),nama,modalJpy,modalIdr:0,hargaJual,qty,qtySisa:qty});
-  sl();if(activeKid===String(kid))renderKloterDetail(String(kid));else renderKloter();
-  toast('✅ Stok ditambahkan!');
-  try{await apiCall({action:'updateKloter',data:k});setSS('ok');}catch(e){setSS('err','Sync gagal');}
-}
-async function delStok(kid,stokId){
-  const k=findK(kid);if(!k)return;
-  k.stockBarang=(k.stockBarang||[]).filter(s=>String(s.id)!==String(stokId));
-  sl();if(activeKid===String(kid))renderKloterDetail(String(kid));else renderKloter();
-  try{await apiCall({action:'updateKloter',data:k});setSS('ok');}catch(e){setSS('err','Sync gagal');}
-}
-async function adjStok(kid,stokId,delta){
-  const k=findK(kid);if(!k)return;
-  const s=k.stockBarang?.find(s=>String(s.id)===String(stokId));if(!s)return;
-  s.qtySisa=Math.max(0,Math.min(s.qty,(s.qtySisa||0)+delta));
-  sl();if(activeKid===String(kid))renderKloterDetail(String(kid));else renderKloter();
-  try{await apiCall({action:'updateKloter',data:k});setSS('ok');}catch(e){setSS('err','Sync gagal');}
-}
-// Open stok picker in QI modal
-function openStokPicker(kid){
-  const k=findK(kid);if(!k)return;
-  const stok=(k.stockBarang||[]).filter(s=>(s.qtySisa||0)>0);
-  if(!stok.length){toast('⚠️ Tidak ada stok tersedia',true);return;}
-  const mod=document.getElementById('stokpickmod');if(!mod)return;
-  document.getElementById('sp-list').innerHTML=stok.map(s=>`
-    <div onclick="pickStok('${s.id}','${kid}')" style="padding:12px 14px;border:1.5px solid var(--bor);border-radius:10px;cursor:pointer;background:var(--bg);transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:10px" onmouseover="this.style.borderColor='var(--acc)';this.style.background='rgba(91,94,244,.04)'" onmouseout="this.style.borderColor='var(--bor)';this.style.background='var(--bg)'">
-      <div>
-        <div style="font-size:13px;font-weight:700">${s.nama}</div>
-        <div style="font-size:11px;color:var(--t2);margin-top:2px">Jual: <b style="font-family:var(--mono);color:var(--grn)">${fr(s.hargaJual||0)}</b> &middot; Modal: <b style="font-family:var(--mono)">${fr(s.modalJpy?(s.modalJpy*(k.rate||109)):s.modalIdr||0)}</b></div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:11px;color:var(--t3)">Sisa</div>
-        <div style="font-size:16px;font-weight:800;font-family:var(--mono);color:${(s.qtySisa||0)<3?'var(--amb)':'var(--acc)'}">${s.qtySisa}</div>
-      </div>
-    </div>`).join('');
-  mod.style.display='flex';
-}
-function pickStok(stokId,kid){
-  const k=findK(kid);if(!k)return;
-  const s=k.stockBarang?.find(s=>String(s.id)===String(stokId));if(!s)return;
-  const ni=document.getElementById('qi-item'),nj=document.getElementById('qi-jpy'),nu=document.getElementById('qi-jual');
-  if(ni)ni.value=s.nama;
-  if(nj)nj.value=s.modalJpy||0;
-  if(nu)nu.value=s.hargaJual||0;
-  _pickedStokId=String(stokId);
-  calcQI();closeStokPicker();
-  toast('✅ Stok dipilih: '+s.nama);
-}
-function closeStokPicker(){const m=document.getElementById('stokpickmod');if(m)m.style.display='none';}
 
 // ═══════════════════════════════════════════════════════
 //  DAFTAR BELI
@@ -2461,105 +2268,69 @@ function renderLap(){
     return`<div class="bkr"><div><div class="bkn"><span class="sdot2" style="background:${KSC[ks]||'#94a3b8'}"></span>${n}</div><div class="bks">${k?.bagasi||''}</div></div><div><div class="bkv" style="color:var(--grn)">${fr(btj)}</div><div class="bks">${bo.length} pesanan</div></div><div><div class="bkv" style="color:var(--red)">${fr(btm+bpg)}</div></div><div><div class="bkv" style="color:var(--pur)">${fr(btu)}</div><div class="bks">${bmg.toFixed(1)}%</div></div><div><span class="tag" style="background:${KSBg[ks]||'#f1f5f9'};color:${KSC[ks]||'#64748b'};border:1px solid ${KSBo[ks]||'#e2e8f0'};font-size:9px">${KSL[ks]||'—'}</span></div></div>`;
   }).filter(Boolean).join('');
   const bkwrap=document.getElementById('bkwrap');if(bkwrap)bkwrap.innerHTML=rows?`<div style="padding:12px 18px;font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--bor)">Rekap Per Kloter</div><div class="bkhd"><span>Kloter</span><span>Omzet</span><span>Modal+Biaya</span><span>Untung</span><span>Status</span></div>${rows}`:'';
-  // ── Unified Piutang & Pembayaran Table ──
-  const allCustGroups={};
-  f.filter(o=>o.ostatus!=='CANCELLED').forEach(o=>{
-    if(!allCustGroups[o.cust])allCustGroups[o.cust]={items:[],totalJual:0,dp:0,sbayar:o.sbayar,kloter:o.batch};
-    allCustGroups[o.cust].items.push(o);
-    allCustGroups[o.cust].totalJual+=o.jual*o.qty;
-    if(o.dp>0)allCustGroups[o.cust].dp=o.dp;
-    if(o.sbayar==='Paid')allCustGroups[o.cust].sbayar='Paid';
-    else if(o.sbayar==='Down Payment'&&allCustGroups[o.cust].sbayar!=='Paid')allCustGroups[o.cust].sbayar='Down Payment';
-  });
-  const pac=document.getElementById('payallcard');if(!pac)return;
-  if(Object.keys(allCustGroups).length){
-    pac.style.display='block';
-    const unpCount=Object.values(allCustGroups).filter(g=>g.sbayar!=='Paid').length;
-    const paidCount=Object.values(allCustGroups).filter(g=>g.sbayar==='Paid').length;
-    const totalUnp=Object.values(allCustGroups).filter(g=>g.sbayar!=='Paid').reduce((s,g)=>s+Math.max(0,g.totalJual-g.dp),0);
-    const b1=document.getElementById('payall-badge-unp');if(b1)b1.textContent=unpCount+' belum · '+fr(totalUnp);
-    const b2=document.getElementById('payall-badge-paid');if(b2)b2.textContent=paidCount+' lunas';
-    _payallData=allCustGroups;
-    renderPayAllRows();
-  }else pac.style.display='none';
-}
-let _payallData={},payallOpen=false;
-function togPayAll(){
-  payallOpen=!payallOpen;
-  const chev=document.getElementById('payall-chev');
-  if(chev)chev.style.transform=payallOpen?'rotate(180deg)':'';
-  const filter=document.getElementById('payall-filter');
-  const table=document.getElementById('payall-table');
-  if(filter){filter.style.display=payallOpen?'flex':'none';}
-  if(table){table.style.display=payallOpen?'block':'none';}
-  if(payallOpen)renderPayAllRows();
-}
-function filterPayAll(){renderPayAllRows();}
-function renderPayAllRows(){
-  const rows=document.getElementById('payall-rows');if(!rows)return;
-  const q=(document.getElementById('payall-search')?.value||'').toLowerCase();
-  const sf=document.getElementById('payall-status')?.value||'';
-  let entries=Object.entries(_payallData);
-  if(q)entries=entries.filter(([c])=>c.toLowerCase().includes(q));
-  if(sf==='unpaid')entries=entries.filter(([,g])=>g.sbayar!=='Paid'&&g.sbayar!=='Down Payment');
-  else if(sf==='dp')entries=entries.filter(([,g])=>g.sbayar==='Down Payment');
-  else if(sf==='paid')entries=entries.filter(([,g])=>g.sbayar==='Paid');
-  // Sort: unpaid first, DP second, paid last; within each group by sisa desc
-  entries.sort(([,a],[,b])=>{
-    const ord={Unpaid:0,'Hold Tokopedia':1,'Hold Shopee':1,'Down Payment':2,Paid:3};
-    const oa=ord[a.sbayar]??0,ob=ord[b.sbayar]??0;
-    if(oa!==ob)return oa-ob;
-    return Math.max(0,b.totalJual-b.dp)-Math.max(0,a.totalJual-a.dp);
-  });
-  if(!entries.length){rows.innerHTML='<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Tidak ada data</div>';return;}
-  rows.innerHTML=entries.map(([cust,g],idx)=>{
-    const sisa=Math.max(0,g.totalJual-g.dp);
-    const isPaid=g.sbayar==='Paid',isDP=g.sbayar==='Down Payment';
-    const encC=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
-    const rowId='pirow-'+encC;
-    const statusHtml=isPaid
-      ?'<span style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700">✓ Lunas</span>'
-      :isDP
-      ?'<span style="background:rgba(91,94,244,.1);color:var(--acc);border:1px solid rgba(91,94,244,.25);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700">💳 DP</span>'
-      :'<span style="background:#fef9c3;color:#854d0e;border:1px solid #fef08a;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700">⏳ Belum</span>';
-    const actsHtml=isPaid
-      ?'<span style="font-size:11px;color:var(--grn);font-weight:700;display:flex;align-items:center;gap:4px;justify-content:center"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>Lunas</span>'
-      :'<div style="display:flex;gap:5px;justify-content:center"><button data-cust="'+encodeURIComponent(cust)+'" data-encc="'+encC+'" data-total="'+g.totalJual+'" data-dp="'+g.dp+'" class="pi-update-btn" style="padding:5px 9px;background:var(--g1);border:none;border-radius:7px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">✏️ Update</button></div>';
-    const bg=idx%2===0?'var(--sur)':'var(--s2)';
-    const leftBorderStyle=isPaid?'border-left:3px solid var(--grn)':isDP?'border-left:3px solid var(--acc)':'border-left:3px solid var(--amb)';
-    return '<div id="'+rowId+'" style="display:grid;grid-template-columns:1fr 80px 90px 100px 100px 100px 110px;gap:0;background:'+bg+';'+leftBorderStyle+';border-bottom:1px solid var(--bor);align-items:center">'+
-      '<div class="pi-nav-btn" data-cust="'+encodeURIComponent(cust)+'" data-kloter="'+encodeURIComponent(g.kloter||'')+'" style="padding:10px 14px;cursor:pointer" title="Lihat pesanan →">'+
-        '<div style="font-size:13px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:5px">'+cust+
-          '<svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
-        '</div>'+
-        '<div style="font-size:10px;color:var(--t2);margin-top:2px">'+g.kloter+' &middot; '+g.items.length+' item</div>'+
-      '</div>'+
-      '<div style="padding:10px 8px;text-align:center;font-size:12px;font-weight:700;font-family:var(--mono)">'+g.items.length+'</div>'+
-      '<div style="padding:10px 8px;text-align:right;font-size:12px;font-weight:700;font-family:var(--mono)">'+fr(g.totalJual)+'</div>'+
-      '<div style="padding:10px 8px;text-align:right;font-size:12px;font-family:var(--mono);color:'+(g.dp>0?'var(--acc)':'var(--t3)')+'">'+fr(g.dp)+'</div>'+
-      '<div style="padding:10px 8px;text-align:right;font-size:13px;font-weight:800;font-family:var(--mono);color:'+(isPaid?'var(--grn)':sisa>0?'var(--amb)':'var(--grn)')+'">'+fr(sisa)+'</div>'+
-      '<div style="padding:10px 8px;text-align:center">'+statusHtml+'</div>'+
-      '<div style="padding:10px 8px">'+actsHtml+'</div>'+
-    '</div>';
-  }).join('');
-  rows.querySelectorAll('.pi-update-btn').forEach(function(btn){btn.addEventListener('click',function(){openPiUpdate(decodeURIComponent(this.dataset.cust),this.dataset.encc,Number(this.dataset.total),Number(this.dataset.dp));});});
-  rows.querySelectorAll('.pi-nav-btn').forEach(function(btn){btn.addEventListener('click',function(){goToPiCust(decodeURIComponent(this.dataset.cust),decodeURIComponent(this.dataset.kloter));});});
+  const pi=f.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED');
+  const pc=document.getElementById('picard');if(!pc)return;
+  if(pi.length){
+    pc.style.display='block';
+    const piGroups={};pi.forEach(o=>{if(!piGroups[o.cust])piGroups[o.cust]={items:[],totalJual:0,dp:0,sbayar:o.sbayar};piGroups[o.cust].items.push(o);piGroups[o.cust].totalJual+=o.jual*o.qty;if(o.dp>0)piGroups[o.cust].dp=o.dp;});
+    const totalSisa=Object.values(piGroups).reduce((s,g)=>s+Math.max(0,g.totalJual-g.dp),0);
+    const b2=document.getElementById('pi-total-badge');if(b2)b2.textContent=fr(totalSisa);
+    const pilist=document.getElementById('pilist');
+    if(pilist){
+      // Sort: Unpaid first, Down Payment below, then by sisa desc
+      const piEntries=Object.entries(piGroups).sort(([,a],[,b])=>{
+        const order={Unpaid:0,'Hold Tokopedia':1,'Hold Shopee':1,'Down Payment':2};
+        const oa=order[a.sbayar]??0, ob=order[b.sbayar]??0;
+        if(oa!==ob) return oa-ob;
+        return (b.totalJual-b.dp)-(a.totalJual-a.dp); // bigger sisa first
+      });
+      pilist.innerHTML=piEntries.map(([cust,g])=>{
+        const sisa=Math.max(0,g.totalJual-g.dp);
+        const rowId='pirow-'+btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
+        const encC=btoa(encodeURIComponent(cust)).replace(/[=+/]/g,'');
+        const isDP=g.sbayar==='Down Payment';
+        const borderColor=isDP?'var(--acc)':'var(--bor)';
+        const custKloter=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED')[0]?.batch||'';
+        return '<div class="pi-cust-row" id="'+rowId+'" style="background:var(--sur);border:1px solid '+borderColor+';border-left:3px solid '+(isDP?'var(--acc)':'var(--amb)')+';border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
+          '<div class="pi-nav-btn" data-cust="'+encodeURIComponent(cust)+'" data-kloter="'+encodeURIComponent(custKloter)+'" style="flex:1;min-width:100px;cursor:pointer" title="Lihat pesanan →">'+
+            '<div class="pirn" style="display:flex;align-items:center;gap:6px">'+cust+
+              (isDP?'<span style="font-size:9px;background:rgba(91,94,244,.1);color:var(--acc);border-radius:4px;padding:2px 6px;font-weight:700">DP</span>':'')+
+              '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
+            '</div>'+
+            '<div class="piri">'+g.items.length+' item &middot; <span style="color:var(--amb);font-weight:600">'+g.sbayar+'</span>'+
+              (g.dp>0?' &middot; DP <b style="font-family:var(--mono);color:var(--acc)">'+fr(g.dp)+'</b>':'')+
+            '</div>'+
+          '</div>'+
+          '<div style="text-align:right">'+
+            '<div style="font-size:16px;font-weight:800;font-family:var(--mono);color:var(--amb)">'+fr(sisa)+'</div>'+
+            '<div style="font-size:10px;color:var(--t3)">kurang</div>'+
+          '</div>'+
+          '<button data-cust="'+encodeURIComponent(cust)+'" data-encc="'+encC+'" data-total="'+g.totalJual+'" data-dp="'+g.dp+'" class="pi-update-btn" style="padding:7px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">✏️ Update</button>'+
+        '</div>';
+      }).join('');}
+      pilist.querySelectorAll('.pi-update-btn').forEach(function(btn){btn.addEventListener('click',function(){openPiUpdate(decodeURIComponent(this.dataset.cust),this.dataset.encc,Number(this.dataset.total),Number(this.dataset.dp));});});
+      pilist.querySelectorAll('.pi-nav-btn').forEach(function(btn){btn.addEventListener('click',function(){goToPiCust(decodeURIComponent(this.dataset.cust),decodeURIComponent(this.dataset.kloter));});});
+    // ── Sudah Bayar list ──
+    const paidG={};f.filter(o=>o.sbayar==='Paid'&&o.ostatus!=='CANCELLED').forEach(o=>{if(!paidG[o.cust])paidG[o.cust]={n:0,total:0,dp:0};paidG[o.cust].n++;paidG[o.cust].total+=o.jual*o.qty;if(o.dp>0)paidG[o.cust].dp=o.dp;});
+    const paidCard=document.getElementById('paidcard'),paidList=document.getElementById('paidlist');
+    if(paidCard){
+      if(Object.keys(paidG).length){
+        paidCard.style.display='block';
+        const pb=document.getElementById('paid-total-badge');if(pb)pb.textContent=Object.keys(paidG).length+' customer';
+        if(paidList)paidList.innerHTML=Object.entries(paidG).map(([cust,g])=>{
+          const bayar=g.dp>=g.total?g.dp:g.total;
+          return '<div style="background:var(--sur);border:1px solid rgba(34,197,94,.2);border-left:3px solid var(--grn);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">'+
+            '<div><div style="font-size:13px;font-weight:700;color:var(--dark)">'+cust+'</div>'+
+            '<div style="font-size:11px;color:var(--t2);margin-top:1px">'+g.n+' item &middot; Bayar: <b style="font-family:var(--mono);color:var(--grn)">'+fr(bayar)+'</b></div></div>'+
+            '<span style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:7px;padding:3px 10px;font-size:11px;font-weight:700;flex-shrink:0">✓ Lunas</span></div>';
+        }).join('');
+      }else paidCard.style.display='none';
+    }
+  }else pc.style.display='none';
 }
 function rstLap(){['r-from','r-to'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const rkl=document.getElementById('r-kl');if(rkl)rkl.value='';renderLap();}
-function openPiUpdate(cust,encC,totalJual,dp){
-  const el=document.getElementById('piupdatemod');if(!el)return;
-  const sisa=Math.max(0,totalJual-dp);
-  document.getElementById('pu-title').textContent=cust;
-  document.getElementById('pu-total').textContent=fr(totalJual);
-  const se=document.getElementById('pu-sisa');if(se){se.textContent=sisa>0?'↓ Kurang: '+fr(sisa):'✓ Lunas';se.style.color=sisa>0?'var(--amb)':'var(--grn)';}
-  const be=document.getElementById('pu-bayar');if(be)be.value=dp>0?dp:'';
-  const oe=document.getElementById('pu-ongkir');if(oe)oe.value='';
-  el.dataset.cust=encodeURIComponent(cust);el.dataset.total=totalJual;
-  el.style.display='flex';setTimeout(()=>be?.focus(),100);
-}
-function closePiUpdate(){document.getElementById('piupdatemod').style.display='none';}
-function calcPiUpdate(){
-  const totalJual=Number(document.getElementById('piupdatemod')?.dataset.total)||0;
+let paidOpen=false;
+function togPaidList(){paidOpen=!paidOpen;const el=document.getElementById('paidlist'),cv=document.getElementById('paid-chev');if(el)el.style.display=paidOpen?'flex':'none';if(cv)cv.style.transform=paidOpen?'rotate(180deg)':'';}
 function openPiUpdate(cust,encC,totalJual,dp){
   const el=document.getElementById('piupdatemod');if(!el)return;
   const sisa=Math.max(0,totalJual-dp);
@@ -2590,7 +2361,7 @@ async function savePiUpdate(toLunas){
   toast(toLunas?'✅ '+cust+' Lunas!':'✅ Bayar '+fr(bayar)+' disimpan!');
   for(const o of cos)try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}
 }
-function togPiutang(){togPayAll();}// legacy alias
+function togPiutang(){piutangOpen=!piutangOpen;const el=document.getElementById('pilist'),chev=document.getElementById('pi-chev');if(el)el.style.display=piutangOpen?'block':'none';if(chev)chev.style.transform=piutangOpen?'rotate(180deg)':'';}
 async function markLunas(cust){
   if(!confirm(`Tandai ${cust} sudah LUNAS?`))return;
   const cos=orders.filter(o=>o.cust===cust&&o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED');if(!cos.length)return;
@@ -2957,9 +2728,7 @@ function generateCustomerReceipt(cust,kloterName){
   if(!cos.length){toast('⚠️ Tidak ada pesanan',true);return;}
   const k=kloters.find(k=>k.name===kloterName),ref=cos[0];
   const totalJual=cos.reduce((s,o)=>s+o.jual*o.qty,0);
-  const admin=ref.admin||0,payer=ref.ongkirPayer||'seller';
-  const effectiveTotal=payer==='customer'?totalJual+admin:totalJual;
-  const dp=ref.dp||0,sisa=Math.max(0,effectiveTotal-dp),lunas=dp>=effectiveTotal;
+  const dp=ref.dp||0,sisa=Math.max(0,totalJual-dp),lunas=dp>=totalJual;
   const now=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   const rcptNo='SK-'+String(Date.now()).slice(-6);
   const itemRows=cos.map(o=>`<tr><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;font-size:13px">${o.item}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:center;font-size:13px">${o.qty}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;font-size:13px">${fr(o.jual)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;font-size:13px;font-weight:700;color:#22c55e">${fr(o.jual*o.qty)}</td></tr>`).join('');
@@ -2998,10 +2767,8 @@ function generateCustomerReceipt(cust,kloterName){
       <tbody>${itemRows}</tbody>
     </table>
     <div style="background:#f4f5fd;border-radius:0 0 8px 8px;padding:10px 12px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0"><span style="color:#6b7a99">Subtotal Barang</span><span style="font-family:monospace;font-weight:700;color:#22c55e">${fr(totalJual)}</span></div>
-      ${(admin>0&&payer==='customer')?`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;margin-top:2px;border-top:1px dashed #e2e5f5"><span style="color:#6b7a99">🚚 Ongkir / Admin</span><span style="font-family:monospace;font-weight:700;color:#f59e0b">${fr(admin)}</span></div>`:(admin>0?`<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;margin-top:2px;border-top:1px dashed #e2e5f5"><span style="color:#6b7a99">🚚 Ongkir / Admin</span><span style="font-family:monospace;font-weight:600;color:#a8b4cc;text-decoration:line-through">${fr(admin)} <span style="font-size:9px;background:#dcfce7;color:#166534;border-radius:4px;padding:1px 5px;text-decoration:none;vertical-align:middle">Ditanggung Seller</span></span></div>`:'')}
-      ${(admin>0&&payer==='customer')?`<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0;font-weight:700"><span style="color:#1a1d4e">Total Tagihan</span><span style="font-family:monospace;color:#1a1d4e">${fr(effectiveTotal)}</span></div>`:''}
-      ${dp>0?`<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0"><span style="color:#6b7a99">Sudah Dibayar (DP)</span><span style="font-family:monospace;font-weight:700;color:#5b5ef4">${fr(dp)}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0"><span style="color:#6b7a99">Total</span><span style="font-family:monospace;font-weight:700;color:#22c55e">${fr(totalJual)}</span></div>
+      ${dp>0?`<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0"><span style="color:#6b7a99">Sudah Dibayar</span><span style="font-family:monospace;font-weight:700;color:#5b5ef4">${fr(dp)}</span></div>`:''}
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0 0;border-top:1px solid #e2e5f5;margin-top:4px"><strong>${lunas?'✓ Lunas':'Sisa Tagihan'}</strong><strong style="font-family:monospace;color:${lunas?'#22c55e':'#ef4444'}">${lunas?'LUNAS':fr(sisa)}</strong></div>
     </div>
   </div>
