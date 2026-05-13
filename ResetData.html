@@ -152,28 +152,99 @@ h1{font-size:18px;font-weight:800;color:#1e2235;}
 </div>
 
 <script>
-// ── PIN MODULE ──────────────────────────────────────────
-const PIN_HASH_KEY='sk_pin_hash',PIN_SESS_KEY='sk_pin_unlocked',PIN_SALT='sukido_jastip_v5';
-let _pinBuf='',_pinMode='enter',_pinSetup1='';
-async function pinHash(p){const enc=new TextEncoder().encode(p+PIN_SALT);const buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
-function pinIsSet(){return!!localStorage.getItem(PIN_HASH_KEY);}
+// ── PIN MODULE (API-backed) ─────────────────────────────
+const PIN_HASH_KEY='sk_pin_hash', PIN_SESS_KEY='sk_pin_unlocked', PIN_SALT='sukido_jastip_v5';
+let _pinBuf='', _pinMode='loading', _pinSetup1='', _pinHashAPI='';
+
+async function pinHashFn(p){
+  const enc=new TextEncoder().encode(p+PIN_SALT);
+  const buf=await crypto.subtle.digest('SHA-256',enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 function pinUnlocked(){return sessionStorage.getItem(PIN_SESS_KEY)==='1';}
 function pinUpdateDots(buf){for(let i=0;i<4;i++){const el=document.getElementById('pd'+i);if(el){el.classList.toggle('filled',i<buf.length);el.classList.remove('err');}}}
-function pinKey(n){if(_pinBuf.length>=4)return;_pinBuf+=String(n);pinUpdateDots(_pinBuf);if(_pinBuf.length===4)setTimeout(()=>pinSubmit(),80);}
-function pinDel(){_pinBuf=_pinBuf.slice(0,-1);pinUpdateDots(_pinBuf);}
-async function pinSubmit(){
-  const sub=document.getElementById('pin-sub'),dots=document.getElementById('pin-dots');
-  if(_pinMode==='enter'){
-    const hash=await pinHash(_pinBuf);
-    if(hash===localStorage.getItem(PIN_HASH_KEY)){sessionStorage.setItem(PIN_SESS_KEY,'1');const ov=document.getElementById('pin-overlay');ov.classList.add('hiding');setTimeout(()=>{ov.style.display='none';ov.classList.remove('hiding');},350);}
-    else{_pinBuf='';sub.textContent='❌ PIN salah';sub.classList.add('err');dots.classList.add('shake');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}setTimeout(()=>{dots.classList.remove('shake');sub.textContent='Masukkan PIN untuk lanjut';sub.classList.remove('err');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');}},1000);}
-  } else if(_pinMode==='setup'){_pinSetup1=_pinBuf;_pinBuf='';_pinMode='setup2';document.getElementById('pin-title').textContent='Konfirmasi PIN';sub.textContent='Masukkan PIN yang sama lagi';sub.classList.remove('err');pinUpdateDots('');}
-  else if(_pinMode==='setup2'){if(_pinBuf===_pinSetup1){const hash=await pinHash(_pinBuf);localStorage.setItem(PIN_HASH_KEY,hash);sessionStorage.setItem(PIN_SESS_KEY,'1');const ov=document.getElementById('pin-overlay');ov.classList.add('hiding');setTimeout(()=>{ov.style.display='none';ov.classList.remove('hiding');},350);}else{_pinBuf='';_pinSetup1='';_pinMode='setup';sub.textContent='❌ Tidak cocok, mulai ulang';sub.classList.add('err');dots.classList.add('shake');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}document.getElementById('pin-title').textContent='Buat PIN Baru';setTimeout(()=>{dots.classList.remove('shake');sub.textContent='Buat 4-digit PIN';sub.classList.remove('err');for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');}},1100);pinUpdateDots('');}}
+
+async function pinFetchHash(){
+  try{
+    const url=new URL(API); url.searchParams.set('action','getPin');
+    const res=await fetch(url.toString()); const j=await res.json();
+    _pinHashAPI=(j.ok&&j.data&&j.data.hash)||'';
+    if(_pinHashAPI) localStorage.setItem(PIN_HASH_KEY,_pinHashAPI);
+    return _pinHashAPI;
+  }catch(e){
+    _pinHashAPI=localStorage.getItem(PIN_HASH_KEY)||'';
+    return _pinHashAPI;
+  }
 }
-function pinForget(){if(!confirm('Reset PIN?\nKamu perlu membuat PIN baru.'))return;localStorage.removeItem(PIN_HASH_KEY);sessionStorage.removeItem(PIN_SESS_KEY);_pinBuf='';_pinMode='setup';document.getElementById('pin-title').textContent='Buat PIN Baru';document.getElementById('pin-sub').textContent='Buat 4-digit PIN';document.getElementById('pin-sub').classList.remove('err');document.getElementById('pin-forget').style.display='none';const ov=document.getElementById('pin-overlay');ov.style.display='flex';ov.style.opacity='1';pinUpdateDots('');}
-// Init
-(function(){const ov=document.getElementById('pin-overlay');if(!ov)return;if(pinUnlocked()){ov.style.display='none';return;}if(!pinIsSet()){_pinMode='setup';document.getElementById('pin-title').textContent='Buat PIN Baru';document.getElementById('pin-sub').textContent='Buat 4-digit PIN untuk keamanan';document.getElementById('pin-forget').style.display='none';}else{document.getElementById('pin-forget').style.display='inline';}})();
-document.addEventListener('keydown',e=>{const ov=document.getElementById('pin-overlay');if(ov&&ov.style.display!=='none'&&!ov.classList.contains('hiding')){if(e.key>='0'&&e.key<='9')pinKey(parseInt(e.key));else if(e.key==='Backspace')pinDel();}});
+async function pinSaveHash(hash){
+  localStorage.setItem(PIN_HASH_KEY,hash); _pinHashAPI=hash;
+  const url=new URL(API); url.searchParams.set('action','setPin'); url.searchParams.set('hash',hash);
+  const res=await fetch(url.toString()); const j=await res.json();
+  if(!j.ok) throw new Error(j.error||'API error');
+}
+
+function pinKey(n){if(_pinMode==='loading'||_pinBuf.length>=4)return;_pinBuf+=String(n);pinUpdateDots(_pinBuf);if(_pinBuf.length===4)setTimeout(()=>pinSubmit(),80);}
+function pinDel(){_pinBuf=_pinBuf.slice(0,-1);pinUpdateDots(_pinBuf);}
+
+function _pinShakeErr(msg, nextSub){
+  const sub=document.getElementById('pin-sub'), dots=document.getElementById('pin-dots');
+  _pinBuf=''; sub.textContent=msg; sub.classList.add('err'); dots.classList.add('shake');
+  for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}
+  setTimeout(()=>{dots.classList.remove('shake');sub.classList.remove('err');sub.textContent=nextSub||'';for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');}},1100);
+}
+
+async function pinSubmit(){
+  const sub=document.getElementById('pin-sub'), ov=document.getElementById('pin-overlay');
+  if(_pinMode==='enter'){
+    const hash=await pinHashFn(_pinBuf);
+    if(hash===_pinHashAPI){sessionStorage.setItem(PIN_SESS_KEY,'1');ov.classList.add('hiding');setTimeout(()=>{ov.style.display='none';ov.classList.remove('hiding');},350);}
+    else _pinShakeErr('❌ PIN salah, coba lagi','Masukkan PIN untuk lanjut');
+  } else if(_pinMode==='setup'){
+    _pinSetup1=_pinBuf;_pinBuf='';_pinMode='setup2';
+    document.getElementById('pin-title').textContent='Konfirmasi PIN';
+    sub.textContent='Masukkan PIN yang sama lagi';sub.classList.remove('err');pinUpdateDots('');
+  } else if(_pinMode==='setup2'){
+    if(_pinBuf!==_pinSetup1){
+      _pinSetup1='';_pinMode='setup';
+      document.getElementById('pin-title').textContent='Buat PIN Baru';
+      _pinShakeErr('❌ Tidak cocok, mulai ulang','Buat 4-digit PIN untuk keamanan');
+      pinUpdateDots(''); return;
+    }
+    const hash=await pinHashFn(_pinBuf);
+    const pad=document.querySelector('.pin-pad');
+    sub.textContent='💾 Menyimpan PIN...';
+    if(pad){pad.style.opacity='0.4';pad.style.pointerEvents='none';}
+    try{
+      await pinSaveHash(hash);
+      sessionStorage.setItem(PIN_SESS_KEY,'1');
+      ov.classList.add('hiding');setTimeout(()=>{ov.style.display='none';ov.classList.remove('hiding');},350);
+    }catch(e){
+      if(pad){pad.style.opacity='';pad.style.pointerEvents='';}
+      _pinBuf='';_pinSetup1='';_pinMode='setup';
+      document.getElementById('pin-title').textContent='Buat PIN Baru';
+      sub.textContent='⚠️ Gagal simpan, coba lagi';sub.classList.add('err');pinUpdateDots('');
+    }
+  }
+}
+
+function pinForget(){
+  if(!confirm('Reset PIN?\nKamu perlu membuat PIN baru.'))return;
+  localStorage.removeItem(PIN_HASH_KEY);sessionStorage.removeItem(PIN_SESS_KEY);
+  _pinBuf='';_pinSetup1='';_pinHashAPI='';_pinMode='setup';
+  document.getElementById('pin-title').textContent='Buat PIN Baru';
+  const sub=document.getElementById('pin-sub');sub.textContent='Buat 4-digit PIN';sub.classList.remove('err');
+  document.getElementById('pin-forget').style.display='none';
+  const ov=document.getElementById('pin-overlay');ov.style.display='flex';ov.style.opacity='1';ov.classList.remove('hiding');
+  pinUpdateDots('');
+}
+
+document.addEventListener('keydown',e=>{
+  const ov=document.getElementById('pin-overlay');
+  if(ov&&ov.style.display!=='none'&&!ov.classList.contains('hiding')){
+    if(e.key>='0'&&e.key<='9')pinKey(parseInt(e.key));
+    else if(e.key==='Backspace')pinDel();
+  }
+});
 // ── END PIN MODULE ──────────────────────────────────────
 
 const API = "https://script.google.com/macros/s/AKfycbwDJyCwuE0lIxbS4Iuso7SoW1JDtlkRkZ9k2bRmzK26GJIPOr_A7QCES9NXb_nTYlo/exec";
@@ -280,6 +351,31 @@ async function doReset() {
     document.getElementById('success-card').style.display = 'block';
   }, 800);
 }
+
+// Init PIN overlay (called here so API const is already defined above)
+(async function(){
+  const ov = document.getElementById('pin-overlay');
+  if(!ov) return;
+  if(pinUnlocked()){ ov.style.display='none'; return; }
+  // Show overlay with loading state immediately
+  ov.style.display='flex';
+  document.getElementById('pin-sub').textContent='⏳ Memuat...';
+  document.querySelector('.pin-pad').style.opacity='0.35';
+  document.querySelector('.pin-pad').style.pointerEvents='none';
+  const hash = await pinFetchHash();
+  document.querySelector('.pin-pad').style.opacity='';
+  document.querySelector('.pin-pad').style.pointerEvents='';
+  if(!hash){
+    _pinMode='setup';
+    document.getElementById('pin-title').textContent='Buat PIN Baru';
+    document.getElementById('pin-sub').textContent='Buat 4-digit PIN untuk keamanan';
+    document.getElementById('pin-forget').style.display='none';
+  } else {
+    _pinMode='enter';
+    document.getElementById('pin-sub').textContent='Masukkan PIN untuk lanjut';
+    document.getElementById('pin-forget').style.display='inline';
+  }
+})();
 </script>
 </body>
 </html>

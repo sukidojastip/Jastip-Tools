@@ -1213,100 +1213,156 @@ input,select,textarea{font-size:16px!important;}
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════
-//  PIN SECURITY MODULE
+//  PIN SECURITY MODULE  (API-backed, localStorage = cache only)
 // ═══════════════════════════════════════════════════════
-const PIN_HASH_KEY  = 'sk_pin_hash';
+const PIN_HASH_KEY  = 'sk_pin_hash';   // localStorage cache key
 const PIN_SESS_KEY  = 'sk_pin_unlocked';
 const PIN_SALT      = 'sukido_jastip_v5';
-let _pinBuf = '', _pinMode = 'enter'; // modes: enter | setup | setup2
-let _pinSetup1 = '';
-// cp = change-pin modal
-let _cpBuf = '', _cpStep = 0; // steps: 0=old, 1=new, 2=confirm
-let _cpNew = '';
 
-async function pinHash(p) {
+let _pinBuf = '', _pinMode = 'loading'; // modes: loading | enter | setup | setup2
+let _pinSetup1  = '';
+let _pinHashAPI = ''; // authoritative hash from API
+
+// ── CP (change-pin modal) state ─────────────────────────
+let _cpBuf = '', _cpStep = 0, _cpNew = '';
+
+async function pinHashFn(p) {
   const enc = new TextEncoder().encode(p + PIN_SALT);
   const buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-function pinIsSet()    { return !!localStorage.getItem(PIN_HASH_KEY); }
-function pinUnlocked() { return sessionStorage.getItem(PIN_SESS_KEY) === '1'; }
-function pinDoUnlock() { sessionStorage.setItem(PIN_SESS_KEY,'1'); }
-function pinLockOut()  { sessionStorage.removeItem(PIN_SESS_KEY); }
 
-function pinInitOverlay() {
+function pinUnlocked() { return sessionStorage.getItem(PIN_SESS_KEY) === '1'; }
+function pinDoUnlock()  { sessionStorage.setItem(PIN_SESS_KEY, '1'); }
+function pinLockOut()   { sessionStorage.removeItem(PIN_SESS_KEY); }
+
+// Fetch hash from API; fall back to localStorage cache if API fails
+async function pinFetchHash() {
+  try {
+    const d = await apiCall({ action: 'getPin' });
+    _pinHashAPI = d.hash || '';
+    if(_pinHashAPI) localStorage.setItem(PIN_HASH_KEY, _pinHashAPI); // update cache
+    return _pinHashAPI;
+  } catch(e) {
+    _pinHashAPI = localStorage.getItem(PIN_HASH_KEY) || '';
+    return _pinHashAPI;
+  }
+}
+
+// Save hash to API + update cache
+async function pinSaveHash(hash) {
+  localStorage.setItem(PIN_HASH_KEY, hash);
+  _pinHashAPI = hash;
+  await apiCall({ action: 'setPin', hash });
+}
+
+async function pinInitOverlay() {
   const ov = document.getElementById('pin-overlay');
   if(!ov) return;
-  if(pinUnlocked()) { ov.style.display='none'; return; }
-  if(!pinIsSet()) {
+  if(pinUnlocked()) { ov.style.display = 'none'; return; }
+
+  // Show overlay immediately with loading state
+  ov.style.display = 'flex';
+  const sub = document.getElementById('pin-sub');
+  const pad = document.getElementById('pin-pad');
+  sub.textContent = '⏳ Memuat...';
+  sub.classList.remove('err');
+  pad.style.opacity = '0.35';
+  pad.style.pointerEvents = 'none';
+
+  const hash = await pinFetchHash();
+
+  pad.style.opacity = '';
+  pad.style.pointerEvents = '';
+
+  if (!hash) {
     _pinMode = 'setup';
     document.getElementById('pin-title').textContent = 'Buat PIN Baru';
-    document.getElementById('pin-sub').textContent   = 'Buat 4-digit PIN untuk keamanan';
+    sub.textContent = 'Buat 4-digit PIN untuk keamanan';
     document.getElementById('pin-forget').style.display = 'none';
   } else {
     _pinMode = 'enter';
     document.getElementById('pin-title').textContent = 'Sukido Jastip';
-    document.getElementById('pin-sub').textContent   = 'Masukkan PIN untuk masuk';
+    sub.textContent = 'Masukkan PIN untuk masuk';
     document.getElementById('pin-forget').style.display = 'inline';
   }
-  ov.style.display = 'flex';
+  pinUpdateDots(_pinBuf, 'p');
 }
 
 function pinUpdateDots(buf, pfx) {
   for(let i=0;i<4;i++){
-    const el=document.getElementById((pfx||'p')+'d'+i);
+    const el = document.getElementById((pfx||'p')+'d'+i);
     if(el){ el.classList.toggle('filled', i < buf.length); el.classList.remove('err'); }
   }
 }
 
 function pinKey(n) {
-  if(_pinBuf.length >= 4) return;
+  if(_pinMode === 'loading' || _pinBuf.length >= 4) return;
   _pinBuf += String(n);
-  pinUpdateDots(_pinBuf,'p');
+  pinUpdateDots(_pinBuf, 'p');
   if(_pinBuf.length === 4) setTimeout(() => pinSubmit(), 80);
 }
-function pinDel() { _pinBuf = _pinBuf.slice(0,-1); pinUpdateDots(_pinBuf,'p'); }
+function pinDel() { _pinBuf = _pinBuf.slice(0,-1); pinUpdateDots(_pinBuf, 'p'); }
+
+function _pinShakeErr(msg) {
+  const sub  = document.getElementById('pin-sub');
+  const dots = document.getElementById('pin-dots');
+  _pinBuf = '';
+  sub.textContent = msg; sub.classList.add('err');
+  dots.classList.add('shake');
+  for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}
+  setTimeout(()=>{
+    dots.classList.remove('shake');
+    sub.classList.remove('err');
+    for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');}
+    if(_pinMode==='enter') sub.textContent='Masukkan PIN untuk masuk';
+    else sub.textContent='Buat 4-digit PIN untuk keamanan';
+  }, 1100);
+}
 
 async function pinSubmit() {
   const sub = document.getElementById('pin-sub');
-  const dots = document.getElementById('pin-dots');
+  const ov  = document.getElementById('pin-overlay');
+
   if(_pinMode === 'enter') {
-    const hash = await pinHash(_pinBuf);
-    if(hash === localStorage.getItem(PIN_HASH_KEY)) {
+    const hash = await pinHashFn(_pinBuf);
+    if(hash === _pinHashAPI) {
       pinDoUnlock();
-      const ov = document.getElementById('pin-overlay');
       ov.classList.add('hiding');
       setTimeout(()=>{ ov.style.display='none'; ov.classList.remove('hiding'); }, 350);
     } else {
-      _pinBuf = '';
-      sub.textContent = '❌ PIN salah, coba lagi';
-      sub.classList.add('err');
-      dots.classList.add('shake');
-      for(let i=0;i<4;i++){ const d=document.getElementById('pd'+i); if(d){d.classList.remove('filled');d.classList.add('err');} }
-      setTimeout(()=>{ dots.classList.remove('shake'); sub.textContent='Masukkan PIN untuk masuk'; sub.classList.remove('err'); for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');} },1000);
+      _pinShakeErr('❌ PIN salah, coba lagi');
     }
+
   } else if(_pinMode === 'setup') {
-    _pinSetup1 = _pinBuf; _pinBuf = '';
-    _pinMode = 'setup2';
+    _pinSetup1 = _pinBuf; _pinBuf = ''; _pinMode = 'setup2';
     document.getElementById('pin-title').textContent = 'Konfirmasi PIN';
     sub.textContent = 'Masukkan PIN yang sama lagi';
     sub.classList.remove('err');
     pinUpdateDots('','p');
+
   } else if(_pinMode === 'setup2') {
-    if(_pinBuf === _pinSetup1) {
-      const hash = await pinHash(_pinBuf);
-      localStorage.setItem(PIN_HASH_KEY, hash);
+    if(_pinBuf !== _pinSetup1) {
+      _pinSetup1 = ''; _pinMode = 'setup';
+      document.getElementById('pin-title').textContent = 'Buat PIN Baru';
+      _pinShakeErr('❌ PIN tidak cocok, mulai ulang');
+      return;
+    }
+    const hash = await pinHashFn(_pinBuf);
+    // Disable pad while saving
+    const pad = document.getElementById('pin-pad');
+    sub.textContent = '💾 Menyimpan PIN...';
+    pad.style.opacity = '0.4'; pad.style.pointerEvents = 'none';
+    try {
+      await pinSaveHash(hash);
       pinDoUnlock();
-      const ov = document.getElementById('pin-overlay');
       ov.classList.add('hiding');
       setTimeout(()=>{ ov.style.display='none'; ov.classList.remove('hiding'); }, 350);
-    } else {
-      _pinBuf = ''; _pinSetup1 = ''; _pinMode = 'setup';
-      sub.textContent = '❌ PIN tidak cocok, mulai ulang'; sub.classList.add('err');
-      dots.classList.add('shake');
-      for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}
-      document.getElementById('pin-title').textContent = 'Buat PIN Baru';
-      setTimeout(()=>{ dots.classList.remove('shake'); sub.textContent='Buat 4-digit PIN untuk keamanan'; sub.classList.remove('err'); for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.classList.remove('err');} }, 1100);
+    } catch(e) {
+      pad.style.opacity=''; pad.style.pointerEvents='';
+      sub.textContent='⚠️ Gagal simpan, coba lagi'; sub.classList.add('err');
+      _pinBuf=''; _pinSetup1=''; _pinMode='setup';
+      document.getElementById('pin-title').textContent='Buat PIN Baru';
       pinUpdateDots('','p');
     }
   }
@@ -1314,89 +1370,89 @@ async function pinSubmit() {
 
 function pinForget() {
   if(!confirm('Reset PIN?\n\nKamu perlu membuat PIN baru.\nData tidak akan terhapus.')) return;
-  localStorage.removeItem(PIN_HASH_KEY);
-  pinLockOut(); _pinBuf=''; _pinMode='setup';
+  localStorage.removeItem(PIN_HASH_KEY); _pinHashAPI = '';
+  pinLockOut(); _pinBuf=''; _pinSetup1=''; _pinMode='setup';
   document.getElementById('pin-title').textContent = 'Buat PIN Baru';
-  document.getElementById('pin-sub').textContent   = 'Buat 4-digit PIN untuk keamanan';
-  document.getElementById('pin-sub').classList.remove('err');
+  const sub = document.getElementById('pin-sub');
+  sub.textContent = 'Buat 4-digit PIN untuk keamanan'; sub.classList.remove('err');
   document.getElementById('pin-forget').style.display = 'none';
   const ov = document.getElementById('pin-overlay');
-  ov.style.display = 'flex'; ov.style.opacity = '1';
+  ov.style.display='flex'; ov.style.opacity='1'; ov.classList.remove('hiding');
   pinUpdateDots('','p');
 }
 
 // ── Change PIN Modal ────────────────────────────────────
-const _cpDescs = ['Masukkan PIN lama terlebih dahulu','Masukkan PIN baru (4 digit)','Konfirmasi PIN baru'];
-function openCPModal() {
+const _cpDescs=['Masukkan PIN lama terlebih dahulu','Masukkan PIN baru (4 digit)','Konfirmasi PIN baru'];
+function openCPModal(){
   _cpBuf=''; _cpStep=0; _cpNew='';
-  const m = document.getElementById('changepin-mod'); if(!m) return;
-  m.classList.add('open');
-  cpReset();
+  const m=document.getElementById('changepin-mod'); if(!m)return;
+  m.classList.add('open'); cpReset();
 }
-function closeCPModal() {
-  document.getElementById('changepin-mod')?.classList.remove('open');
-}
-function cpReset() {
-  document.getElementById('cp-desc').textContent = _cpDescs[_cpStep]||'';
-  document.getElementById('cp-sub').textContent = '';
-  document.getElementById('cp-sub').classList.remove('err');
-  ['cps0','cps1','cps2'].forEach((id,i)=>{
-    const el=document.getElementById(id); if(el) el.classList.toggle('on', i<=_cpStep);
-  });
+function closeCPModal(){ document.getElementById('changepin-mod')?.classList.remove('open'); }
+function cpReset(){
+  document.getElementById('cp-desc').textContent=_cpDescs[_cpStep]||'';
+  document.getElementById('cp-sub').textContent=''; document.getElementById('cp-sub').classList.remove('err');
+  ['cps0','cps1','cps2'].forEach((id,i)=>{ const el=document.getElementById(id);if(el)el.classList.toggle('on',i<=_cpStep); });
   cpUpdateDots('');
 }
-function cpUpdateDots(buf) {
-  for(let i=0;i<4;i++){
-    const el=document.getElementById('cpd'+i);
-    if(el){ el.classList.toggle('filled', i < buf.length); el.classList.remove('err'); }
-  }
+function cpUpdateDots(buf){
+  for(let i=0;i<4;i++){const el=document.getElementById('cpd'+i);if(el){el.classList.toggle('filled',i<buf.length);el.classList.remove('err');}}
 }
-function cpKey(n) {
-  if(_cpBuf.length >= 4) return;
-  _cpBuf += String(n);
-  cpUpdateDots(_cpBuf);
-  if(_cpBuf.length === 4) setTimeout(() => cpSubmit(), 80);
+function cpKey(n){ if(_cpBuf.length>=4)return; _cpBuf+=String(n); cpUpdateDots(_cpBuf); if(_cpBuf.length===4)setTimeout(()=>cpSubmit(),80); }
+function cpDel(){ _cpBuf=_cpBuf.slice(0,-1); cpUpdateDots(_cpBuf); }
+
+function _cpShakeErr(msg, resetStep, newStep){
+  const sub=document.getElementById('cp-sub');
+  const dots=document.getElementById('cp-dots');
+  sub.textContent=msg; sub.classList.add('err');
+  dots.classList.add('shake');
+  for(let i=0;i<4;i++){const d=document.getElementById('cpd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}
+  setTimeout(()=>{
+    dots.classList.remove('shake'); sub.textContent=''; sub.classList.remove('err');
+    for(let i=0;i<4;i++){const d=document.getElementById('cpd'+i);if(d)d.classList.remove('err');}
+    if(newStep!==undefined){_cpStep=newStep; _cpBuf=''; cpReset();}
+  }, 1100);
+  _cpBuf='';
 }
-function cpDel() { _cpBuf = _cpBuf.slice(0,-1); cpUpdateDots(_cpBuf); }
-async function cpSubmit() {
-  const sub = document.getElementById('cp-sub');
-  if(_cpStep === 0) {
-    const hash = await pinHash(_cpBuf);
-    if(hash !== localStorage.getItem(PIN_HASH_KEY)) {
-      sub.textContent = '❌ PIN lama salah'; sub.classList.add('err');
-      const dots=document.getElementById('cp-dots'); dots.classList.add('shake');
-      for(let i=0;i<4;i++){const d=document.getElementById('cpd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}
-      setTimeout(()=>{ dots.classList.remove('shake'); sub.textContent=''; sub.classList.remove('err'); for(let i=0;i<4;i++){const d=document.getElementById('cpd'+i);if(d)d.classList.remove('err');} },1000);
-      _cpBuf=''; return;
-    }
+
+async function cpSubmit(){
+  const sub=document.getElementById('cp-sub');
+  const pad=document.querySelector('#changepin-mod .cp-pad');
+
+  if(_cpStep===0){
+    const hash=await pinHashFn(_cpBuf);
+    if(hash!==_pinHashAPI){ _cpShakeErr('❌ PIN lama salah'); return; }
     _cpStep=1; _cpBuf=''; cpReset();
-  } else if(_cpStep === 1) {
-    _cpNew = _cpBuf; _cpStep=2; _cpBuf=''; cpReset();
-  } else if(_cpStep === 2) {
-    if(_cpBuf !== _cpNew) {
-      sub.textContent = '❌ PIN tidak cocok'; sub.classList.add('err');
-      const dots=document.getElementById('cp-dots'); dots.classList.add('shake');
-      for(let i=0;i<4;i++){const d=document.getElementById('cpd'+i);if(d){d.classList.remove('filled');d.classList.add('err');}}
-      setTimeout(()=>{ dots.classList.remove('shake'); sub.textContent=''; sub.classList.remove('err'); for(let i=0;i<4;i++){const d=document.getElementById('cpd'+i);if(d)d.classList.remove('err');} },1000);
-      _cpBuf=''; _cpStep=1; _cpNew=''; setTimeout(()=>cpReset(),200); return;
+
+  } else if(_cpStep===1){
+    _cpNew=_cpBuf; _cpStep=2; _cpBuf=''; cpReset();
+
+  } else if(_cpStep===2){
+    if(_cpBuf!==_cpNew){ _cpShakeErr('❌ PIN tidak cocok', true, 1); _cpNew=''; return; }
+    const hash=await pinHashFn(_cpBuf);
+    sub.textContent='💾 Menyimpan...'; sub.classList.remove('err');
+    if(pad){pad.style.opacity='0.4';pad.style.pointerEvents='none';}
+    try {
+      await pinSaveHash(hash);
+      closeCPModal();
+      toast('🔑 PIN berhasil diubah!');
+    } catch(e) {
+      if(pad){pad.style.opacity='';pad.style.pointerEvents='';}
+      _cpShakeErr('⚠️ Gagal simpan, coba lagi');
     }
-    const hash = await pinHash(_cpBuf);
-    localStorage.setItem(PIN_HASH_KEY, hash);
-    closeCPModal();
-    toast('🔑 PIN berhasil diubah!');
   }
 }
 
-// Keyboard support for PIN
+// Keyboard support
 document.addEventListener('keydown', e => {
   const ov = document.getElementById('pin-overlay');
   const cp = document.getElementById('changepin-mod');
   const ovActive = ov && ov.style.display !== 'none' && !ov.classList.contains('hiding');
   const cpActive = cp && cp.classList.contains('open');
-  if(ovActive) {
+  if(ovActive){
     if(e.key>='0'&&e.key<='9') pinKey(parseInt(e.key));
     else if(e.key==='Backspace') pinDel();
-  } else if(cpActive) {
+  } else if(cpActive){
     if(e.key>='0'&&e.key<='9') cpKey(parseInt(e.key));
     else if(e.key==='Backspace') cpDel();
     else if(e.key==='Escape') closeCPModal();

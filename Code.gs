@@ -1,11 +1,12 @@
 // ================================================
-// SUKIDO JASTIP — Google Apps Script Backend v4
+// SUKIDO JASTIP — Google Apps Script Backend v6
 // ================================================
 
 const SHEET_NAME_ORDERS    = "Orders";
 const SHEET_NAME_KLOTERS   = "Kloters";
 const SHEET_NAME_ADDRESSES = "Addresses";
 const SHEET_NAME_KIRIM     = "KirimStatus";
+const SHEET_NAME_KATALOG   = "Katalog";
 
 function doGet(e)  { return handleRequest(e); }
 function doPost(e) { return handleRequest(e); }
@@ -29,8 +30,14 @@ function handleRequest(e) {
       case "getAddresses":     result = getAddresses();                           break;
       case "saveKirimStatus":  result = saveKirimStatus(JSON.parse(params.data)); break;
       case "getKirimStatus":   result = getKirimStatus();                         break;
+      case "saveKatalog":      result = saveKatalogItem(JSON.parse(params.data)); break;
+      case "updateKatalog":    result = updateKatalogItem(JSON.parse(params.data)); break;
+      case "deleteKatalog":    result = deleteKatalogItem(params.id);             break;
+      case "getKatalog":       result = getKatalog();                             break;
+      case "getPin":           result = getPin();                                 break;
+      case "setPin":           result = setPin(params.hash);                      break;
       default:
-        result = { ping: "ok", message: "Sukido Jastip API v4 running!" };
+        result = { ping: "ok", message: "Sukido Jastip API v5 running!" };
     }
     output.setContent(JSON.stringify({ ok: true, data: result }));
   } catch (err) {
@@ -45,8 +52,8 @@ function setupSheets() {
 
   if (!ss.getSheetByName(SHEET_NAME_ORDERS)) {
     const s = ss.insertSheet(SHEET_NAME_ORDERS);
-    s.appendRow(["id","date","cust","stype","pic","ship","item","qty","jpy","rate","jual","admin","dp","sbayar","ostatus","sudahBeli","batch"]);
-    s.getRange(1,1,1,17).setFontWeight("bold").setBackground("#e91e8c").setFontColor("#ffffff");
+    s.appendRow(["id","date","cust","stype","pic","ship","item","qty","jpy","rate","jual","admin","dp","sbayar","ostatus","sudahBeli","batch","sudahDipesan","sudahReady","ongkirPayer"]);
+    s.getRange(1,1,1,20).setFontWeight("bold").setBackground("#e91e8c").setFontColor("#ffffff");
   }
 
   if (!ss.getSheetByName(SHEET_NAME_KLOTERS)) {
@@ -65,6 +72,12 @@ function setupSheets() {
     const s = ss.insertSheet(SHEET_NAME_KIRIM);
     s.appendRow(["custName","packed","sent","updatedAt"]);
     s.getRange(1,1,1,4).setFontWeight("bold").setBackground("#16a34a").setFontColor("#ffffff");
+  }
+
+  if (!ss.getSheetByName(SHEET_NAME_KATALOG)) {
+    const s = ss.insertSheet(SHEET_NAME_KATALOG);
+    s.appendRow(["id","nama","jpy","jual","updatedAt"]);
+    s.getRange(1,1,1,5).setFontWeight("bold").setBackground("#f59e0b").setFontColor("#ffffff");
   }
 }
 
@@ -85,7 +98,10 @@ function getAllData() {
     obj.jual      = Number(obj.jual)  || 0;
     obj.admin     = Number(obj.admin) || 0;
     obj.dp        = Number(obj.dp)    || 0;
-    obj.sudahBeli = (obj.sudahBeli === true || String(obj.sudahBeli).toLowerCase() === "true");
+    obj.sudahBeli     = (obj.sudahBeli === true     || String(obj.sudahBeli).toLowerCase()     === "true");
+    obj.sudahDipesan  = (obj.sudahDipesan === true  || String(obj.sudahDipesan).toLowerCase()  === "true");
+    obj.sudahReady    = (obj.sudahReady === true     || String(obj.sudahReady).toLowerCase()    === "true");
+    obj.ongkirPayer   = obj.ongkirPayer || "seller";
     return obj;
   }).filter(o => o.id && o.id !== 'undefined' && o.id !== '');
 
@@ -101,10 +117,11 @@ function getAllData() {
     return obj;
   }).filter(k => k.id && k.id !== 'undefined' && k.id !== '');
 
-  const addresses = getAddresses();
+  const addresses   = getAddresses();
   const kirimStatus = getKirimStatus();
+  const katalog     = getKatalog();
 
-  return { orders, kloters, addresses, kirimStatus };
+  return { orders, kloters, addresses, kirimStatus, katalog };
 }
 
 function saveOrder(order) {
@@ -114,7 +131,8 @@ function saveOrder(order) {
     String(order.id), order.date, order.cust, order.stype, order.pic,
     order.ship, order.item, order.qty, order.jpy, order.rate,
     order.jual, order.admin||0, order.dp||0, order.sbayar,
-    order.ostatus, order.sudahBeli||false, order.batch
+    order.ostatus, order.sudahBeli||false, order.batch,
+    order.sudahDipesan||false, order.sudahReady||false, order.ongkirPayer||"seller"
   ]);
   return { saved: order.id };
 }
@@ -124,11 +142,12 @@ function updateOrder(order) {
   const data = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]) === String(order.id)) {
-      sheet.getRange(i+1,1,1,17).setValues([[
+      sheet.getRange(i+1,1,1,20).setValues([[
         String(order.id), order.date, order.cust, order.stype, order.pic,
         order.ship, order.item, order.qty, order.jpy, order.rate,
         order.jual, order.admin||0, order.dp||0, order.sbayar,
-        order.ostatus, order.sudahBeli||false, order.batch
+        order.ostatus, order.sudahBeli||false, order.batch,
+        order.sudahDipesan||false, order.sudahReady||false, order.ongkirPayer||"seller"
       ]]);
       return { updated: order.id };
     }
@@ -222,7 +241,6 @@ function getAddresses() {
 
 // ── KIRIM STATUS ──────────────────────────────────────────
 function saveKirimStatus(data) {
-  // data = { custName, packed: true/false, sent: true/false }
   setupSheets();
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KIRIM);
   const rows = sheet.getDataRange().getValues();
@@ -259,8 +277,73 @@ function getKirimStatus() {
   return result;
 }
 
+// ── KATALOG BARANG ────────────────────────────────────────
+function getKatalog() {
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KATALOG);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  const headers = data[0];
+  return data.slice(1).map(row => {
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = row[i]; });
+    obj.id   = String(obj.id);
+    obj.jpy  = Number(obj.jpy)  || 0;
+    obj.jual = Number(obj.jual) || 0;
+    return obj;
+  }).filter(k => k.id && k.id !== '' && k.nama);
+}
+
+function saveKatalogItem(item) {
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KATALOG);
+  sheet.appendRow([
+    String(item.id), item.nama, item.jpy||0, item.jual||0,
+    new Date().toISOString()
+  ]);
+  return { saved: item.id };
+}
+
+function updateKatalogItem(item) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KATALOG);
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(item.id)) {
+      sheet.getRange(i+1,1,1,5).setValues([[
+        String(item.id), item.nama, item.jpy||0, item.jual||0,
+        new Date().toISOString()
+      ]]);
+      return { updated: item.id };
+    }
+  }
+  return saveKatalogItem(item);
+}
+
+function deleteKatalogItem(id) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KATALOG);
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length-1; i >= 1; i--) {
+    if (String(data[i][0]) === String(id)) { sheet.deleteRow(i+1); return { deleted: id }; }
+  }
+  return { notFound: id };
+}
+
 // ── TEST ──────────────────────────────────────────────────
 function testGetAll() {
   const result = getAllData();
   Logger.log(JSON.stringify(result));
+}
+
+// ── PIN SECURITY ──────────────────────────────────────────
+// PIN hash is stored in Script Properties (not visible in sheet cells).
+// Only a SHA-256 hash is ever stored — never the raw PIN.
+function getPin() {
+  const hash = PropertiesService.getScriptProperties().getProperty('sk_pin_hash') || '';
+  return { hash: hash };
+}
+
+function setPin(hash) {
+  if (!hash || hash.length !== 64) throw new Error('Invalid PIN hash');
+  PropertiesService.getScriptProperties().setProperty('sk_pin_hash', hash);
+  return { saved: true };
 }
