@@ -58,8 +58,8 @@ function setupSheets() {
 
   if (!ss.getSheetByName(SHEET_NAME_KLOTERS)) {
     const s = ss.insertSheet(SHEET_NAME_KLOTERS);
-    s.appendRow(["id","name","rate","bagasi","eta","status","pengeluaran"]);
-    s.getRange(1,1,1,7).setFontWeight("bold").setBackground("#7c3aed").setFontColor("#ffffff");
+    s.appendRow(["id","name","rate","bagasi","eta","status","pengeluaran","stockBarang"]);
+    s.getRange(1,1,1,8).setFontWeight("bold").setBackground("#7c3aed").setFontColor("#ffffff");
   }
 
   if (!ss.getSheetByName(SHEET_NAME_ADDRESSES)) {
@@ -114,6 +114,8 @@ function getAllData() {
     obj.rate = Number(obj.rate) || 0;
     try { obj.pengeluaran = obj.pengeluaran ? JSON.parse(obj.pengeluaran) : []; }
     catch(e) { obj.pengeluaran = []; }
+    try { obj.stockBarang = obj.stockBarang ? JSON.parse(obj.stockBarang) : []; }
+    catch(e) { obj.stockBarang = []; }
     return obj;
   }).filter(k => k.id && k.id !== 'undefined' && k.id !== '');
 
@@ -171,7 +173,8 @@ function saveKloter(kloter) {
   sheet.appendRow([
     String(kloter.id), kloter.name, kloter.rate||0,
     kloter.bagasi||"", kloter.eta||"", kloter.status||"open",
-    JSON.stringify(kloter.pengeluaran||[])
+    JSON.stringify(kloter.pengeluaran||[]),
+    JSON.stringify(kloter.stockBarang||[])
   ]);
   return { saved: kloter.id };
 }
@@ -181,10 +184,11 @@ function updateKloter(kloter) {
   const data = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]) === String(kloter.id)) {
-      sheet.getRange(i+1,1,1,7).setValues([[
+      sheet.getRange(i+1,1,1,8).setValues([[
         String(kloter.id), kloter.name, kloter.rate||0,
         kloter.bagasi||"", kloter.eta||"", kloter.status||"open",
-        JSON.stringify(kloter.pengeluaran||[])
+        JSON.stringify(kloter.pengeluaran||[]),
+        JSON.stringify(kloter.stockBarang||[])
       ]]);
       return { updated: kloter.id };
     }
