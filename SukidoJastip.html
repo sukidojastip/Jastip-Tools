@@ -592,6 +592,44 @@ select.si option{background:#fff;color:var(--txt);}
 .stok-del-btn{background:transparent;border:none;cursor:pointer;padding:4px;opacity:.25;display:flex;transition:opacity .15s;border-radius:6px;}
 .stok-del-btn:hover{opacity:1;background:rgba(239,68,68,.07);}
 .stok-del-btn svg{width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+/* ── STOK BARANG KLOTER ─────────────────────────────── */
+.sk-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bor);background:var(--sur);}
+.sk-row:last-child{border-bottom:none;}
+.sk-row:hover{background:var(--s2);}
+.sk-icon{width:36px;height:36px;border-radius:10px;background:var(--g2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
+.sk-info{flex:1;min-width:0;}
+.sk-name{font-size:13px;font-weight:700;letter-spacing:-.2px;}
+.sk-prices{display:flex;gap:12px;margin-top:3px;flex-wrap:wrap;}
+.sk-prc{font-size:10px;color:var(--t3);}
+.sk-prc span{font-family:var(--mono);font-weight:700;font-size:11px;}
+.sk-prc.modal span{color:var(--red);}
+.sk-prc.jual span{color:var(--grn);}
+.sk-qty-badge{font-size:20px;font-weight:800;font-family:var(--mono);color:var(--acc);min-width:32px;text-align:right;}
+.sk-qty-lbl{font-size:9px;color:var(--t3);text-align:right;margin-top:1px;}
+.sk-actions{display:flex;gap:5px;}
+.sk-btn{background:transparent;border:1.5px solid var(--bor);border-radius:7px;padding:4px 9px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sk-btn:hover{border-color:var(--acc);color:var(--acc);}
+.sk-del{background:transparent;border:none;cursor:pointer;padding:5px;opacity:.25;display:flex;border-radius:6px;transition:opacity .15s;}
+.sk-del:hover{opacity:1;background:rgba(239,68,68,.07);}
+.sk-del svg{width:13px;height:13px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.sk-empty{text-align:center;padding:28px 20px;color:var(--t3);font-size:12px;}
+.sk-form{background:var(--bg);border-radius:var(--rs);padding:14px;margin-top:12px;border:1.5px dashed var(--bor2);}
+.sk-form-title{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;}
+.sk-form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.sk-form-row.full{grid-template-columns:1fr;}
+.sk-form-row.three{grid-template-columns:2fr 1fr 1fr;}
+.sk-finput{background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;width:100%;transition:border .15s;}
+.sk-finput:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(91,94,244,.1);}
+.sk-finput::placeholder{color:var(--t3);}
+.sk-add-btn{background:var(--g2);color:#fff;border:none;border-radius:var(--rs);padding:9px 18px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s;}
+.sk-add-btn:hover{opacity:.88;}
+.sk-add-btn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+/* Stok kloter picker in add order form */
+.skp-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--bor);transition:background .12s;}
+.skp-item:last-child{border-bottom:none;}
+.skp-item:hover{background:var(--s2);}
+.skp-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(34,197,94,.1);color:var(--grn);border:1px solid rgba(34,197,94,.2);}
+.skp-badge.out{background:rgba(239,68,68,.08);color:var(--red);border-color:rgba(239,68,68,.15);}
 .stok-empty{text-align:center;padding:50px 20px;color:var(--t3);}
 .stok-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
 
@@ -1191,6 +1229,21 @@ input,select,textarea{font-size:16px!important;}
   </div>
 </div>
 
+
+<!-- STOK KLOTER PICKER (in add form) -->
+<div class="mov" id="skpmod" style="display:none;z-index:300" onclick="if(event.target===this)closeSkpicker()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:500px;max-height:80vh;display:flex;flex-direction:column">
+    <div class="mhdr">
+      <span class="mtit">📦 Pilih dari Stok Kloter</span>
+      <button class="mclose" onclick="closeSkpicker()">✕</button>
+    </div>
+    <div id="skp-kloter-name" style="font-size:11px;color:var(--t3);margin-bottom:10px;font-weight:600;flex-shrink:0"></div>
+    <input id="skp-search" placeholder="🔍 Cari barang..." oninput="renderSkpicker()"
+      style="width:100%;background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;font-family:var(--fn);font-size:13px;outline:none;margin-bottom:12px;flex-shrink:0"
+      onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+    <div id="skp-list" style="flex:1;overflow-y:auto;max-height:50vh"></div>
+  </div>
+</div>
 <!-- STOK PICKER POPUP -->
 <div class="mov" id="stokpopmod" style="display:none;z-index:300" onclick="if(event.target===this)closeStokPopup()">
   <div class="mbox" onclick="event.stopPropagation()" style="max-width:500px;max-height:80vh;display:flex;flex-direction:column">
@@ -1667,6 +1720,60 @@ function calc(){
 
 // ─── STOK PICKER ───────────────────────────────────────
 function togStokPicker(){const el=document.getElementById('stok-picker');if(!el)return;const op=el.style.display==='block';el.style.display=op?'none':'block';if(!op)renderStokPicker();}
+function openSkpicker(){
+  // Cari kloter aktif dari dropdown batch di form
+  const batchEl=document.getElementById('f-batch');
+  const kname=batchEl?batchEl.value:'';
+  const k=kloters.find(x=>x.name===kname);
+  if(!k||!k.stokBarang||k.stokBarang.length===0){toast('Stok kloter '+kname+' kosong / belum ada',true);return;}
+  window._skpKid=k.id;
+  const nameEl=document.getElementById('skp-kloter-name');
+  if(nameEl)nameEl.textContent='Kloter: '+kname;
+  const si=document.getElementById('skp-search');if(si)si.value='';
+  document.getElementById('skpmod').style.display='flex';
+  renderSkpicker();
+}
+function closeSkpicker(){document.getElementById('skpmod').style.display='none';}
+function renderSkpicker(){
+  const el=document.getElementById('skp-list');if(!el)return;
+  const kid=window._skpKid;
+  const k=kloters.find(x=>x.id===kid);
+  const stok=k?(k.stokBarang||[]):[];
+  const q=(document.getElementById('skp-search')?.value||'').toLowerCase();
+  const filtered=stok.filter(s=>!q||s.nama.toLowerCase().includes(q));
+  if(!filtered.length){el.innerHTML='<div style="text-align:center;padding:28px;color:var(--t3);font-size:13px">Tidak ada stok</div>';return;}
+  el.innerHTML=filtered.map(s=>{
+    const outOfStock=s.qty<=0;
+    return `<div class="skp-item${outOfStock?' sk-disabled':''}" onclick="pickFromStokKloter('${kid}','${s.id}')" style="${outOfStock?'opacity:.45;cursor:not-allowed':''}">
+      <div class="sk-icon" style="background:${outOfStock?'var(--bor)':'var(--g2)'}">📦</div>
+      <div class="sk-info">
+        <div class="sk-name">${s.nama}</div>
+        <div class="sk-prices">
+          <div class="sk-prc modal">Modal <span>${fr(s.hargaModal)}</span></div>
+          <div class="sk-prc jual">Jual <span>${fr(s.hargaJual)}</span></div>
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="sk-qty-badge" style="color:${outOfStock?'var(--red)':'var(--acc)'}">${s.qty}</div>
+        <div class="sk-qty-lbl">sisa</div>
+        <span class="skp-badge${outOfStock?' out':''}">${outOfStock?'Habis':'Tersedia'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function pickFromStokKloter(kid,itemId){
+  const k=kloters.find(x=>x.id===kid);if(!k)return;
+  const s=(k.stokBarang||[]).find(x=>x.id===itemId);if(!s||s.qty<=0){toast('Stok habis!',true);return;}
+  // Isi form
+  const fi=document.getElementById('f-item'),fj=document.getElementById('f-jual');
+  if(fi)fi.value=s.nama;
+  if(fj){fj.value=s.hargaJual;calc();}
+  // Simpan reference untuk decrement saat save
+  window._skpPickedKid=kid;
+  window._skpPickedId=itemId;
+  closeSkpicker();
+  toast('✓ Stok dipilih: '+s.nama);
+}
 function renderStokPicker(){
   const el=document.getElementById('stok-picker-list');if(!el)return;
   if(!stokList.length){el.innerHTML='<div style="padding:14px;text-align:center;color:var(--t3);font-size:12px">Belum ada stok</div>';return;}
@@ -1743,6 +1850,12 @@ async function confirmSave(){
   if(!_pendingOrder){closePreview();return;}
   const o=_pendingOrder;_pendingOrder=null;closePreview();
   if(_pickedStokId){const s=stokList.find(x=>String(x.id)===_pickedStokId);if(s&&s.qty>0){s.qty=Math.max(0,s.qty-(o.qty||1));saveStok();}_pickedStokId=null;}
+  // Stok Kloter decrement
+  if(window._skpPickedKid&&window._skpPickedId){
+    const sk=findK(window._skpPickedKid);
+    if(sk&&sk.stokBarang){const ss=sk.stokBarang.find(x=>x.id===window._skpPickedId);if(ss&&ss.qty>0){ss.qty=Math.max(0,ss.qty-(o.qty||1));sl();try{await apiCall({action:'updateKloter',data:sk});}catch(e){}}}
+    window._skpPickedKid=null;window._skpPickedId=null;
+  }
   orders.push(o);sl();
   ['f-cust','f-item','f-jpy','f-jual','f-dp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const fq=document.getElementById('f-qty');if(fq)fq.value=1;const fs=document.getElementById('f-sbayar');if(fs)fs.value='Unpaid';
@@ -1750,7 +1863,13 @@ async function confirmSave(){
   try{await apiCall({action:'saveOrder',data:o});setSS('ok');}catch(e){setSS('err','Offline');}
 }
 async function addOrder(){showPreview();}
-function openTambahModal(){refreshDD();renderStokPicker();document.getElementById('tambahmod').style.display='flex';setTimeout(()=>document.getElementById('f-cust')?.focus(),100);}
+function openTambahModal(){
+  refreshDD();renderStokPicker();
+  // Reset stok kloter picked reference
+  window._skpPickedKid=null;window._skpPickedId=null;
+  document.getElementById('tambahmod').style.display='flex';
+  setTimeout(()=>document.getElementById('f-cust')?.focus(),100);
+}
 function closeTambahModal(){document.getElementById('tambahmod').style.display='none';}
 
 // ═══════════════════════════════════════════════════════
@@ -2164,7 +2283,111 @@ function renderKloterDetail(sid){
       ${isY&&k.rate?`<div style="font-size:10px;color:var(--t3);margin-top:4px;font-family:var(--mono)">¥1 = <span style="color:var(--amb);font-weight:600">Rp ${fn(r)}</span></div>`:''}
       <button class="addpgbtn" onclick="addPG('${sid}')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Tambah Pengeluaran</button>
     </div>
+  </div>
+  ${renderStokKloterSection(sid)}`;
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  STOK BARANG READY PER KLOTER
+// ═══════════════════════════════════════════════════════
+
+function renderStokKloterSection(sid){
+  const k=findK(sid);if(!k)return '';
+  const stok=k.stokBarang||[];
+  const isOpen=!!expSK[sid];
+  const totalStok=stok.reduce((s,x)=>s+x.qty,0);
+  const rows=stok.map(s=>{
+    const outOfStock=s.qty<=0;
+    return `<div class="sk-row">
+      <div class="sk-icon" style="background:${outOfStock?'var(--bor)':'linear-gradient(135deg,#22c55e,#16a34a)'}">📦</div>
+      <div class="sk-info">
+        <div class="sk-name">${s.nama}</div>
+        <div class="sk-prices">
+          <div class="sk-prc modal">Modal <span>${fr(s.hargaModal)}</span></div>
+          <div class="sk-prc jual">Jual <span>${fr(s.hargaJual)}</span></div>
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="sk-qty-badge" style="color:${outOfStock?'var(--red)':'var(--acc)'}">${s.qty}</div>
+        <div class="sk-qty-lbl">sisa</div>
+      </div>
+      <div class="sk-actions">
+        <div style="display:flex;gap:4px">
+          <button class="sk-btn" onclick="adjSkQty('${sid}','${s.id}',1)" title="+1">+</button>
+          <button class="sk-btn" onclick="adjSkQty('${sid}','${s.id}',-1)" title="-1">-</button>
+        </div>
+        <button class="sk-del" onclick="delSkItem('${sid}','${s.id}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="kd-body-card">
+    <div style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;margin-bottom:${isOpen?'14px':'0'}" onclick="togSK('${sid}')">
+      <div class="ct-ico" style="flex-shrink:0;background:var(--g2)"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+      <span style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.7px;flex:1">Stok Barang Ready</span>
+      ${stok.length?`<span style="font-size:11px;font-weight:700;color:var(--acc);background:rgba(91,94,244,.08);padding:2px 9px;border-radius:20px;border:1px solid rgba(91,94,244,.15)">${stok.length} item · ${totalStok} pcs</span>`:''}
+      <svg style="width:12px;height:12px;stroke:var(--t3);fill:none;stroke-width:2.5;flex-shrink:0;transition:transform .18s;${isOpen?'transform:rotate(180deg)':''}" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div style="display:${isOpen?'block':'none'}">
+      ${stok.length?`<div style="border:1px solid var(--bor);border-radius:var(--rs);overflow:hidden;margin-bottom:14px">${rows}</div>`:'<div class="sk-empty">Belum ada stok. Tambahkan barang ready di bawah.</div>'}
+      <div class="sk-form">
+        <div class="sk-form-title">+ Tambah Stok Barang</div>
+        <div class="sk-form-row full"><input class="sk-finput" id="sk-nama-${sid}" placeholder="Nama barang (e.g. Nike Air Max)"/></div>
+        <div class="sk-form-row three">
+          <input class="sk-finput" id="sk-modal-${sid}" type="number" placeholder="Harga Modal (Rp)"/>
+          <input class="sk-finput" id="sk-jual-${sid}" type="number" placeholder="Harga Jual (Rp)"/>
+          <input class="sk-finput" id="sk-qty-${sid}" type="number" placeholder="Qty" min="1" value="1"/>
+        </div>
+        <button class="sk-add-btn" onclick="addSkItem('${sid}')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Tambah ke Stok
+        </button>
+      </div>
+    </div>
   </div>`;
+}
+
+let expSK={};
+function togSK(sid){expSK[sid]=!expSK[sid];renderKloterDetail(sid);}
+
+function addSkItem(sid){
+  const k=findK(sid);if(!k)return;
+  const nama=(document.getElementById('sk-nama-'+sid)?.value||'').trim();
+  const modal=parseInt(document.getElementById('sk-modal-'+sid)?.value||0)||0;
+  const jual=parseInt(document.getElementById('sk-jual-'+sid)?.value||0)||0;
+  const qty=parseInt(document.getElementById('sk-qty-'+sid)?.value||1)||1;
+  if(!nama){toast('Nama barang wajib diisi',true);return;}
+  if(!k.stokBarang)k.stokBarang=[];
+  k.stokBarang.push({id:'sk'+Date.now(),nama,hargaModal:modal,hargaJual:jual,qty});
+  sl();
+  syncKloterStok(sid);
+  renderKloterDetail(sid);
+  toast('✓ Stok '+nama+' ditambahkan ('+qty+' pcs)');
+}
+
+function delSkItem(sid,itemId){
+  const k=findK(sid);if(!k||!k.stokBarang)return;
+  if(!confirm('Hapus stok ini?'))return;
+  k.stokBarang=k.stokBarang.filter(x=>x.id!==itemId);
+  sl();
+  syncKloterStok(sid);
+  renderKloterDetail(sid);
+}
+
+function adjSkQty(sid,itemId,delta){
+  const k=findK(sid);if(!k||!k.stokBarang)return;
+  const s=k.stokBarang.find(x=>x.id===itemId);if(!s)return;
+  s.qty=Math.max(0,s.qty+delta);
+  sl();
+  syncKloterStok(sid);
+  renderKloterDetail(sid);
+}
+
+async function syncKloterStok(sid){
+  const k=findK(sid);if(!k)return;
+  try{await apiCall({action:'updateKloter',data:k});setSS('ok');}
+  catch(e){setSS('err','Sync stok gagal');}
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2449,7 +2672,8 @@ function buildLink(cust,cos){
   const cfg=getCfg();let base=cfg.url||'';
   if(!base){const cur=window.location.href.split('?')[0];base=cur.replace(/[^/]+\.html$/i,'FormAlamat.html');}
   const total=cos.reduce((s,o)=>s+o.jual*o.qty,0);
-  return base+'?custName='+encodeURIComponent(cust)+'&items='+encodeURIComponent(JSON.stringify(cos.map(o=>o.item+' (Qty '+o.qty+')')))+'&total='+total;
+  const itemsData=cos.map(o=>({name:o.item,qty:o.qty,price:o.jual||0}));
+  return base+'?custName='+encodeURIComponent(cust)+'&items='+encodeURIComponent(JSON.stringify(itemsData))+'&total='+total;
 }
 function copyLink(cust){
   const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
@@ -3459,7 +3683,8 @@ function pickKatalogIntoForm(id) {
       <div class="g1r"><div class="fl"><label>Nama Barang</label>
       <div style="display:flex;gap:6px">
         <input id="f-item" placeholder="e.g. Salomon Active Skin 8 Black M" style="flex:1"/>
-        <button onclick="openKatalogPopup()" style="padding:0 12px;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(245,158,11,.3)" title="Pilih dari Katalog" onclick="openKatalogPopup()">📋 Katalog</button>
+        <button onclick="openKatalogPopup()" style="padding:0 12px;background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(245,158,11,.3)" title="Pilih dari Katalog">📋 Katalog</button>
+        <button onclick="openSkpicker()" style="padding:0 12px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(34,197,94,.3)" title="Pilih dari Stok Kloter">📦 Stok</button>
       </div>
     </div></div>
     <!-- Stok Picker Dropdown -->

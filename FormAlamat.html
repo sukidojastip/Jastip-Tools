@@ -26,7 +26,10 @@ body{font-family:var(--fn);background:#eef0fb;min-height:100vh;display:flex;alig
   border:1.5px solid rgba(91,94,244,.18);border-radius:12px;padding:14px 16px;margin-bottom:22px;
 }
 .prev-title{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.prev-item{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:#374151;font-weight:500;}
+.prev-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;font-size:13px;color:#374151;font-weight:500;border-bottom:1px dashed rgba(91,94,244,.08);}
+.prev-item:last-child{border-bottom:none;}
+.prev-item-name{display:flex;align-items:center;gap:8px;flex:1;}
+.prev-item-price{font-size:12px;font-weight:700;color:var(--acc);font-family:monospace;white-space:nowrap;}
 .prev-item:before{content:'•';color:var(--acc);font-size:16px;flex-shrink:0;}
 .total-row{
   display:flex;align-items:center;justify-content:space-between;
@@ -172,7 +175,14 @@ window.onload=function(){
       const list=JSON.parse(decodeURIComponent(itemsParam));
       if(list.length){
         document.getElementById('order-preview').style.display='block';
-        document.getElementById('prev-items').innerHTML=list.map(i=>`<div class="prev-item">${i}</div>`).join('');
+        document.getElementById('prev-items').innerHTML=list.map(i=>{
+          // Format baru: {name, qty, price} / Format lama: string
+          if(typeof i==='object'&&i.name){
+            const priceTxt=i.price>0?`<span class="prev-item-price">${fr(i.price)}/item</span>`:'';
+            return `<div class="prev-item"><div class="prev-item-name"><span style="color:var(--acc)">•</span>${i.name} <span style="color:#9ca3af;font-size:11px">(Qty ${i.qty})</span></div>${priceTxt}</div>`;
+          }
+          return `<div class="prev-item"><div class="prev-item-name"><span style="color:var(--acc)">•</span>${i}</div></div>`;
+        }).join('');
       }
     }catch(e){}
   }
