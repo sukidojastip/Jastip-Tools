@@ -624,6 +624,12 @@ select.si option{background:#fff;color:var(--txt);}
 .sk-add-btn{background:var(--g2);color:#fff;border:none;border-radius:var(--rs);padding:9px 18px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s;}
 .sk-add-btn:hover{opacity:.88;}
 .sk-add-btn svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.sk-cur-tog{display:inline-flex;align-items:center;border-radius:20px;overflow:hidden;border:1.5px solid var(--bor);background:var(--sur);flex-shrink:0;cursor:pointer;user-select:none;}
+.sk-cur-btn{padding:5px 10px;font-size:11px;font-weight:700;font-family:var(--fn);cursor:pointer;border:none;background:transparent;color:var(--t3);transition:all .15s;line-height:1;}
+.sk-cur-btn.active{background:var(--g1);color:#fff;border-radius:16px;}
+.sk-jpy-hint{font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--mono);min-height:16px;}
+.sk-jpy-hint.ok{color:var(--acc);}
+.sk-modal-wrap{display:flex;flex-direction:column;gap:0;}
 /* Stok kloter picker in add order form */
 .skp-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--bor);transition:background .12s;}
 .skp-item:last-child{border-bottom:none;}
@@ -1744,7 +1750,7 @@ function renderSkpicker(){
       <div class="sk-info">
         <div class="sk-name">${s.nama}</div>
         <div class="sk-prices">
-          <div class="sk-prc modal">Modal <span>${fr(s.hargaModal)}</span></div>
+          <div class="sk-prc modal">Modal <span>${s.hargaModalJpy?'¥'+fn(s.hargaModalJpy)+' · ':'' }${fr(s.hargaModal)}</span></div>
           <div class="sk-prc jual">Jual <span>${fr(s.hargaJual)}</span></div>
         </div>
       </div>
@@ -2294,17 +2300,45 @@ function renderStokKloterSection(sid){
   const totalStok=stok.reduce((s,x)=>s+x.qty,0);
   const rows=stok.map(s=>{
     const outOfStock=s.qty<=0;
+    const isEditing=(window._skEdit&&window._skEdit[sid]===s.id);
+    if(isEditing){
+      const eMode=(window._skEditMode&&window._skEditMode[sid+s.id])||'idr';
+      const eRate=k.rate||0;
+      const defaultModal=eMode==='jpy'?(s.hargaModalJpy||''):(s.hargaModal||'');
+      const eHint=eMode==='jpy'&&s.hargaModalJpy&&eRate?'→ '+fr(Math.round(s.hargaModalJpy*eRate))+' (¥'+fn(s.hargaModalJpy)+' × '+fn(eRate)+')':
+'';
+      return `<div class="sk-row" style="flex-wrap:wrap;gap:8px;padding:12px 14px;background:var(--s2)">
+        <div style="width:100%;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:11px;font-weight:700;color:var(--t2)">✏️ Edit: ${s.nama}</span>
+          <div class="sk-cur-tog">
+            <button class="sk-cur-btn ${eMode==='idr'?'active':''}" onclick="setSkEditMode('${sid}','${s.id}','idr')">Rp IDR</button>
+            <button class="sk-cur-btn ${eMode==='jpy'?'active':''}" onclick="setSkEditMode('${sid}','${s.id}','jpy')">¥ JPY</button>
+          </div>
+        </div>
+        <div style="flex:1;min-width:110px">
+          <input class="sk-finput" id="ske-modal-${sid}-${s.id}" type="number" value="${defaultModal}"
+            placeholder="${eMode==='jpy'?'Harga Modal (¥)':'Harga Modal (Rp)'}"
+            oninput="updSkeHint('${sid}','${s.id}')"/>
+          <div class="sk-jpy-hint ${eHint?'ok':''}" id="ske-hint-${sid}-${s.id}">${eHint}</div>
+        </div>
+        <input class="sk-finput" id="ske-jual-${sid}-${s.id}" type="number" value="${s.hargaJual}" placeholder="Harga Jual (Rp)" style="flex:1;min-width:110px"/>
+        <div style="display:flex;gap:6px;width:100%">
+          <button class="sk-add-btn" style="flex:1;padding:8px;font-size:12px" onclick="saveSkEdit('${sid}','${s.id}')">✓ Simpan</button>
+          <button class="sk-del" style="padding:8px 12px;border-radius:var(--rs)" onclick="cancelSkEdit('${sid}')">✕</button>
+        </div>
+      </div>`;
+    }
     return `<div class="sk-row">
       <div class="sk-icon" style="background:${outOfStock?'var(--bor)':'linear-gradient(135deg,#22c55e,#16a34a)'}">📦</div>
       <div class="sk-info">
         <div class="sk-name">${s.nama}</div>
         <div class="sk-prices">
-          <div class="sk-prc modal">Modal <span>${fr(s.hargaModal)}</span></div>
+          <div class="sk-prc modal">Modal <span>${s.hargaModalJpy?'¥'+fn(s.hargaModalJpy)+' ≈ ':'' }${fr(s.hargaModal)}</span></div>
           <div class="sk-prc jual">Jual <span>${fr(s.hargaJual)}</span></div>
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div class="sk-qty-badge" style="color:${outOfStock?'var(--red)':'var(--acc)'}">${s.qty}</div>
+        <div class="sk-qty-badge" style="color:${outOfStock?'var(--red)':'var(--acc)'}"> ${s.qty}</div>
         <div class="sk-qty-lbl">sisa</div>
       </div>
       <div class="sk-actions">
@@ -2312,7 +2346,10 @@ function renderStokKloterSection(sid){
           <button class="sk-btn" onclick="adjSkQty('${sid}','${s.id}',1)" title="+1">+</button>
           <button class="sk-btn" onclick="adjSkQty('${sid}','${s.id}',-1)" title="-1">-</button>
         </div>
-        <button class="sk-del" onclick="delSkItem('${sid}','${s.id}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        <div style="display:flex;gap:4px">
+          <button class="sk-btn" onclick="startSkEdit('${sid}','${s.id}')" title="Edit harga" style="background:var(--g1)">✏️</button>
+          <button class="sk-del" onclick="delSkItem('${sid}','${s.id}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -2327,10 +2364,24 @@ function renderStokKloterSection(sid){
     <div style="display:${isOpen?'block':'none'}">
       ${stok.length?`<div style="border:1px solid var(--bor);border-radius:var(--rs);overflow:hidden;margin-bottom:14px">${rows}</div>`:'<div class="sk-empty">Belum ada stok. Tambahkan barang ready di bawah.</div>'}
       <div class="sk-form">
-        <div class="sk-form-title">+ Tambah Stok Barang</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="sk-form-title" style="margin-bottom:0">+ Tambah Stok Barang</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:10px;color:var(--t3);font-weight:600">Input Modal:</span>
+            <div class="sk-cur-tog">
+              <button class="sk-cur-btn ${(window._skModalMode&&window._skModalMode[sid])==='jpy'?'':'active'}" onclick="setSkModalMode('${sid}','idr')">Rp IDR</button>
+              <button class="sk-cur-btn ${(window._skModalMode&&window._skModalMode[sid])==='jpy'?'active':''}" onclick="setSkModalMode('${sid}','jpy')">¥ JPY</button>
+            </div>
+          </div>
+        </div>
         <div class="sk-form-row full"><input class="sk-finput" id="sk-nama-${sid}" placeholder="Nama barang (e.g. Nike Air Max)"/></div>
         <div class="sk-form-row three">
-          <input class="sk-finput" id="sk-modal-${sid}" type="number" placeholder="Harga Modal (Rp)"/>
+          <div class="sk-modal-wrap">
+            <input class="sk-finput" id="sk-modal-${sid}" type="number"
+              placeholder="${(window._skModalMode&&window._skModalMode[sid])==='jpy'?'Harga Modal (¥)':'Harga Modal (Rp)'}"
+              oninput="updSkModalHint('${sid}')"/>
+            <div class="sk-jpy-hint" id="sk-modal-hint-${sid}"></div>
+          </div>
           <input class="sk-finput" id="sk-jual-${sid}" type="number" placeholder="Harga Jual (Rp)"/>
           <input class="sk-finput" id="sk-qty-${sid}" type="number" placeholder="Qty" min="1" value="1"/>
         </div>
@@ -2349,12 +2400,18 @@ function togSK(sid){expSK[sid]=!expSK[sid];renderKloterDetail(sid);}
 function addSkItem(sid){
   const k=findK(sid);if(!k)return;
   const nama=(document.getElementById('sk-nama-'+sid)?.value||'').trim();
-  const modal=parseInt(document.getElementById('sk-modal-'+sid)?.value||0)||0;
+  const rawModal=parseFloat(document.getElementById('sk-modal-'+sid)?.value||0)||0;
   const jual=parseInt(document.getElementById('sk-jual-'+sid)?.value||0)||0;
   const qty=parseInt(document.getElementById('sk-qty-'+sid)?.value||1)||1;
+  const isJpy=(window._skModalMode&&window._skModalMode[sid])==='jpy';
+  const rate=k.rate||0;
+  const modal=isJpy?Math.round(rawModal*(rate||1)):Math.round(rawModal);
+  const hargaModalJpy=isJpy?rawModal:null;
   if(!nama){toast('Nama barang wajib diisi',true);return;}
   if(!k.stokBarang)k.stokBarang=[];
-  k.stokBarang.push({id:'sk'+Date.now(),nama,hargaModal:modal,hargaJual:jual,qty});
+  const item={id:'sk'+Date.now(),nama,hargaModal:modal,hargaJual:jual,qty};
+  if(hargaModalJpy)item.hargaModalJpy=hargaModalJpy;
+  k.stokBarang.push(item);
   sl();
   syncKloterStok(sid);
   renderKloterDetail(sid);
@@ -2368,6 +2425,33 @@ function delSkItem(sid,itemId){
   sl();
   syncKloterStok(sid);
   renderKloterDetail(sid);
+}
+
+if(!window._skModalMode)window._skModalMode={};
+function setSkModalMode(sid,mode){
+  if(!window._skModalMode)window._skModalMode={};
+  window._skModalMode[sid]=mode;
+  renderKloterDetail(sid);
+  // restore input focus
+  setTimeout(()=>{
+    const el=document.getElementById('sk-modal-'+sid);
+    if(el){el.value='';el.focus();}
+    const hint=document.getElementById('sk-modal-hint-'+sid);
+    if(hint)hint.textContent='';
+  },40);
+}
+
+function updSkModalHint(sid){
+  const k=findK(sid);if(!k)return;
+  const isJpy=(window._skModalMode&&window._skModalMode[sid])==='jpy';
+  const hint=document.getElementById('sk-modal-hint-'+sid);
+  if(!hint)return;
+  if(!isJpy){hint.textContent='';hint.className='sk-jpy-hint';return;}
+  const rate=k.rate||0;
+  const val=parseFloat(document.getElementById('sk-modal-'+sid)?.value||0)||0;
+  if(!val||!rate){hint.textContent=rate?'Masukkan jumlah ¥':'⚠ Rate kloter belum diset';hint.className='sk-jpy-hint';return;}
+  hint.textContent='→ '+fr(Math.round(val*rate))+' (¥'+fn(val)+' × '+fn(rate)+')';
+  hint.className='sk-jpy-hint ok';
 }
 
 function startSkEdit(sid,itemId){
@@ -2384,15 +2468,43 @@ function startSkEdit(sid,itemId){
 function saveSkEdit(sid,itemId){
   const k=findK(sid);if(!k||!k.stokBarang)return;
   const s=k.stokBarang.find(x=>x.id===itemId);if(!s)return;
-  const modal=parseInt(document.getElementById('ske-modal-'+sid+'-'+itemId)?.value||0)||0;
+  const eMode=(window._skEditMode&&window._skEditMode[sid+itemId])||'idr';
+  const rate=k.rate||0;
+  const rawModal=parseFloat(document.getElementById('ske-modal-'+sid+'-'+itemId)?.value||0)||0;
   const jual=parseInt(document.getElementById('ske-jual-'+sid+'-'+itemId)?.value||0)||0;
-  s.hargaModal=modal;
+  s.hargaModal=eMode==='jpy'?Math.round(rawModal*(rate||1)):Math.round(rawModal);
   s.hargaJual=jual;
+  if(eMode==='jpy'&&rawModal){s.hargaModalJpy=rawModal;}else{delete s.hargaModalJpy;}
   if(window._skEdit)delete window._skEdit[sid];
+  if(window._skEditMode)delete window._skEditMode[sid+itemId];
   sl();
   syncKloterStok(sid);
   renderKloterDetail(sid);
   toast('✓ Harga '+s.nama+' diperbarui');
+}
+
+if(!window._skEditMode)window._skEditMode={};
+function setSkEditMode(sid,itemId,mode){
+  if(!window._skEditMode)window._skEditMode={};
+  window._skEditMode[sid+itemId]=mode;
+  renderKloterDetail(sid);
+  setTimeout(()=>{
+    const el=document.getElementById('ske-modal-'+sid+'-'+itemId);
+    if(el)el.focus();
+  },40);
+}
+
+function updSkeHint(sid,itemId){
+  const k=findK(sid);if(!k)return;
+  const eMode=(window._skEditMode&&window._skEditMode[sid+itemId])||'idr';
+  const hint=document.getElementById('ske-hint-'+sid+'-'+itemId);
+  if(!hint)return;
+  if(eMode!=='jpy'){hint.textContent='';hint.className='sk-jpy-hint';return;}
+  const rate=k.rate||0;
+  const val=parseFloat(document.getElementById('ske-modal-'+sid+'-'+itemId)?.value||0)||0;
+  if(!val||!rate){hint.textContent=rate?'Masukkan jumlah ¥':'⚠ Rate kloter belum diset';hint.className='sk-jpy-hint';return;}
+  hint.textContent='→ '+fr(Math.round(val*rate))+' (¥'+fn(val)+' × '+fn(rate)+')';
+  hint.className='sk-jpy-hint ok';
 }
 
 function cancelSkEdit(sid){
