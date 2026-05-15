@@ -845,12 +845,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="page-title" id="topbar-title">Kloter Pengiriman</div>
     </div>
     <div class="topbar-right">
-      <button onclick="openTambahModal()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--g1);border:none;border-radius:20px;color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(91,94,244,.3);transition:all .2s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''"><svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Pesanan</button>
-      <div class="topbar-pill">
-        <div class="sdot2 sdot s-ld" id="sdot2" style="width:7px;height:7px;border-radius:50%;flex-shrink:0;"></div>
-        <span id="stxt2" style="font-size:11px;color:var(--t2);font-weight:500;">Memuat...</span>
-      </div>
-      <div class="topbar-count" id="topbar-badge">0 pesanan</div>
+      <button onclick="openTambahModal()" style="display:flex;align-items:center;gap:8px;padding:11px 22px;background:var(--g1);border:none;border-radius:22px;color:#fff;font-family:var(--fn);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.35);transition:all .2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(91,94,244,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(91,94,244,.35)'"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Pesanan</button>
     </div>
   </header>
 
@@ -2216,7 +2211,7 @@ function renderKloterDetail(sid){
       <div class="kcs"><div class="kcs-l">Total Jual</div><div class="kcs-v" style="color:var(--grn)">${fr(tj)}</div></div>
       <div class="kcs"><div class="kcs-l">Modal</div><div class="kcs-v" style="color:var(--red)">${fr(tm)}</div></div>
       <div class="kcs"><div class="kcs-l">Lunas</div><div class="kcs-v">${paid}<span style="color:var(--t3)">/${ko.length}</span></div></div>
-      <div class="kcs"><div class="kcs-l">Blm Dibeli</div><div class="kcs-v" style="color:${bb>0?'var(--amb)':'var(--grn)'}">${bb}</div></div>
+      <div class="kcs"><div class="kcs-l">Modal Stok</div><div class="kcs-v" style="color:${(k.stokBarang||[]).reduce((s,x)=>s+(x.hargaModal||0)*(x.qty||0),0)>0?'var(--amb)':'var(--grn)'}">${fr((k.stokBarang||[]).reduce((s,x)=>s+(x.hargaModal||0)*(x.qty||0),0))}</div></div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <select class="kstatus" style="background:${KSBg[k.status]||'#f1f5f9'};color:${KSC[k.status]||'#64748b'};border:1.5px solid ${KSBo[k.status]||'#e2e8f0'}" onchange="chgKS('${sid}',this.value)">${opts}</select>
@@ -2372,6 +2367,36 @@ function delSkItem(sid,itemId){
   k.stokBarang=k.stokBarang.filter(x=>x.id!==itemId);
   sl();
   syncKloterStok(sid);
+  renderKloterDetail(sid);
+}
+
+function startSkEdit(sid,itemId){
+  if(!window._skEdit)window._skEdit={};
+  window._skEdit[sid]=itemId;
+  renderKloterDetail(sid);
+  // scroll into view after render
+  setTimeout(()=>{
+    const el=document.getElementById('ske-modal-'+sid+'-'+itemId);
+    if(el){el.focus();el.select();}
+  },60);
+}
+
+function saveSkEdit(sid,itemId){
+  const k=findK(sid);if(!k||!k.stokBarang)return;
+  const s=k.stokBarang.find(x=>x.id===itemId);if(!s)return;
+  const modal=parseInt(document.getElementById('ske-modal-'+sid+'-'+itemId)?.value||0)||0;
+  const jual=parseInt(document.getElementById('ske-jual-'+sid+'-'+itemId)?.value||0)||0;
+  s.hargaModal=modal;
+  s.hargaJual=jual;
+  if(window._skEdit)delete window._skEdit[sid];
+  sl();
+  syncKloterStok(sid);
+  renderKloterDetail(sid);
+  toast('✓ Harga '+s.nama+' diperbarui');
+}
+
+function cancelSkEdit(sid){
+  if(window._skEdit)delete window._skEdit[sid];
   renderKloterDetail(sid);
 }
 

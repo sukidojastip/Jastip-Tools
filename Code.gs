@@ -7,6 +7,7 @@ const SHEET_NAME_KLOTERS   = "Kloters";
 const SHEET_NAME_ADDRESSES = "Addresses";
 const SHEET_NAME_KIRIM     = "KirimStatus";
 const SHEET_NAME_KATALOG   = "Katalog";
+const SHEET_NAME_STOK      = "StokBarang";
 
 function doGet(e)  { return handleRequest(e); }
 function doPost(e) { return handleRequest(e); }
@@ -34,6 +35,7 @@ function handleRequest(e) {
       case "updateKatalog":    result = updateKatalogItem(JSON.parse(params.data)); break;
       case "deleteKatalog":    result = deleteKatalogItem(params.id);             break;
       case "getKatalog":       result = getKatalog();                             break;
+      case "syncStok":         result = syncStokSheet(JSON.parse(params.data));  break;
       case "getPin":           result = getPin();                                 break;
       case "setPin":           result = setPin(params.hash);                      break;
       default:
@@ -78,6 +80,12 @@ function setupSheets() {
     const s = ss.insertSheet(SHEET_NAME_KATALOG);
     s.appendRow(["id","nama","jpy","jual","updatedAt"]);
     s.getRange(1,1,1,5).setFontWeight("bold").setBackground("#f59e0b").setFontColor("#ffffff");
+  }
+
+  if (!ss.getSheetByName(SHEET_NAME_STOK)) {
+    const s = ss.insertSheet(SHEET_NAME_STOK);
+    s.appendRow(["kloter_id","kloter_name","item_id","nama","hargaModal","hargaJual","qty","updatedAt"]);
+    s.getRange(1,1,1,8).setFontWeight("bold").setBackground("#059669").setFontColor("#ffffff");
   }
 }
 
@@ -176,6 +184,7 @@ function saveKloter(kloter) {
     JSON.stringify(kloter.pengeluaran||[]),
     JSON.stringify(kloter.stokBarang||[])
   ]);
+  syncStokSheet(kloter);
   return { saved: kloter.id };
 }
 
@@ -190,6 +199,7 @@ function updateKloter(kloter) {
         JSON.stringify(kloter.pengeluaran||[]),
         JSON.stringify(kloter.stokBarang||[])
       ]]);
+      syncStokSheet(kloter);
       return { updated: kloter.id };
     }
   }
@@ -330,6 +340,39 @@ function deleteKatalogItem(id) {
     if (String(data[i][0]) === String(id)) { sheet.deleteRow(i+1); return { deleted: id }; }
   }
   return { notFound: id };
+}
+
+// ── STOK BARANG SHEET ────────────────────────────────────
+// Keeps a flat, human-readable StokBarang sheet in sync.
+// Called automatically on every saveKloter / updateKloter.
+function syncStokSheet(kloter) {
+  setupSheets();
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME_STOK);
+  const now   = new Date().toISOString();
+  const kid   = String(kloter.id);
+  const kname = kloter.name || '';
+  const items = kloter.stokBarang || [];
+
+  // Delete all existing rows that belong to this kloter (keep header row 1)
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][0]) === kid) sheet.deleteRow(i + 1);
+  }
+
+  // Re-insert each stok item as its own row
+  items.forEach(s => {
+    sheet.appendRow([
+      kid, kname,
+      String(s.id), s.nama || '',
+      Number(s.hargaModal) || 0,
+      Number(s.hargaJual)  || 0,
+      Number(s.qty)        || 0,
+      now
+    ]);
+  });
+
+  return { synced: items.length };
 }
 
 // ── TEST ──────────────────────────────────────────────────
