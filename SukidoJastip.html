@@ -1586,11 +1586,21 @@ function setSS(s,m){
   ['stxt','stxt2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=msg;});
 }
 async function apiCall(p){
-  const url=new URL(API);
-  Object.entries(p).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
-  const ctrl=new AbortController(),tid=setTimeout(()=>ctrl.abort(),15000);
-  try{const res=await fetch(url.toString(),{signal:ctrl.signal});clearTimeout(tid);const j=await res.json();if(!j.ok)throw new Error(j.error||'API Error');return j.data;}
-  catch(e){clearTimeout(tid);throw e;}
+  // POST with form-encoded body — avoids Apps Script URL length limit (~2000 chars)
+  // Apps Script reads e.parameter from form-encoded POST body, no Code.gs changes needed
+  const body=new URLSearchParams();
+  Object.entries(p).forEach(([k,v])=>body.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
+  const ctrl=new AbortController(),tid=setTimeout(()=>ctrl.abort(),20000);
+  try{
+    const res=await fetch(API,{method:'POST',body,signal:ctrl.signal});
+    clearTimeout(tid);
+    // Apps Script may return non-JSON on redirect — handle gracefully
+    const txt=await res.text();
+    let j;
+    try{j=JSON.parse(txt);}catch(ex){throw new Error('Respon bukan JSON: '+txt.slice(0,80));}
+    if(!j.ok)throw new Error(j.error||'API Error');
+    return j.data;
+  }catch(e){clearTimeout(tid);throw e;}
 }
 async function syncNow(){
   setSS('ld','Sinkronisasi...');
@@ -2523,8 +2533,11 @@ function adjSkQty(sid,itemId,delta){
 
 async function syncKloterStok(sid){
   const k=findK(sid);if(!k)return;
-  try{await apiCall({action:'updateKloter',data:k});setSS('ok');}
-  catch(e){setSS('err','Sync stok gagal');}
+  try{
+    // Use dedicated action — only sends stokBarang array (lighter payload)
+    await apiCall({action:'updateStokBarang',id:sid,stok:k.stokBarang||[]});
+    setSS('ok');
+  }catch(e){setSS('err','Sync stok gagal');}
 }
 
 // ═══════════════════════════════════════════════════════

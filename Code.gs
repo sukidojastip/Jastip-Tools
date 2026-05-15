@@ -13,7 +13,24 @@ function doGet(e)  { return handleRequest(e); }
 function doPost(e) { return handleRequest(e); }
 
 function handleRequest(e) {
-  const params = (e && e.parameter) ? e.parameter : {};
+  // Merge URL params + POST form-encoded body (both land in e.parameter for form-encoded POST)
+  // For raw POST body (e.g. Content-Type: application/json), fall back to e.postData
+  let params = (e && e.parameter) ? Object.assign({}, e.parameter) : {};
+  if (e && e.postData && e.postData.contents && !params.action) {
+    // Try JSON body
+    try {
+      const body = JSON.parse(e.postData.contents);
+      Object.assign(params, body);
+    } catch(ex) {
+      // Try form-encoded body manually
+      try {
+        e.postData.contents.split('&').forEach(part => {
+          const [k, v] = part.split('=').map(decodeURIComponent);
+          if (k) params[k] = v;
+        });
+      } catch(ex2) {}
+    }
+  }
   const action = params.action || '';
   const output = ContentService.createTextOutput();
   output.setMimeType(ContentService.MimeType.JSON);
@@ -35,7 +52,8 @@ function handleRequest(e) {
       case "updateKatalog":    result = updateKatalogItem(JSON.parse(params.data)); break;
       case "deleteKatalog":    result = deleteKatalogItem(params.id);             break;
       case "getKatalog":       result = getKatalog();                             break;
-      case "syncStok":         result = syncStokSheet(JSON.parse(params.data));  break;
+      case "syncStok":           result = syncStokSheet(JSON.parse(params.data));  break;
+      case "updateStokBarang":   result = updateStokBarang(params.id, JSON.parse(params.stok)); break;
       case "getPin":           result = getPin();                                 break;
       case "setPin":           result = setPin(params.hash);                      break;
       default:
@@ -84,7 +102,7 @@ function setupSheets() {
 
   if (!ss.getSheetByName(SHEET_NAME_STOK)) {
     const s = ss.insertSheet(SHEET_NAME_STOK);
-    s.appendRow(["kloter_id","kloter_name","item_id","nama","hargaModal","hargaJual","qty","updatedAt"]);
+    s.appendRow(["kloter_id","kloter_name","item_id","nama","hargaModal","hargaJual","qty","hargaModalJpy","updatedAt"]);
     s.getRange(1,1,1,8).setFontWeight("bold").setBackground("#059669").setFontColor("#ffffff");
   }
 }
@@ -343,18 +361,39 @@ function deleteKatalogItem(id) {
 }
 
 // ── STOK BARANG SHEET ────────────────────────────────────
+// Lightweight update: only touches stokBarang column + StokBarang sheet.
+// Preferred over updateKloter when only stok changes.
+function updateStokBarang(kid, stokBarang) {
+  setupSheets();
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME_KLOTERS);
+  const data  = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(kid)) {
+      // Update only column 8 (stokBarang)
+      sheet.getRange(i + 1, 8, 1, 1).setValue(JSON.stringify(stokBarang));
+      // Sync flat StokBarang sheet
+      syncStokSheetById(String(kid), String(data[i][1]), stokBarang);
+      return { updated: kid, items: stokBarang.length };
+    }
+  }
+  return { notFound: kid };
+}
+
+// ── STOK BARANG SHEET ────────────────────────────────────
 // Keeps a flat, human-readable StokBarang sheet in sync.
 // Called automatically on every saveKloter / updateKloter.
 function syncStokSheet(kloter) {
+  return syncStokSheetById(String(kloter.id), kloter.name || '', kloter.stokBarang || []);
+}
+
+function syncStokSheetById(kid, kname, items) {
   setupSheets();
   const ss    = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(SHEET_NAME_STOK);
   const now   = new Date().toISOString();
-  const kid   = String(kloter.id);
-  const kname = kloter.name || '';
-  const items = kloter.stokBarang || [];
 
-  // Delete all existing rows that belong to this kloter (keep header row 1)
+  // Delete all existing rows for this kloter (keep header row 1)
   const data = sheet.getDataRange().getValues();
   for (let i = data.length - 1; i >= 1; i--) {
     if (String(data[i][0]) === kid) sheet.deleteRow(i + 1);
@@ -365,9 +404,10 @@ function syncStokSheet(kloter) {
     sheet.appendRow([
       kid, kname,
       String(s.id), s.nama || '',
-      Number(s.hargaModal) || 0,
-      Number(s.hargaJual)  || 0,
-      Number(s.qty)        || 0,
+      Number(s.hargaModal)    || 0,
+      Number(s.hargaJual)     || 0,
+      Number(s.qty)           || 0,
+      s.hargaModalJpy ? Number(s.hargaModalJpy) : '',
       now
     ]);
   });
