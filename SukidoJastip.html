@@ -826,6 +826,10 @@ input,select,textarea{font-size:16px!important;}
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
       Katalog
     </button>
+    <button class="nb" onclick="sw('stok')" id="nb-stok">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      Stok Barang
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="sync-row" onclick="syncNow()">
@@ -1046,7 +1050,135 @@ input,select,textarea{font-size:16px!important;}
       <div id="katalog-list"></div>
     </div>
 
+
+  </div><!-- end sec-katalog -->
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!--  STOK BARANG                                       -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="sec" id="sec-stok">
+
+    <!-- Header + Tombol Tambah -->
+    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:22px 24px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="card-ttl" style="margin-bottom:0">
+          <div class="ct-ico" style="background:linear-gradient(135deg,#8b5cf6,#5b5ef4)">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          Stok Barang
+          <span id="stok-sync-indicator" style="font-size:10px;color:var(--t3);font-weight:500;margin-left:8px"></span>
+        </div>
+        <button onclick="togStokForm()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,#8b5cf6,#5b5ef4);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(91,94,244,.3)">
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Stok
+          <svg id="stokchev" viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.5;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+
+      <!-- FORM TAMBAH/EDIT STOK (collapsible) -->
+      <div id="stokform" style="display:none">
+        <div style="background:var(--bg);border-radius:var(--rs);padding:16px;border:1.5px dashed var(--bor2)">
+          <div class="sk-form-title">📦 Detail Barang Stok</div>
+
+          <!-- Nama -->
+          <div style="margin-bottom:10px">
+            <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Nama Barang *</label>
+            <input id="sk-nama" placeholder="e.g. Nike Air Max 90 White 42"
+              style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none"
+              onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+          </div>
+
+          <!-- Kloter + Qty -->
+          <div class="sk-form-row" style="margin-bottom:10px">
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Kloter</label>
+              <select id="sk-kloter" onchange="calcStok()"
+                style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none">
+                <option value="">— Tanpa Kloter —</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Qty *</label>
+              <input type="number" id="sk-qty" placeholder="0" min="0"
+                style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none"
+                onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'" oninput="calcStok()"/>
+            </div>
+          </div>
+
+          <!-- Currency toggle -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Modal:</span>
+            <button id="sk-curr-idr" class="ctbtn on" onclick="setStokCurr('IDR')">IDR</button>
+            <button id="sk-curr-jpy" class="ctbtn" onclick="setStokCurr('JPY')">JPY ¥</button>
+          </div>
+          <div id="sk-rate-hint" style="display:none;font-size:11px;color:var(--acc);margin-bottom:8px;font-weight:600"></div>
+
+          <!-- Modal + Jual -->
+          <div class="sk-form-row" style="margin-bottom:10px">
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Modal / Item</label>
+              <input type="number" id="sk-modal" placeholder="0"
+                style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none"
+                onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'" oninput="calcStok()"/>
+            </div>
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Harga Jual / Item</label>
+              <input type="number" id="sk-jual" placeholder="0"
+                style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none"
+                onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'" oninput="calcStok()"/>
+            </div>
+          </div>
+
+          <!-- Margin preview -->
+          <div style="display:flex;gap:10px;background:var(--sur);border:1px solid var(--bor);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px">
+            <div style="flex:1;text-align:center">
+              <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Margin</div>
+              <div id="sk-margin" style="font-size:16px;font-weight:800;font-family:var(--mono);margin-top:2px;color:var(--pur)">0%</div>
+            </div>
+            <div style="width:1px;background:var(--bor)"></div>
+            <div style="flex:1;text-align:center">
+              <div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px">Profit / Item</div>
+              <div id="sk-profit" style="font-size:14px;font-weight:800;font-family:var(--mono);margin-top:2px;color:var(--grn)">Rp 0</div>
+            </div>
+          </div>
+
+          <!-- Catatan -->
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">Catatan</label>
+            <input id="sk-catatan" placeholder="Optional..."
+              style="width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none"
+              onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+          </div>
+
+          <!-- Save button -->
+          <div style="display:flex;gap:8px">
+            <button id="sk-cancel-btn" onclick="cancelStokEdit()" style="display:none;padding:10px 16px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
+            <button id="sk-save-btn" onclick="addStok()" style="flex:1;padding:10px;background:linear-gradient(135deg,#8b5cf6,#5b5ef4);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(139,92,246,.3)">Simpan Barang</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & List -->
+    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:22px 24px;box-shadow:var(--sh)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <input id="stok-search" placeholder="🔍 Cari nama barang / catatan..." oninput="renderStok()"
+          style="flex:1;min-width:160px;background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--fn);font-size:13px;outline:none;color:var(--txt)"
+          onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+        <select id="stok-kloter-filter" onchange="renderStok()"
+          style="background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--fn);font-size:13px;outline:none;color:var(--txt)">
+          <option value="">📦 Semua Kloter</option>
+        </select>
+        <button onclick="saveStokToSheets()" style="display:flex;align-items:center;gap:5px;padding:8px 14px;background:var(--bg);border:1.5px solid var(--bor);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer" title="Simpan ke Google Sheets">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Sync Sheets
+        </button>
+      </div>
+      <div id="stoklist"></div>
+    </div>
+
   </div>
+
 </div><!-- end .content -->
 </div><!-- end .main -->
 </div><!-- end .layout -->
@@ -1651,6 +1783,23 @@ async function syncNow(){
       saveKatalogLS();
       if(document.getElementById('katalog-list')) renderKatalog();
     }
+    // Load stok from Sheets
+    if(d.stok && d.stok.length) {
+      stokList = d.stok.map(s=>({
+        id: String(s.id),
+        nama: s.nama||'',
+        kloter: s.kloter||'',
+        qty: Number(s.qty)||0,
+        modal: Number(s.modal)||0,
+        modalJPY: Number(s.modalJPY)||0,
+        modalCurr: s.modalCurr||'IDR',
+        jual: Number(s.jual)||0,
+        catatan: s.catatan||'',
+        createdAt: s.createdAt||''
+      }));
+      saveStok();
+      if(document.getElementById('stoklist')) renderStok();
+    }
     setSS('ok',`${orders.length} pesanan · ${kloters.length} kloter`);
     refreshAll();
   }catch(e){setSS('err',e.name==='AbortError'?'Timeout':'Offline');}
@@ -1675,17 +1824,17 @@ function refreshAll(){
 // ═══════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════
-const TITLES={kloter:'Kloter Pengiriman',beli:'Daftar Beli',kirim:'Kirim & Resi',lap:'Laporan Keuangan',katalog:'Katalog Barang'};
+const TITLES={kloter:'Kloter Pengiriman',beli:'Daftar Beli',kirim:'Kirim & Resi',lap:'Laporan Keuangan',katalog:'Katalog Barang',stok:'Stok Barang'};
 const LABELS={kloter:'Manajemen',beli:'Shopping List',stok:'Inventori',kirim:'Pengiriman',lap:'Finansial',katalog:'Harga & Produk'};
 
 function sw(t){
-  ['kloter','beli','kirim','lap','katalog'].forEach(s=>{
+  ['kloter','beli','kirim','lap','katalog','stok'].forEach(s=>{
     document.getElementById('sec-'+s)?.classList.toggle('on',s===t);
     const nb=document.getElementById('nb-'+s);if(nb)nb.className='nb'+(s===t?' on':'');
   });
   const title=document.getElementById('topbar-title');if(title)title.textContent=TITLES[t]||t;
   const lbl=document.getElementById('page-lbl');if(lbl)lbl.textContent=LABELS[t]||'';
-  const renderers={kloter:renderKloter,beli:renderBeli,kirim:renderKirim,lap:renderLap,katalog:renderKatalog};
+  const renderers={kloter:renderKloter,beli:renderBeli,kirim:renderKirim,lap:renderLap,katalog:renderKatalog,stok:renderStok};
   renderers[t]?.();
   closeSidebar();
 }
@@ -3292,6 +3441,33 @@ let editStokId = null;
 
 function saveStok(){ try{ localStorage.setItem('sk_stok', JSON.stringify(stokList)); }catch(e){} }
 
+function cancelStokEdit(){
+  editStokId = null;
+  const btn = document.getElementById('sk-save-btn');
+  if(btn){ btn.textContent = 'Simpan Barang'; }
+  const cancel = document.getElementById('sk-cancel-btn');
+  if(cancel) cancel.style.display = 'none';
+  ['sk-nama','sk-catatan'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['sk-qty','sk-modal','sk-jual'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  const kl = document.getElementById('sk-kloter'); if(kl) kl.value = '';
+  setStokCurr('IDR');
+}
+
+async function saveStokToSheets(){
+  const ind = document.getElementById('stok-sync-indicator');
+  if(ind) ind.textContent = '⏳ Menyimpan...';
+  try{
+    await apiCall({action:'saveStok', stok: stokList});
+    if(ind) ind.textContent = '✅ Tersimpan ke Sheets';
+    toast('✅ Stok berhasil disimpan ke Google Sheets');
+    setTimeout(()=>{ if(ind) ind.textContent = ''; }, 3000);
+  }catch(e){
+    if(ind) ind.textContent = '❌ Gagal sync';
+    toast('⚠️ Gagal simpan ke Sheets: ' + e.message, true);
+    setTimeout(()=>{ if(ind) ind.textContent = ''; }, 4000);
+  }
+}
+
 function togStokForm(){
   const form = document.getElementById('stokform');
   const chev = document.getElementById('stokchev');
@@ -3370,6 +3546,8 @@ function addStok(){
   renderStok();
   toast('✅ Barang ' + (editStokId ? 'diupdate' : 'disimpan') + '!');
   editStokId = null;
+  // Auto-save to Sheets
+  saveStokToSheets();
 }
 
 function openEditStok(id){

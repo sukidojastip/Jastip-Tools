@@ -8,21 +8,18 @@ const SHEET_NAME_ADDRESSES = "Addresses";
 const SHEET_NAME_KIRIM     = "KirimStatus";
 const SHEET_NAME_KATALOG   = "Katalog";
 const SHEET_NAME_STOK      = "StokBarang";
+const SHEET_NAME_STOK_LIST = "StokList";   // ← NEW: untuk stok mandiri
 
 function doGet(e)  { return handleRequest(e); }
 function doPost(e) { return handleRequest(e); }
 
 function handleRequest(e) {
-  // Merge URL params + POST form-encoded body (both land in e.parameter for form-encoded POST)
-  // For raw POST body (e.g. Content-Type: application/json), fall back to e.postData
   let params = (e && e.parameter) ? Object.assign({}, e.parameter) : {};
   if (e && e.postData && e.postData.contents && !params.action) {
-    // Try JSON body
     try {
       const body = JSON.parse(e.postData.contents);
       Object.assign(params, body);
     } catch(ex) {
-      // Try form-encoded body manually
       try {
         e.postData.contents.split('&').forEach(part => {
           const [k, v] = part.split('=').map(decodeURIComponent);
@@ -52,8 +49,9 @@ function handleRequest(e) {
       case "updateKatalog":    result = updateKatalogItem(JSON.parse(params.data)); break;
       case "deleteKatalog":    result = deleteKatalogItem(params.id);             break;
       case "getKatalog":       result = getKatalog();                             break;
-      case "syncStok":           result = syncStokSheet(JSON.parse(params.data));  break;
-      case "updateStokBarang":   result = updateStokBarang(params.id, JSON.parse(params.stok)); break;
+      case "syncStok":         result = syncStokSheet(JSON.parse(params.data));   break;
+      case "updateStokBarang": result = updateStokBarang(params.id, JSON.parse(params.stok)); break;
+      case "saveStok":         result = saveStokList(JSON.parse(params.stok));    break; // ← NEW
       case "getPin":           result = getPin();                                 break;
       case "setPin":           result = setPin(params.hash);                      break;
       default:
@@ -105,6 +103,13 @@ function setupSheets() {
     s.appendRow(["kloter_id","kloter_name","item_id","nama","hargaModal","hargaJual","qty","hargaModalJpy","updatedAt"]);
     s.getRange(1,1,1,8).setFontWeight("bold").setBackground("#059669").setFontColor("#ffffff");
   }
+
+  // ── NEW: StokList sheet ──────────────────────────────────
+  if (!ss.getSheetByName(SHEET_NAME_STOK_LIST)) {
+    const s = ss.insertSheet(SHEET_NAME_STOK_LIST);
+    s.appendRow(["id","nama","kloter","qty","modal","modalJPY","modalCurr","jual","catatan","createdAt","updatedAt"]);
+    s.getRange(1,1,1,11).setFontWeight("bold").setBackground("#7c3aed").setFontColor("#ffffff");
+  }
 }
 
 // ── ORDERS ────────────────────────────────────────────────
@@ -148,8 +153,9 @@ function getAllData() {
   const addresses   = getAddresses();
   const kirimStatus = getKirimStatus();
   const katalog     = getKatalog();
+  const stok        = getStokList();   // ← NEW
 
-  return { orders, kloters, addresses, kirimStatus, katalog };
+  return { orders, kloters, addresses, kirimStatus, katalog, stok };
 }
 
 function saveOrder(order) {
@@ -360,9 +366,7 @@ function deleteKatalogItem(id) {
   return { notFound: id };
 }
 
-// ── STOK BARANG SHEET ────────────────────────────────────
-// Lightweight update: only touches stokBarang column + StokBarang sheet.
-// Preferred over updateKloter when only stok changes.
+// ── STOK BARANG (per Kloter) ──────────────────────────────
 function updateStokBarang(kid, stokBarang) {
   setupSheets();
   const ss    = SpreadsheetApp.getActiveSpreadsheet();
@@ -370,9 +374,7 @@ function updateStokBarang(kid, stokBarang) {
   const data  = sheet.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]) === String(kid)) {
-      // Update only column 8 (stokBarang)
       sheet.getRange(i + 1, 8, 1, 1).setValue(JSON.stringify(stokBarang));
-      // Sync flat StokBarang sheet
       syncStokSheetById(String(kid), String(data[i][1]), stokBarang);
       return { updated: kid, items: stokBarang.length };
     }
@@ -380,9 +382,6 @@ function updateStokBarang(kid, stokBarang) {
   return { notFound: kid };
 }
 
-// ── STOK BARANG SHEET ────────────────────────────────────
-// Keeps a flat, human-readable StokBarang sheet in sync.
-// Called automatically on every saveKloter / updateKloter.
 function syncStokSheet(kloter) {
   return syncStokSheetById(String(kloter.id), kloter.name || '', kloter.stokBarang || []);
 }
@@ -393,13 +392,11 @@ function syncStokSheetById(kid, kname, items) {
   const sheet = ss.getSheetByName(SHEET_NAME_STOK);
   const now   = new Date().toISOString();
 
-  // Delete all existing rows for this kloter (keep header row 1)
   const data = sheet.getDataRange().getValues();
   for (let i = data.length - 1; i >= 1; i--) {
     if (String(data[i][0]) === kid) sheet.deleteRow(i + 1);
   }
 
-  // Re-insert each stok item as its own row
   items.forEach(s => {
     sheet.appendRow([
       kid, kname,
@@ -415,6 +412,61 @@ function syncStokSheetById(kid, kname, items) {
   return { synced: items.length };
 }
 
+// ── STOK LIST (Mandiri) ───────────────────────────────────
+// Menyimpan seluruh stokList dari frontend ke sheet StokList.
+// Strategi: hapus semua baris lama → tulis ulang (full replace).
+function saveStokList(items) {
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_STOK_LIST);
+  const now   = new Date().toISOString();
+
+  // Hapus semua data lama (kecuali header baris 1)
+  const lastRow = sheet.getLastRow();
+  if (lastRow > 1) {
+    sheet.getRange(2, 1, lastRow - 1, 11).clearContent();
+    // Hapus baris kosong sisa
+    sheet.deleteRows(2, lastRow - 1);
+  }
+
+  // Tulis ulang semua item
+  if (items && items.length > 0) {
+    const rows = items.map(s => [
+      String(s.id),
+      s.nama        || '',
+      s.kloter      || '',
+      Number(s.qty)          || 0,
+      Number(s.modal)        || 0,
+      Number(s.modalJPY)     || 0,
+      s.modalCurr   || 'IDR',
+      Number(s.jual)         || 0,
+      s.catatan     || '',
+      s.createdAt   || '',
+      now
+    ]);
+    sheet.getRange(2, 1, rows.length, 11).setValues(rows);
+  }
+
+  return { saved: items ? items.length : 0 };
+}
+
+function getStokList() {
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_STOK_LIST);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  const headers = data[0];
+  return data.slice(1).map(row => {
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = row[i]; });
+    obj.id       = String(obj.id);
+    obj.qty      = Number(obj.qty)      || 0;
+    obj.modal    = Number(obj.modal)    || 0;
+    obj.modalJPY = Number(obj.modalJPY) || 0;
+    obj.jual     = Number(obj.jual)     || 0;
+    return obj;
+  }).filter(s => s.id && s.id !== '' && s.nama);
+}
+
 // ── TEST ──────────────────────────────────────────────────
 function testGetAll() {
   const result = getAllData();
@@ -422,8 +474,6 @@ function testGetAll() {
 }
 
 // ── PIN SECURITY ──────────────────────────────────────────
-// PIN hash is stored in Script Properties (not visible in sheet cells).
-// Only a SHA-256 hash is ever stored — never the raw PIN.
 function getPin() {
   const hash = PropertiesService.getScriptProperties().getProperty('sk_pin_hash') || '';
   return { hash: hash };
