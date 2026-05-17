@@ -74,7 +74,7 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--txt
 .sync-ico svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
 /* MAIN */
-.main{flex:1;margin-left:var(--sidebar);display:flex;flex-direction:column;min-height:100vh;}
+.main{flex:1;margin-left:var(--sidebar);display:flex;flex-direction:column;min-height:100vh;min-width:0;overflow-x:hidden;}
 
 /* TOPBAR */
 .topbar{
@@ -101,8 +101,9 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--txt
 .ham-btn svg{width:18px;height:18px;stroke:var(--txt);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block;}
 
 /* CONTENT */
-.content{flex:1;padding:20px 28px 32px;max-width:1200px;width:100%;}
+.content{flex:1;padding:20px 28px 32px;max-width:1200px;width:100%;min-width:0;overflow-x:hidden;}
 .sec{display:none;animation:fadeUp .22s ease;}
+.sec#sec-lap{max-width:100%;overflow-x:hidden;}
 .sec.on{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .ph{margin-bottom:20px;}
@@ -137,7 +138,7 @@ html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--txt
 .ppd{width:1px;background:var(--bor);align-self:stretch;}
 
 /* HERO STAT CARDS (like O2O top cards) */
-.hero-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.hero-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px;}
 .hero-card{
   border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;
   color:#fff;cursor:pointer;transition:transform .2s,box-shadow .2s;
@@ -306,11 +307,11 @@ select.si option{background:#fff;color:var(--txt);}
 .add-item-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 
 /* LAPORAN */
-.rfilt{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:flex-end;}
-.rfilt .fl{flex:1;min-width:130px;margin:0;}
+.rfilt{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:flex-end;max-width:100%;}
+.rfilt .fl{flex:1;min-width:120px;max-width:280px;margin:0;}
 .rfilt select,.rfilt input[type=date]{width:100%;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 12px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;cursor:pointer;}
 .rfilt select option{background:#fff;}
-.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.sgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px;}
 .sc{border-radius:var(--r);padding:20px 22px;border:1px solid;box-shadow:var(--sh);}
 .scg{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0;}
 .scr{background:linear-gradient(135deg,#fff1f2,#fee2e2);border-color:#fecaca;}
@@ -318,16 +319,17 @@ select.si option{background:#fff;color:var(--txt);}
 .scy{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a;}
 .scb{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;}
 .sc .ico2{font-size:24px;margin-bottom:10px;}
-.scv{font-size:22px;font-weight:800;line-height:1;font-family:var(--mono);}
+.scv{font-size:clamp(14px,1.7vw,22px);font-weight:800;line-height:1;font-family:var(--mono);word-break:break-all;}
 .scl{font-size:10px;font-weight:700;color:var(--t2);margin-top:6px;text-transform:uppercase;letter-spacing:.5px;}
 .scs{font-size:11px;color:var(--t3);margin-top:3px;}
-.bkwrap{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);overflow:hidden;margin-bottom:16px;box-shadow:var(--sh);}
-.bkhd{background:var(--bg);padding:12px 18px;display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr .8fr;gap:12px;border-bottom:1px solid var(--bor);}
+.bkwrap{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);overflow:hidden;margin-bottom:16px;box-shadow:var(--sh);max-width:100%;}
+.bkhd{background:var(--bg);padding:12px 18px;display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr .8fr;gap:8px;border-bottom:1px solid var(--bor);min-width:0;}
 .bkhd span{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;}
-.bkr{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr .8fr;gap:12px;padding:13px 18px;border-top:1px solid var(--bor);align-items:center;transition:background .15s;}
+.bkr{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr .8fr;gap:8px;padding:13px 18px;border-top:1px solid var(--bor);align-items:center;transition:background .15s;min-width:0;}
 .bkr:hover{background:var(--bg);}
-.bkn{font-size:13px;font-weight:700;}.bkv{font-size:13px;font-weight:700;font-family:var(--mono);}
-.bks{font-size:10px;color:var(--t3);margin-top:1px;}
+.bkn{font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bkv{font-size:14px;font-weight:700;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bks{font-size:11px;color:var(--t3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sdot2{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:3px;}
 .pirow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--bor);}
 .pirow:last-child{border:none;padding-bottom:0;}
@@ -411,6 +413,7 @@ select.si option{background:#fff;color:var(--txt);}
   .g2,.g3,.pay-grid{grid-template-columns:1fr;}
   .bkhd,.bkr{grid-template-columns:1.5fr 1fr 1fr;}
   .bkhd span:nth-child(n+4),.bkr>div:nth-child(n+4){display:none;}
+  .scv{font-size:clamp(13px,2.8vw,18px);}
   .kloter-wrap{flex-direction:column;height:auto;}
   .kloter-left{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--bor);}
   .kl-list{max-height:180px;}
@@ -1660,7 +1663,7 @@ const PLATFORM_SHIPS = ['Shopee','Tokopedia','Toco'];
 
 // ─── STATE ──────────────────────────────────────────────
 let orders=[], kloters=[], stokList=[];
-let editId=null, qiCust=null, qiKid=null, resiCust=null, resiKloter='', _editResiKloter='';
+let editId=null, qiCust=null, qiKid=null, resiCust=null;
 let activeKid=null, _pendingOrder=null, _pickedStokId=null, _editResiCust=null;
 let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={}, kirimPacked={};
 let piutangOpen=false;
@@ -1676,8 +1679,7 @@ try{kirimSent=JSON.parse(localStorage.getItem('sk_sent')||'{}');}catch(e){kirimS
 // ─── SAVE ──────────────────────────────────────────────
 function sl(){try{localStorage.setItem('sk_o',JSON.stringify(orders));localStorage.setItem('sk_k',JSON.stringify(kloters));}catch(e){}}
 function slKirim(){try{localStorage.setItem('sk_packed',JSON.stringify(kirimPacked));localStorage.setItem('sk_sent',JSON.stringify(kirimSent));}catch(e){}}
-function kirimKey(cust,kloter){return cust+'||'+(kloter||'');}
-async function syncKirimStatus(cust,kloter){const k=kirimKey(cust,kloter);try{await apiCall({action:'saveKirimStatus',data:{custName:cust,kloter:kloter||'',packed:!!kirimPacked[k],sent:!!kirimSent[k]}});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
+async function syncKirimStatus(cust){try{await apiCall({action:'saveKirimStatus',data:{custName:cust,packed:!!kirimPacked[cust],sent:!!kirimSent[cust]}});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 
 
 // ─── HELPERS ───────────────────────────────────────────
@@ -1760,7 +1762,7 @@ async function syncNow(){
       return o;
     });
     kloters=d.kloters||[];sl();
-    if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([key,s])=>{kirimPacked[key]=!!s.packed;kirimSent[key]=!!s.sent;});}
+    if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([cust,s])=>{kirimPacked[cust]=!!s.packed;kirimSent[cust]=!!s.sent;});}
     // Load addresses from Sheets into localStorage
     if(d.addresses&&d.addresses.length){
       d.addresses.forEach(addr=>{
@@ -2098,7 +2100,7 @@ async function saveCustPay(cust,kloterName){
   const sbayar=document.getElementById('cb-st-'+key)?.value||'Unpaid';
   const admin=+document.getElementById('cb-adm-'+key)?.value||0;
   const dp=+document.getElementById('cb-pay-'+key)?.value||0;
-  const payer=(document.querySelector('input[name="cb-payer-'+key+'"]:checked')?.value)||'seller';
+  const payer=document.getElementById('cb-payer-'+key)?.value||'seller';
   const cos=orders.filter(o=>o.cust===cust&&o.batch===kloterName&&o.ostatus!=='CANCELLED');
   if(!cos.length){toast('Tidak ada pesanan aktif',true);return;}
   const totalJual2=cos.reduce((s,o)=>s+o.jual*o.qty,0);
@@ -2114,10 +2116,24 @@ async function saveCustPay(cust,kloterName){
   if(activeKid)renderKloterDetail(activeKid);else renderKloter();renderLap();toast('✅ Status bayar disimpan!');
   for(const o of cos){try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 }
+function setBayarOngkir(key,val,totalJual){
+  const hi=document.getElementById('cb-payer-'+key);if(hi)hi.value=val;
+  const SELLER_ON='flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:rgba(91,94,244,.12);border:2px solid var(--acc);color:var(--acc)';
+  const SELLER_OFF='flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:var(--bg);border:1.5px solid var(--bor);color:var(--t3)';
+  const CUST_ON='flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:rgba(239,68,68,.1);border:2px solid var(--red);color:var(--red)';
+  const CUST_OFF='flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:var(--bg);border:1.5px solid var(--bor);color:var(--t3)';
+  const CHK='<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>';
+  const CIR='<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.35;flex-shrink:0"><circle cx="12" cy="12" r="9"/></svg>';
+  const bs=document.getElementById('cb-payer-btn-seller-'+key);
+  if(bs){bs.style.cssText=val==='seller'?SELLER_ON:SELLER_OFF;bs.innerHTML=(val==='seller'?CHK:CIR)+' \uD83C\uDFEA Seller';}
+  const bc=document.getElementById('cb-payer-btn-customer-'+key);
+  if(bc){bc.style.cssText=val==='customer'?CUST_ON:CUST_OFF;bc.innerHTML=(val==='customer'?CHK:CIR)+' \uD83D\uDC64 Customer';}
+  calcSisa(key,totalJual);
+}
 function calcSisa(key,totalJual){
   const bayar=+document.getElementById('cb-pay-'+key)?.value||0;
   const admin=+document.getElementById('cb-adm-'+key)?.value||0;
-  const payer=(document.querySelector('input[name="cb-payer-'+key+'"]:checked')?.value)||'seller';
+  const payer=document.getElementById('cb-payer-'+key)?.value||'seller';
   // If customer pays ongkir → add to their bill (sisa bayar naik)
   // If seller pays ongkir → doesn't affect customer bill (sudah dipotong dari untung via unt())
   const effectiveTotal = payer==='customer' ? totalJual+admin : totalJual;
@@ -2262,15 +2278,28 @@ function custCard(cust,custOrders,kloterName){
           <div class="fl">
             <label>Admin / Ongkir (Rp)</label>
             <input type="number" id="cb-adm-${key}" value="${curAdmin||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/>
-            <div style="display:flex;gap:12px;margin-top:7px">
-              <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2)">
-                <input type="radio" name="cb-payer-${key}" value="seller" ${(ref.ongkirPayer||'seller')==='seller'?'checked':''} onchange="calcSisa('${key}',${totalJual})"/>
-                <span>🏪 Seller (kurangi untung)</span>
-              </label>
-              <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2)">
-                <input type="radio" name="cb-payer-${key}" value="customer" ${(ref.ongkirPayer||'seller')==='customer'?'checked':''} onchange="calcSisa('${key}',${totalJual})"/>
-                <span>👤 Customer (tambah tagihan)</span>
-              </label>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button type="button" id="cb-payer-btn-seller-${key}"
+                onclick="setBayarOngkir('${key}','seller',${totalJual})"
+                style="${(ref.ongkirPayer||'seller')==='seller'
+                  ?'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:rgba(91,94,244,.12);border:2px solid var(--acc);color:var(--acc)'
+                  :'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:var(--bg);border:1.5px solid var(--bor);color:var(--t3)'}">
+                ${(ref.ongkirPayer||'seller')==='seller'
+                  ?'<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>'
+                  :'<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.35;flex-shrink:0"><circle cx="12" cy="12" r="9"/></svg>'}
+                🏪 Seller
+              </button>
+              <button type="button" id="cb-payer-btn-customer-${key}"
+                onclick="setBayarOngkir('${key}','customer',${totalJual})"
+                style="${(ref.ongkirPayer||'seller')==='customer'
+                  ?'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:rgba(239,68,68,.1);border:2px solid var(--red);color:var(--red)'
+                  :'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:var(--bg);border:1.5px solid var(--bor);color:var(--t3)'}">
+                ${(ref.ongkirPayer||'seller')==='customer'
+                  ?'<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>'
+                  :'<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.35;flex-shrink:0"><circle cx="12" cy="12" r="9"/></svg>'}
+                👤 Customer
+              </button>
+              <input type="hidden" id="cb-payer-${key}" value="${ref.ongkirPayer||'seller'}"/>
             </div>
           </div>
         </div>
@@ -2818,7 +2847,6 @@ function renderLap(){
   const bayarBadges=document.getElementById('bayar-summary-badges');
   if(!bayarCard||!bayarTbody)return;
 
-  // Build grouped data per (cust, kloter) dari semua order aktif
   const allGroups={};
   f.filter(o=>o.ostatus!=='CANCELLED').forEach(o=>{
     const key=o.cust+'||'+(o.batch||'');
@@ -2826,13 +2854,8 @@ function renderLap(){
     allGroups[key].items.push(o);
     allGroups[key].totalJual+=o.jual*o.qty;
     if(o.dp>0)allGroups[key].dp=o.dp;
-    // ambil ongkir dari admin (biaya kirim)
-    if((o.admin||0)>0)allGroups[key].ongkir=o.admin||0;
-    // ongkirPayer dari order terakhir yang punya admin
-    if((o.admin||0)>0)allGroups[key].ongkirPayer=o.ongkirPayer||'seller';
-    // ship dari order pertama
+    if((o.admin||0)>0){allGroups[key].ongkir=o.admin||0;allGroups[key].ongkirPayer=o.ongkirPayer||'seller';}
     if(!allGroups[key].ship&&o.ship)allGroups[key].ship=o.ship;
-    // sbayar paling "tinggi" per group (Paid > DP > Hold > Unpaid)
     const rank={Paid:4,'Down Payment':3,'Hold Tokopedia':2,'Hold Shopee':2,Unpaid:1};
     if((rank[o.sbayar]||0)>(rank[allGroups[key].sbayar]||0))allGroups[key].sbayar=o.sbayar;
   });
@@ -2841,12 +2864,11 @@ function renderLap(){
   if(!entries.length){bayarCard.style.display='none';return;}
   bayarCard.style.display='block';
 
-  // Hitung summary
   const nLunas=entries.filter(g=>g.sbayar==='Paid').length;
   const nDP=entries.filter(g=>g.sbayar==='Down Payment').length;
   const nHold=entries.filter(g=>g.sbayar.startsWith('Hold')).length;
   const nUnpaid=entries.filter(g=>g.sbayar==='Unpaid').length;
-  const totalPiutang=entries.reduce((s,g)=>{if(g.sbayar==='Paid')return s;return s+Math.max(0,g.totalJual-g.dp);},0);
+  const totalPiutang=entries.reduce((s,g)=>{if(g.sbayar==='Paid')return s;const isCust=g.ongkirPayer==='customer';return s+Math.max(0,(g.totalJual+(isCust?g.ongkir:0))-g.dp);},0);
 
   const mkBadge=(label,count,bg,color,border)=>count?`<span style="background:${bg};color:${color};border:1px solid ${border};border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700">${label}: ${count}</span>`:'';
   if(bayarBadges)bayarBadges.innerHTML=
@@ -2856,73 +2878,46 @@ function renderLap(){
     mkBadge('❌ Belum',nUnpaid,'#fee2e2','#991b1b','#fecaca')+
     (totalPiutang>0?`<span style="background:rgba(245,158,11,.1);color:var(--amb);border:1px solid rgba(245,158,11,.3);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;font-family:var(--mono)">Sisa ${fr(totalPiutang)}</span>`:'');
 
-  // Sort: Unpaid → Hold → DP → Paid; per grup sort by sisa desc
   const sortRank={Unpaid:0,'Hold Tokopedia':1,'Hold Shopee':1,'Down Payment':2,Paid:3};
   entries.sort((a,b)=>{
     const ra=sortRank[a.sbayar]??0,rb=sortRank[b.sbayar]??0;
     if(ra!==rb)return ra-rb;
-    return Math.max(0,b.totalJual-b.dp)-Math.max(0,a.totalJual-a.dp);
+    const sa=Math.max(0,(a.totalJual+(a.ongkirPayer==='customer'?a.ongkir:0))-a.dp);
+    const sb=Math.max(0,(b.totalJual+(b.ongkirPayer==='customer'?b.ongkir:0))-b.dp);
+    return sb-sa;
   });
 
-  // Status badge config
-  const stBadge={
-    Paid:'background:#dcfce7;color:#166534;border:1px solid #bbf7d0',
-    'Down Payment':'background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe',
-    'Hold Tokopedia':'background:#fef9c3;color:#854d0e;border:1px solid #fde68a',
-    'Hold Shopee':'background:#fef9c3;color:#854d0e;border:1px solid #fde68a',
-    'Unpaid':'background:#fee2e2;color:#991b1b;border:1px solid #fecaca'
-  };
+  const stBadge={Paid:'background:#dcfce7;color:#166534;border:1px solid #bbf7d0','Down Payment':'background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe','Hold Tokopedia':'background:#fef9c3;color:#854d0e;border:1px solid #fde68a','Hold Shopee':'background:#fef9c3;color:#854d0e;border:1px solid #fde68a','Unpaid':'background:#fee2e2;color:#991b1b;border:1px solid #fecaca'};
   const stLabel={Paid:'✓ Lunas','Down Payment':'DP','Hold Tokopedia':'Hold Toped','Hold Shopee':'Hold Shopee',Unpaid:'Belum'};
-
-  // Cell style helper (Excel-like grid)
   const cs=(extra='')=>`padding:8px 10px;border-bottom:1px solid var(--bor);border-right:1px solid var(--bor);${extra}`;
   const csLast=(extra='')=>`padding:8px 10px;border-bottom:1px solid var(--bor);${extra}`;
 
   bayarTbody.innerHTML=entries.map((g,i)=>{
-    const isCustomerPaysOngkir=g.ongkirPayer==='customer';
-    const tagihan=g.totalJual+(isCustomerPaysOngkir?g.ongkir:0);
+    const isCustPaysOngkir=g.ongkirPayer==='customer';
+    const tagihan=g.totalJual+(isCustPaysOngkir?g.ongkir:0);
     const sisa=g.sbayar==='Paid'?0:Math.max(0,tagihan-g.dp);
-    const isOdd=i%2===0;
-    const rowBg=isOdd?'var(--sur)':'var(--bg)';
+    const rowBg=i%2===0?'var(--sur)':'var(--bg)';
     const stStyle=stBadge[g.sbayar]||'background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0';
     const stText=stLabel[g.sbayar]||g.sbayar;
-    const custKloter=g.kloter;
-    const navAttrs=`data-cust="${encodeURIComponent(g.cust)}" data-kloter="${encodeURIComponent(custKloter)}"`;
-    const payerLabel=isCustomerPaysOngkir
+    const navAttrs=`data-cust="${encodeURIComponent(g.cust)}" data-kloter="${encodeURIComponent(g.kloter)}"`;
+    const payerLabel=isCustPaysOngkir
       ?'<span style="font-size:10px;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:4px;padding:1px 6px;font-weight:700">Customer</span>'
       :'<span style="font-size:10px;background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe;border-radius:4px;padding:1px 6px;font-weight:700">Seller</span>';
     return `<tr class="bayar-nav-row" ${navAttrs} style="background:${rowBg};cursor:pointer;transition:background .12s" onmouseover="this.style.background='rgba(91,94,244,.05)'" onmouseout="this.style.background='${rowBg}'">
-      <td style="${cs()}">
-        <div style="font-weight:700;font-size:12px;color:var(--dark);white-space:nowrap">${g.cust}</div>
-        <div style="font-size:10px;color:var(--t3);margin-top:1px">${g.items.length} item</div>
-      </td>
-      <td style="${cs()}">
-        ${g.kloter?`<span style="font-size:10px;background:rgba(91,94,244,.1);color:var(--acc);border-radius:4px;padding:2px 6px;font-weight:700;white-space:nowrap">${g.kloter}</span>`:'<span style="color:var(--t3);font-size:11px">—</span>'}
-      </td>
-      <td style="${cs('white-space:nowrap;font-size:11px')}">
-        ${g.ship||'<span style="color:var(--t3)">—</span>'}
-      </td>
-      <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px')}">
-        ${g.ongkir>0?`<span style="color:var(--red);font-weight:600">${fr(g.ongkir)}</span>`:'<span style="color:var(--t3)">—</span>'}
-      </td>
+      <td style="${cs()}"><div style="font-weight:700;font-size:12px;color:var(--dark);white-space:nowrap">${g.cust}</div><div style="font-size:10px;color:var(--t3);margin-top:1px">${g.items.length} item</div></td>
+      <td style="${cs()}">${g.kloter?`<span style="font-size:10px;background:rgba(91,94,244,.1);color:var(--acc);border-radius:4px;padding:2px 6px;font-weight:700;white-space:nowrap">${g.kloter}</span>`:'<span style="color:var(--t3);font-size:11px">—</span>'}</td>
+      <td style="${cs('white-space:nowrap;font-size:11px')}">${g.ship||'<span style="color:var(--t3)">—</span>'}</td>
+      <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px')}">${g.ongkir>0?`<span style="color:var(--red);font-weight:600">${fr(g.ongkir)}</span>`:'<span style="color:var(--t3)">—</span>'}</td>
       <td style="${cs('text-align:center')}">${g.ongkir>0?payerLabel:'<span style="color:var(--t3);font-size:11px">—</span>'}</td>
       <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px')}">${fr(g.totalJual)}</td>
-      <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px;font-weight:700')}">
-        ${isCustomerPaysOngkir&&g.ongkir>0?`<span style="color:var(--dark)">${fr(tagihan)}</span>`:fr(g.totalJual)}
-      </td>
+      <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px;font-weight:700')}">${isCustPaysOngkir&&g.ongkir>0?fr(tagihan):fr(g.totalJual)}</td>
       <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px;color:'+(g.dp>0?'var(--acc)':'var(--t3)'))}">
-        ${g.dp>0?fr(g.dp):'—'}
-      </td>
-      <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px;font-weight:700;color:'+(sisa>0?'var(--amb)':'var(--grn)'))}">
-        ${sisa>0?fr(sisa):'<span style="color:var(--grn)">✓</span>'}
-      </td>
-      <td style="${csLast('text-align:center')}">
-        <span style="${stStyle};border-radius:6px;padding:3px 9px;font-size:10px;font-weight:700;white-space:nowrap">${stText}</span>
-      </td>
+        ${g.dp>0?fr(g.dp):'—'}</td>
+      <td style="${cs('text-align:right;font-family:var(--mono);font-size:12px;font-weight:700;color:'+(sisa>0?'var(--amb)':'var(--grn)'))}">${sisa>0?fr(sisa):'<span style="color:var(--grn)">✓</span>'}</td>
+      <td style="${csLast('text-align:center')}"><span style="${stStyle};border-radius:6px;padding:3px 9px;font-size:10px;font-weight:700;white-space:nowrap">${stText}</span></td>
     </tr>`;
   }).join('');
 
-  // Attach click to navigate to kloter
   bayarTbody.querySelectorAll('.bayar-nav-row').forEach(function(row){
     row.addEventListener('click',function(){
       goToPiCust(decodeURIComponent(this.dataset.cust),decodeURIComponent(this.dataset.kloter));
@@ -3053,18 +3048,18 @@ function buildLink(cust,cos){
   const itemsData=cos.map(o=>({name:o.item,qty:o.qty,price:o.jual||0}));
   return base+'?custName='+encodeURIComponent(cust)+'&items='+encodeURIComponent(JSON.stringify(itemsData))+'&total='+total;
 }
-function copyLink(cust,kloter){
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED'&&(!kloter||o.batch===kloter));
+function copyLink(cust){
+  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
   const link=buildLink(cust,cos);
   navigator.clipboard.writeText(link).then(()=>toast('✅ Link disalin!')).catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('✅ Link disalin!');});
 }
-function togKirimOpen(cust,kloter){var k=kirimKey(cust,kloter);
-  if(!kirimOpen[k]){Object.keys(kirimOpen).forEach(x=>{kirimOpen[x]=false;});}
-  kirimOpen[k]=!kirimOpen[k];
+function togKirimOpen(cust){
+  if(!kirimOpen[cust]){Object.keys(kirimOpen).forEach(k=>{kirimOpen[k]=false;});}
+  kirimOpen[cust]=!kirimOpen[cust];
   renderKirim();
 }
-function togKirimSent(cust,kloter){var k=kirimKey(cust,kloter);kirimSent[k]=!kirimSent[k];if(kirimSent[k])kirimPacked[k]=true;slKirim();syncKirimStatus(cust,kloter);renderKirim();}
-function togKirimPacked(cust,kloter){var k=kirimKey(cust,kloter);kirimPacked[k]=!kirimPacked[k];if(!kirimPacked[k])kirimSent[k]=false;slKirim();syncKirimStatus(cust,kloter);renderKirim();}
+function togKirimSent(cust){kirimSent[cust]=!kirimSent[cust];if(kirimSent[cust])kirimPacked[cust]=true;slKirim();syncKirimStatus(cust);renderKirim();}
+function togKirimPacked(cust){kirimPacked[cust]=!kirimPacked[cust];if(!kirimPacked[cust])kirimSent[cust]=false;slKirim();syncKirimStatus(cust);renderKirim();}
 
 function renderKirim(){
   const kn = document.getElementById('k-kl')?.value || '';
@@ -3076,15 +3071,14 @@ function renderKirim(){
     el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><p>Belum Ada Pesanan</p><small>Tambah pesanan dulu</small></div>`;
     return;
   }
-  // Build custs map — group per (cust, kloter) agar status terpisah
+  // Build custs map
   const custs = {};
   filt.forEach(o => {
-    const ck=kirimKey(o.cust, o.batch||'');
-    if(!custs[ck]) custs[ck] = {cust:o.cust, kloter:o.batch||'', orders:[], ship:o.ship, stype:o.stype};
-    custs[ck].orders.push(o);
+    if(!custs[o.cust]) custs[o.cust] = {cust:o.cust, orders:[], ship:o.ship, stype:o.stype};
+    custs[o.cust].orders.push(o);
   });
   let entries = Object.values(custs);
-  if(q)  entries = entries.filter(e => e.cust.toLowerCase().includes(q) || e.kloter.toLowerCase().includes(q) || e.orders.some(o => o.item.toLowerCase().includes(q)));
+  if(q)  entries = entries.filter(e => e.cust.toLowerCase().includes(q) || e.orders.some(o => o.item.toLowerCase().includes(q)));
   if(sf) entries = entries.filter(e => e.orders.some(o => o.ship === sf));
   if(!entries.length){ el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--t3)">Tidak ada hasil</div>`; return; }
 
@@ -3117,7 +3111,7 @@ function renderKirim(){
   // Active group content
   const activeGroup = groups[kirimTab] || groups.siap;
   const activeItems = activeGroup.items;
-  const sortedItems=[...activeItems].sort(function(a,b){var ka=kirimKey(a.cust,a.kloter),kb=kirimKey(b.cust,b.kloter),sa=kirimSent[ka]?2:kirimPacked[ka]?1:0,sb=kirimSent[kb]?2:kirimPacked[kb]?1:0;return sa-sb;});
+  const sortedItems=[...activeItems].sort(function(a,b){var sa=kirimSent[a.cust]?2:kirimPacked[a.cust]?1:0,sb=kirimSent[b.cust]?2:kirimPacked[b.cust]?1:0;return sa-sb;});
   const listHtml=sortedItems.length?sortedItems.map(e=>renderKirimCard(e)).join(''):'<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">'+activeGroup.ico+' Tidak ada pesanan</div>';
 
   el.innerHTML = `
@@ -3135,7 +3129,7 @@ function renderKirimCard(c){
   var addr=getAddr(c.cust),hasA=!!addr;
   var isPlat=c.orders.some(function(o){return PLATFORM_SHIPS.includes(o.ship);});
   var tj=c.orders.reduce(function(s,o){return s+o.jual*o.qty;},0);
-  var ck_=kirimKey(c.cust,c.kloter),isOpen=!!kirimOpen[ck_],isSent=!!kirimSent[ck_],isPacked=!!kirimPacked[ck_];
+  var isOpen=!!kirimOpen[c.cust],isSent=!!kirimSent[c.cust],isPacked=!!kirimPacked[c.cust];
   var ckId='kchk-'+encKey(c.cust,'chk');
   // Card style
   var cs='margin-bottom:8px;'+(isSent?'opacity:.55;border-left:4px solid var(--grn);':isPacked?'border-left:4px solid var(--amb);':'');
@@ -3157,11 +3151,11 @@ function renderKirimCard(c){
     isPacked?'<span class="ccbadge" style="background:#fef9c3;color:#854d0e;border:1px solid #fef08a">📦 Packed</span>':'';
   // Action buttons
   var rBtn=(hasA||isPlat)?
-    '<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="padding:7px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🖨️ Resi</button>':
+    '<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\')" style="padding:7px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🖨️ Resi</button>':
     '<button disabled style="padding:7px 10px;background:#fef9c3;border:1.5px solid #fef08a;border-radius:8px;color:#854d0e;font-family:var(--fn);font-size:11px;cursor:not-allowed">⏳</button>';
-  var lBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">🔗</button>':'';
-  var eBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;cursor:pointer">✏️</button>':'';
-  var chv='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="width:18px;height:18px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;cursor:pointer;flex-shrink:0;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  var lBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">🔗</button>':'';
+  var eBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;cursor:pointer">✏️</button>':'';
+  var chv='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\')" style="width:18px;height:18px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;cursor:pointer;flex-shrink:0;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
   // Detail items
   var itms='<div class="ccitems">'+c.orders.map(function(o){
     return'<div class="ccir"><span class="ccin">• '+o.item+'</span><span class="cciv">Qty '+o.qty+' · '+fr(o.jual*o.qty)+'</span></div>';
@@ -3177,19 +3171,18 @@ function renderKirimCard(c){
       // Pack → Kirim
       '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'+
         '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
-          '<button onclick="togKirimPacked(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+pB+';background:'+pBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">📦</button>'+
+          '<button onclick="togKirimPacked(\''+esc(c.cust)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+pB+';background:'+pBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">📦</button>'+
           '<span style="font-size:7px;font-weight:700;color:'+(isPacked||isSent?'var(--amb)':'var(--t3)')+'">PACK</span>'+
         '</div>'+
         '<svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:var(--bor2);fill:none;stroke-width:2.5;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
         '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
-          '<button onclick="togKirimSent(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+sB+';background:'+sBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">'+sIco+'</button>'+
+          '<button onclick="togKirimSent(\''+esc(c.cust)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+sB+';background:'+sBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">'+sIco+'</button>'+
           '<span style="font-size:7px;font-weight:700;color:'+(isSent?'var(--grn)':'var(--t3)')+'">KIRIM</span>'+
         '</div>'+
       '</div>'+
       // Name + info (clickable)
-      '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')">'+
+      '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\')">'+
         nP+
-        (c.kloter?'<div style="font-size:9px;background:rgba(91,94,244,.1);color:var(--acc);border-radius:4px;padding:1px 6px;font-weight:700;margin-top:2px;display:inline-block">'+c.kloter+'</div>':'')+
         '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">'+
           addrBadge+statusBadge+
         '</div>'+
@@ -3242,9 +3235,9 @@ function _printResiList(custList,bulkIsiMap){
 }
 
 // ─── RESI FUNCTIONS ────────────────────────────────────
-function showResi(cust,kloter){
-  resiCust=cust; resiKloter=kloter||'';
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED'&&(!kloter||o.batch===kloter));if(!cos.length)return;
+function showResi(cust){
+  resiCust=cust;
+  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');if(!cos.length)return;
   const addr=getAddr(cust),isPlat=cos.some(o=>PLATFORM_SHIPS.includes(o.ship));
   const il=cos.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', ');
   // Open resi detail confirm popup
@@ -3303,9 +3296,9 @@ function printResi(){const c=document.getElementById('resi-area');if(!c)return;c
 function closeResi(){document.getElementById('resimod').style.display='none';}
 
 // ─── EDIT RESI ─────────────────────────────────────────
-function openEditResi(cust,kloter){
-  _editResiCust=cust; _editResiKloter=kloter||'';const addr=getAddr(cust);
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED'&&(!kloter||o.batch===kloter));
+function openEditResi(cust){
+  _editResiCust=cust;const addr=getAddr(cust);
+  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
   const ship=cos[0]?.ship||'Regular JNT';
   const il=cos.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', ');
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
