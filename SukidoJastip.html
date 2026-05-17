@@ -1652,7 +1652,7 @@ const PLATFORM_SHIPS = ['Shopee','Tokopedia','Toco'];
 
 // ─── STATE ──────────────────────────────────────────────
 let orders=[], kloters=[], stokList=[];
-let editId=null, qiCust=null, qiKid=null, resiCust=null;
+let editId=null, qiCust=null, qiKid=null, resiCust=null, resiKloter='', _editResiKloter='';
 let activeKid=null, _pendingOrder=null, _pickedStokId=null, _editResiCust=null;
 let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={}, kirimPacked={};
 let piutangOpen=false;
@@ -1668,7 +1668,8 @@ try{kirimSent=JSON.parse(localStorage.getItem('sk_sent')||'{}');}catch(e){kirimS
 // ─── SAVE ──────────────────────────────────────────────
 function sl(){try{localStorage.setItem('sk_o',JSON.stringify(orders));localStorage.setItem('sk_k',JSON.stringify(kloters));}catch(e){}}
 function slKirim(){try{localStorage.setItem('sk_packed',JSON.stringify(kirimPacked));localStorage.setItem('sk_sent',JSON.stringify(kirimSent));}catch(e){}}
-async function syncKirimStatus(cust){try{await apiCall({action:'saveKirimStatus',data:{custName:cust,packed:!!kirimPacked[cust],sent:!!kirimSent[cust]}});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
+function kirimKey(cust,kloter){return cust+'||'+(kloter||'');}
+async function syncKirimStatus(cust,kloter){const k=kirimKey(cust,kloter);try{await apiCall({action:'saveKirimStatus',data:{custName:cust,kloter:kloter||'',packed:!!kirimPacked[k],sent:!!kirimSent[k]}});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 
 
 // ─── HELPERS ───────────────────────────────────────────
@@ -1751,7 +1752,7 @@ async function syncNow(){
       return o;
     });
     kloters=d.kloters||[];sl();
-    if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([cust,s])=>{kirimPacked[cust]=!!s.packed;kirimSent[cust]=!!s.sent;});}
+    if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([key,s])=>{kirimPacked[key]=!!s.packed;kirimSent[key]=!!s.sent;});}
     // Load addresses from Sheets into localStorage
     if(d.addresses&&d.addresses.length){
       d.addresses.forEach(addr=>{
@@ -2987,18 +2988,18 @@ function buildLink(cust,cos){
   const itemsData=cos.map(o=>({name:o.item,qty:o.qty,price:o.jual||0}));
   return base+'?custName='+encodeURIComponent(cust)+'&items='+encodeURIComponent(JSON.stringify(itemsData))+'&total='+total;
 }
-function copyLink(cust){
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
+function copyLink(cust,kloter){
+  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED'&&(!kloter||o.batch===kloter));
   const link=buildLink(cust,cos);
   navigator.clipboard.writeText(link).then(()=>toast('✅ Link disalin!')).catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('✅ Link disalin!');});
 }
-function togKirimOpen(cust){
-  if(!kirimOpen[cust]){Object.keys(kirimOpen).forEach(k=>{kirimOpen[k]=false;});}
-  kirimOpen[cust]=!kirimOpen[cust];
+function togKirimOpen(cust,kloter){var k=kirimKey(cust,kloter);
+  if(!kirimOpen[k]){Object.keys(kirimOpen).forEach(x=>{kirimOpen[x]=false;});}
+  kirimOpen[k]=!kirimOpen[k];
   renderKirim();
 }
-function togKirimSent(cust){kirimSent[cust]=!kirimSent[cust];if(kirimSent[cust])kirimPacked[cust]=true;slKirim();syncKirimStatus(cust);renderKirim();}
-function togKirimPacked(cust){kirimPacked[cust]=!kirimPacked[cust];if(!kirimPacked[cust])kirimSent[cust]=false;slKirim();syncKirimStatus(cust);renderKirim();}
+function togKirimSent(cust,kloter){var k=kirimKey(cust,kloter);kirimSent[k]=!kirimSent[k];if(kirimSent[k])kirimPacked[k]=true;slKirim();syncKirimStatus(cust,kloter);renderKirim();}
+function togKirimPacked(cust,kloter){var k=kirimKey(cust,kloter);kirimPacked[k]=!kirimPacked[k];if(!kirimPacked[k])kirimSent[k]=false;slKirim();syncKirimStatus(cust,kloter);renderKirim();}
 
 function renderKirim(){
   const kn = document.getElementById('k-kl')?.value || '';
@@ -3010,14 +3011,15 @@ function renderKirim(){
     el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><p>Belum Ada Pesanan</p><small>Tambah pesanan dulu</small></div>`;
     return;
   }
-  // Build custs map
+  // Build custs map — group per (cust, kloter) agar status terpisah
   const custs = {};
   filt.forEach(o => {
-    if(!custs[o.cust]) custs[o.cust] = {cust:o.cust, orders:[], ship:o.ship, stype:o.stype};
-    custs[o.cust].orders.push(o);
+    const ck=kirimKey(o.cust, o.batch||'');
+    if(!custs[ck]) custs[ck] = {cust:o.cust, kloter:o.batch||'', orders:[], ship:o.ship, stype:o.stype};
+    custs[ck].orders.push(o);
   });
   let entries = Object.values(custs);
-  if(q)  entries = entries.filter(e => e.cust.toLowerCase().includes(q) || e.orders.some(o => o.item.toLowerCase().includes(q)));
+  if(q)  entries = entries.filter(e => e.cust.toLowerCase().includes(q) || e.kloter.toLowerCase().includes(q) || e.orders.some(o => o.item.toLowerCase().includes(q)));
   if(sf) entries = entries.filter(e => e.orders.some(o => o.ship === sf));
   if(!entries.length){ el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--t3)">Tidak ada hasil</div>`; return; }
 
@@ -3050,7 +3052,7 @@ function renderKirim(){
   // Active group content
   const activeGroup = groups[kirimTab] || groups.siap;
   const activeItems = activeGroup.items;
-  const sortedItems=[...activeItems].sort(function(a,b){var sa=kirimSent[a.cust]?2:kirimPacked[a.cust]?1:0,sb=kirimSent[b.cust]?2:kirimPacked[b.cust]?1:0;return sa-sb;});
+  const sortedItems=[...activeItems].sort(function(a,b){var ka=kirimKey(a.cust,a.kloter),kb=kirimKey(b.cust,b.kloter),sa=kirimSent[ka]?2:kirimPacked[ka]?1:0,sb=kirimSent[kb]?2:kirimPacked[kb]?1:0;return sa-sb;});
   const listHtml=sortedItems.length?sortedItems.map(e=>renderKirimCard(e)).join(''):'<div style="text-align:center;padding:32px;color:var(--t3);font-size:13px">'+activeGroup.ico+' Tidak ada pesanan</div>';
 
   el.innerHTML = `
@@ -3068,7 +3070,7 @@ function renderKirimCard(c){
   var addr=getAddr(c.cust),hasA=!!addr;
   var isPlat=c.orders.some(function(o){return PLATFORM_SHIPS.includes(o.ship);});
   var tj=c.orders.reduce(function(s,o){return s+o.jual*o.qty;},0);
-  var isOpen=!!kirimOpen[c.cust],isSent=!!kirimSent[c.cust],isPacked=!!kirimPacked[c.cust];
+  var ck_=kirimKey(c.cust,c.kloter),isOpen=!!kirimOpen[ck_],isSent=!!kirimSent[ck_],isPacked=!!kirimPacked[ck_];
   var ckId='kchk-'+encKey(c.cust,'chk');
   // Card style
   var cs='margin-bottom:8px;'+(isSent?'opacity:.55;border-left:4px solid var(--grn);':isPacked?'border-left:4px solid var(--amb);':'');
@@ -3090,11 +3092,11 @@ function renderKirimCard(c){
     isPacked?'<span class="ccbadge" style="background:#fef9c3;color:#854d0e;border:1px solid #fef08a">📦 Packed</span>':'';
   // Action buttons
   var rBtn=(hasA||isPlat)?
-    '<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\')" style="padding:7px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🖨️ Resi</button>':
+    '<button onclick="event.stopPropagation();showResi(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="padding:7px 12px;background:var(--g1);border:none;border-radius:8px;color:#fff;font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🖨️ Resi</button>':
     '<button disabled style="padding:7px 10px;background:#fef9c3;border:1.5px solid #fef08a;border-radius:8px;color:#854d0e;font-family:var(--fn);font-size:11px;cursor:not-allowed">⏳</button>';
-  var lBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">🔗</button>':'';
-  var eBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;cursor:pointer">✏️</button>':'';
-  var chv='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\')" style="width:18px;height:18px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;cursor:pointer;flex-shrink:0;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  var lBtn=!isPlat?'<button onclick="event.stopPropagation();copyLink(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:700;cursor:pointer">🔗</button>':'';
+  var eBtn=!isPlat?'<button onclick="event.stopPropagation();openEditResi(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="padding:7px 10px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:8px;color:var(--t2);font-family:var(--fn);font-size:11px;cursor:pointer">✏️</button>':'';
+  var chv='<svg onclick="togKirimOpen(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="width:18px;height:18px;stroke:var(--t3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s;cursor:pointer;flex-shrink:0;'+(isOpen?'transform:rotate(180deg)':'')+'" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
   // Detail items
   var itms='<div class="ccitems">'+c.orders.map(function(o){
     return'<div class="ccir"><span class="ccin">• '+o.item+'</span><span class="cciv">Qty '+o.qty+' · '+fr(o.jual*o.qty)+'</span></div>';
@@ -3110,18 +3112,19 @@ function renderKirimCard(c){
       // Pack → Kirim
       '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'+
         '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
-          '<button onclick="togKirimPacked(\''+esc(c.cust)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+pB+';background:'+pBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">📦</button>'+
+          '<button onclick="togKirimPacked(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+pB+';background:'+pBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">📦</button>'+
           '<span style="font-size:7px;font-weight:700;color:'+(isPacked||isSent?'var(--amb)':'var(--t3)')+'">PACK</span>'+
         '</div>'+
         '<svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:var(--bor2);fill:none;stroke-width:2.5;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>'+
         '<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'+
-          '<button onclick="togKirimSent(\''+esc(c.cust)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+sB+';background:'+sBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">'+sIco+'</button>'+
+          '<button onclick="togKirimSent(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')" style="width:34px;height:34px;border-radius:10px;border:1.5px solid '+sB+';background:'+sBg+';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s">'+sIco+'</button>'+
           '<span style="font-size:7px;font-weight:700;color:'+(isSent?'var(--grn)':'var(--t3)')+'">KIRIM</span>'+
         '</div>'+
       '</div>'+
       // Name + info (clickable)
-      '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\')">'+
+      '<div style="flex:1;min-width:0;cursor:pointer" onclick="togKirimOpen(\''+esc(c.cust)+'\',\''+esc(c.kloter)+'\')">'+
         nP+
+        (c.kloter?'<div style="font-size:9px;background:rgba(91,94,244,.1);color:var(--acc);border-radius:4px;padding:1px 6px;font-weight:700;margin-top:2px;display:inline-block">'+c.kloter+'</div>':'')+
         '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px">'+
           addrBadge+statusBadge+
         '</div>'+
@@ -3174,9 +3177,9 @@ function _printResiList(custList,bulkIsiMap){
 }
 
 // ─── RESI FUNCTIONS ────────────────────────────────────
-function showResi(cust){
-  resiCust=cust;
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');if(!cos.length)return;
+function showResi(cust,kloter){
+  resiCust=cust; resiKloter=kloter||'';
+  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED'&&(!kloter||o.batch===kloter));if(!cos.length)return;
   const addr=getAddr(cust),isPlat=cos.some(o=>PLATFORM_SHIPS.includes(o.ship));
   const il=cos.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', ');
   // Open resi detail confirm popup
@@ -3235,9 +3238,9 @@ function printResi(){const c=document.getElementById('resi-area');if(!c)return;c
 function closeResi(){document.getElementById('resimod').style.display='none';}
 
 // ─── EDIT RESI ─────────────────────────────────────────
-function openEditResi(cust){
-  _editResiCust=cust;const addr=getAddr(cust);
-  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED');
+function openEditResi(cust,kloter){
+  _editResiCust=cust; _editResiKloter=kloter||'';const addr=getAddr(cust);
+  const cos=orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED'&&(!kloter||o.batch===kloter));
   const ship=cos[0]?.ship||'Regular JNT';
   const il=cos.map(o=>o.item+(o.qty>1?' ('+o.qty+'x)':'')).join(', ');
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};

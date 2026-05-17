@@ -88,8 +88,8 @@ function setupSheets() {
 
   if (!ss.getSheetByName(SHEET_NAME_KIRIM)) {
     const s = ss.insertSheet(SHEET_NAME_KIRIM);
-    s.appendRow(["custName","packed","sent","updatedAt"]);
-    s.getRange(1,1,1,4).setFontWeight("bold").setBackground("#16a34a").setFontColor("#ffffff");
+    s.appendRow(["custName","kloter","packed","sent","updatedAt"]);
+    s.getRange(1,1,1,5).setFontWeight("bold").setBackground("#16a34a").setFontColor("#ffffff");
   }
 
   if (!ss.getSheetByName(SHEET_NAME_KATALOG)) {
@@ -283,19 +283,22 @@ function saveKirimStatus(data) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_KIRIM);
   const rows = sheet.getDataRange().getValues();
   const custName = String(data.custName || '').trim();
+  const kloter   = String(data.kloter   || '').trim();
   const now = new Date().toISOString();
 
   for (let i = 1; i < rows.length; i++) {
-    if (String(rows[i][0]).trim().toLowerCase() === custName.toLowerCase()) {
-      sheet.getRange(i+1,1,1,4).setValues([[
-        custName, data.packed ? "true" : "false",
-        data.sent ? "true" : "false", now
+    if (String(rows[i][0]).trim().toLowerCase() === custName.toLowerCase() &&
+        String(rows[i][1]).trim().toLowerCase() === kloter.toLowerCase()) {
+      sheet.getRange(i+1,1,1,5).setValues([[
+        custName, kloter,
+        data.packed ? "true" : "false",
+        data.sent   ? "true" : "false", now
       ]]);
-      return { updated: custName };
+      return { updated: custName + '||' + kloter };
     }
   }
-  sheet.appendRow([custName, data.packed ? "true" : "false", data.sent ? "true" : "false", now]);
-  return { saved: custName };
+  sheet.appendRow([custName, kloter, data.packed ? "true" : "false", data.sent ? "true" : "false", now]);
+  return { saved: custName + '||' + kloter };
 }
 
 function getKirimStatus() {
@@ -306,10 +309,12 @@ function getKirimStatus() {
   const result = {};
   data.slice(1).forEach(row => {
     const custName = String(row[0] || '').trim();
+    const kloter   = String(row[1] || '').trim();
     if (!custName) return;
-    result[custName] = {
-      packed: String(row[1]).toLowerCase() === 'true',
-      sent:   String(row[2]).toLowerCase() === 'true'
+    const key = custName + '||' + kloter;
+    result[key] = {
+      packed: String(row[2]).toLowerCase() === 'true',
+      sent:   String(row[3]).toLowerCase() === 'true'
     };
   });
   return result;
