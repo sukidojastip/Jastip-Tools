@@ -1748,20 +1748,37 @@ async function syncNow(){
   setSS('ld','Sinkronisasi...');
   try{
     const d=await apiCall({action:'getAll'});
-    // Merge: preserve local sudahDipesan/sudahReady if server doesn't have them
+    // Merge: preserve local data if server hasn't caught up yet
     const incoming=d.orders||[];
     const localMap={};
     orders.forEach(o=>{localMap[String(o.id)]=o;});
+    const ordersNeedingResync=[];
     orders=incoming.map(o=>{
       const local=localMap[String(o.id)];
       if(local){
-        // If server says false but local has true → keep local (sheet may be outdated)
-        if(!o.sudahDipesan&&local.sudahDipesan) o.sudahDipesan=true;
-        if(!o.sudahReady&&local.sudahReady) o.sudahReady=true;
+        let localOverride=false;
+        // Checklist flags: prefer local TRUE (Bug 3 fix)
+        if(!o.sudahDipesan&&local.sudahDipesan){o.sudahDipesan=true;localOverride=true;}
+        if(!o.sudahReady&&local.sudahReady){o.sudahReady=true;localOverride=true;}
+        if(!o.sudahBeli&&local.sudahBeli){o.sudahBeli=true;localOverride=true;}
+        // Payment fields: prefer local if different (Bug 1 fix — reverts on refresh)
+        if(local.ongkirPayer&&local.ongkirPayer!==o.ongkirPayer){o.ongkirPayer=local.ongkirPayer;localOverride=true;}
+        if(local.dp!==undefined&&local.dp!==o.dp){o.dp=local.dp;localOverride=true;}
+        if(local.admin!==undefined&&local.admin!==o.admin){o.admin=local.admin;localOverride=true;}
+        if(local.sbayar&&local.sbayar!==o.sbayar){o.sbayar=local.sbayar;localOverride=true;}
+        if(localOverride)ordersNeedingResync.push(o);
       }
       return o;
     });
     kloters=d.kloters||[];sl();
+    // Re-push orders where local was ahead of server (ensures cross-device sync)
+    if(ordersNeedingResync.length){
+      setTimeout(async()=>{
+        for(const o of ordersNeedingResync){
+          try{await apiCall({action:'updateOrder',data:o});}catch(e){}
+        }
+      },1500);
+    }
     if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([cust,s])=>{kirimPacked[cust]=!!s.packed;kirimSent[cust]=!!s.sent;});}
     // Load addresses from Sheets into localStorage
     if(d.addresses&&d.addresses.length){
@@ -2033,7 +2050,7 @@ function closePreview(){_pendingOrder=null;document.getElementById('previewmod')
 async function confirmSave(){
   if(!_pendingOrder){closePreview();return;}
   const o=_pendingOrder;_pendingOrder=null;closePreview();
-  if(_pickedStokId){const s=stokList.find(x=>String(x.id)===_pickedStokId);if(s&&s.qty>0){s.qty=Math.max(0,s.qty-(o.qty||1));saveStok();}_pickedStokId=null;}
+  if(_pickedStokId){const s=stokList.find(x=>String(x.id)===_pickedStokId);if(s&&s.qty>0){s.qty=Math.max(0,s.qty-(o.qty||1));saveStok();saveStokToSheets();}_pickedStokId=null;}
   // Stok Kloter decrement
   if(window._skpPickedKid&&window._skpPickedId){
     const sk=findK(window._skpPickedKid);
@@ -3659,6 +3676,7 @@ function delStok(id){
   saveStok();
   renderStok();
   toast('✅ Barang dihapus!');
+  saveStokToSheets(); // auto-sync ke API
 }
 
 function editStokQty(id, delta){
@@ -3667,21 +3685,24 @@ function editStokQty(id, delta){
   s.qty = Math.max(0, (s.qty || 0) + delta);
   saveStok();
   renderStok();
+  saveStokToSheets(); // auto-sync ke API
 }
 
 function pickStokToForm(id){
   const s = stokList.find(x => String(x.id) === String(id));
   if(!s) return;
-  const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val ?? ''; };
-  set('f-item', s.nama);
-  set('f-jual', s.jual);
-  if(s.modalCurr === 'JPY' && s.modalJPY) set('f-jpy', s.modalJPY);
-  if(s.kloter){
-    set('f-batch', s.kloter);
-    onBC();
-  }
-  sw('add');
-  setTimeout(() => document.getElementById('f-qty')?.focus(), 200);
+  if(s.qty <= 0){ toast('⚠️ Stok '+s.nama+' sudah habis!', true); return; }
+  _pickedStokId = String(id); // track agar qty berkurang saat confirmSave
+  openTambahModal();
+  setTimeout(() => {
+    const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val ?? ''; };
+    set('f-item', s.nama);
+    set('f-jual', s.jual);
+    if(s.modalCurr === 'JPY' && s.modalJPY){ set('f-jpy', s.modalJPY); } else { set('f-jpy', ''); }
+    if(s.kloter){ set('f-batch', s.kloter); onBC(); }
+    calc();
+    document.getElementById('f-qty')?.focus();
+  }, 80);
   toast('✅ ' + s.nama + ' — isi qty & konfirmasi');
 }
 
@@ -3882,17 +3903,20 @@ function renderStokPopup(){
   }).join('');
 }
 function pickStokPopup(id){
-  const s = stokList.find(x => String(x.id)===String(id)); if(!s) return;
+  const s = stokList.find(x => String(x.id)===String(id));
+  if(!s){return;}
+  if(s.qty<=0){toast('⚠️ Stok '+s.nama+': habis!',true);closeStokPopup();return;}
   const set = (elId,val) => { const el=document.getElementById(elId); if(el) el.value=val; };
   set('f-item', s.nama);
   set('f-jual', s.jual);
   if(s.modalCurr==='JPY' && s.modalJPY) set('f-jpy', s.modalJPY);
   else set('f-jpy', '');
   if(s.kloter){ set('f-batch', s.kloter); onBC(); }
+  _pickedStokId = String(id);
   closeStokPopup();
   calc();
   document.getElementById('f-qty')?.focus();
-  toast('✅ '+s.nama+' dipilih!');
+  toast('✅ '+s.nama+': dipilih! Sisa stok: '+s.qty);
 }
 
 
