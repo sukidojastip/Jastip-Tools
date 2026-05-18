@@ -711,6 +711,40 @@ select.si option{background:#fff;color:var(--txt);}
 input,select,textarea{font-size:16px!important;}
 @media(min-width:541px){input,select,textarea{font-size:13px!important;}}
 
+
+/* ── TODO LIST ─────────────────────────────────────── */
+.todo-item{
+  background:var(--sur);border:1px solid var(--bor);border-radius:12px;
+  padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh);
+  display:flex;align-items:flex-start;gap:12px;transition:all .18s;
+}
+.todo-item:hover{box-shadow:var(--sh2);}
+.todo-item.done-item{opacity:.55;background:var(--s2);}
+.todo-cb{
+  width:22px;height:22px;border-radius:6px;border:2px solid var(--bor2);
+  flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .18s;margin-top:1px;
+}
+.todo-cb.checked{background:var(--grn);border-color:var(--grn);}
+.todo-cb:hover{border-color:var(--acc);}
+.todo-text{flex:1;font-size:13px;font-weight:600;color:var(--txt);line-height:1.5;word-break:break-word;}
+.todo-text.done-text{text-decoration:line-through;color:var(--t3);}
+.todo-text-edit{
+  flex:1;background:var(--s2);border:1.5px solid var(--acc);border-radius:8px;
+  padding:6px 10px;font-family:var(--fn);font-size:13px;font-weight:600;color:var(--txt);
+  outline:none;
+}
+.todo-meta{font-size:10px;color:var(--t3);margin-top:3px;font-weight:500;}
+.prio-biasa{display:inline-block;width:8px;height:8px;border-radius:50%;background:#3b82f6;flex-shrink:0;margin-top:6px;}
+.prio-penting{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0;margin-top:6px;}
+.prio-mendesak{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:6px;}
+.todo-actions{display:flex;gap:5px;flex-shrink:0;align-items:flex-start;}
+.todo-act-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--bor);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:12px;}
+.todo-act-btn:hover{border-color:var(--acc);background:rgba(91,94,244,.06);}
+.todo-empty{text-align:center;padding:48px 20px;color:var(--t3);}
+.todo-empty .te-ico{font-size:44px;margin-bottom:12px;}
+.todo-empty .te-txt{font-size:14px;font-weight:700;color:var(--t2);margin-bottom:6px;}
+.todo-empty .te-sub{font-size:12px;}
 @media(max-width:640px){
   .content{padding:14px 14px 24px;}
   .ccard{padding:12px 13px;}
@@ -833,6 +867,12 @@ input,select,textarea{font-size:16px!important;}
       <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
       Stok Barang
     </button>
+    <div class="nav-group-lbl" style="margin-top:8px">Tools</div>
+    <button class="nb" onclick="sw('todo')" id="nb-todo">
+      <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      To Do List
+      <span id="todo-badge" style="display:none;margin-left:auto;min-width:18px;height:18px;background:#ef4444;color:#fff;border-radius:9px;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;padding:0 5px"></span>
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="sync-row" onclick="syncNow()">
@@ -858,7 +898,7 @@ input,select,textarea{font-size:16px!important;}
       <div class="page-title" id="topbar-title">Kloter Pengiriman</div>
     </div>
     <div class="topbar-right">
-      <button onclick="openTambahModal()" style="display:flex;align-items:center;gap:8px;padding:11px 22px;background:var(--g1);border:none;border-radius:22px;color:#fff;font-family:var(--fn);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.35);transition:all .2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(91,94,244,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(91,94,244,.35)'"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+ Pesanan</button>
+      <button onclick="openTambahModal()" style="display:flex;align-items:center;gap:8px;padding:11px 22px;background:var(--g1);border:none;border-radius:22px;color:#fff;font-family:var(--fn);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(91,94,244,.35);transition:all .2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(91,94,244,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(91,94,244,.35)'"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Pesanan</button>
     </div>
   </header>
 
@@ -1188,6 +1228,56 @@ input,select,textarea{font-size:16px!important;}
       <div id="stoklist"></div>
     </div>
 
+  </div>
+
+<!-- ════════════════════════════════════════════════
+       TO DO LIST
+       ════════════════════════════════════════════════ -->
+  <div class="sec" id="sec-todo">
+    <!-- Header bar -->
+    <div style="background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:16px 20px;margin-bottom:14px;box-shadow:var(--sh);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div class="card-ttl" style="margin-bottom:0">
+        <div class="ct-ico" style="background:linear-gradient(135deg,#ef4444,#f97316)">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        To Do List
+        <span id="todo-sync-dot" style="font-size:10px;color:var(--t3);font-weight:500;margin-left:8px"></span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button onclick="clearDoneTodosUI()"
+          style="padding:7px 13px;background:transparent;border:1.5px solid rgba(239,68,68,.25);border-radius:var(--rs);color:var(--red);font-family:var(--fn);font-size:11px;font-weight:600;cursor:pointer;transition:all .18s"
+          onmouseover="this.style.background='rgba(239,68,68,.07)'" onmouseout="this.style.background='transparent'">
+          🗑️ Hapus Selesai
+        </button>
+        <button onclick="openTodoModal()"
+          style="display:flex;align-items:center;gap:6px;padding:9px 18px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(91,94,244,.3)">
+          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Tugas
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter tabs + search -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+      <button id="todo-f-all" onclick="setTodoFilter('all')"
+        style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--acc);background:var(--acc);color:#fff;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s">
+        Semua
+      </button>
+      <button id="todo-f-active" onclick="setTodoFilter('active')"
+        style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--bor2);background:var(--sur);color:var(--t2);font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s">
+        Aktif
+      </button>
+      <button id="todo-f-done" onclick="setTodoFilter('done')"
+        style="padding:7px 16px;border-radius:20px;border:1.5px solid var(--bor2);background:var(--sur);color:var(--t2);font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s">
+        Selesai
+      </button>
+      <input id="todo-search" placeholder="🔍 Cari tugas..." oninput="renderTodo()"
+        style="margin-left:auto;background:var(--s2);border:1.5px solid var(--bor);border-radius:20px;padding:7px 14px;font-family:var(--fn);font-size:12px;color:var(--txt);outline:none;min-width:160px;transition:border .15s"
+        onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+    </div>
+
+    <!-- Todo list -->
+    <div id="todo-list"></div>
   </div>
 
 </div><!-- end .content -->
@@ -1663,6 +1753,7 @@ const PLATFORM_SHIPS = ['Shopee','Tokopedia','Toco'];
 
 // ─── STATE ──────────────────────────────────────────────
 let orders=[], kloters=[], stokList=[];
+let todoList=[], katalogList=[];
 let editId=null, qiCust=null, qiKid=null, resiCust=null;
 let activeKid=null, _pendingOrder=null, _pickedStokId=null, _editResiCust=null;
 let expP={}, expPG={}, pgCurr={}, custOpen={}, kirimOpen={}, kirimSent={}, kirimPacked={};
@@ -1673,13 +1764,23 @@ let kloterSearch={}, kloterShipFilter={};
 try{orders=JSON.parse(localStorage.getItem('sk_o')||'[]');}catch(e){orders=[];}
 try{kloters=JSON.parse(localStorage.getItem('sk_k')||'[]');}catch(e){kloters=[];}
 try{stokList=JSON.parse(localStorage.getItem('sk_stok')||'[]');}catch(e){stokList=[];}
+try{todoList=JSON.parse(localStorage.getItem('sk_todo')||'[]');}catch(e){todoList=[];}
+try{katalogList=JSON.parse(localStorage.getItem('sk_katalog')||'[]');}catch(e){katalogList=[];}
 try{kirimPacked=JSON.parse(localStorage.getItem('sk_packed')||'{}');}catch(e){kirimPacked={};}
 try{kirimSent=JSON.parse(localStorage.getItem('sk_sent')||'{}');}catch(e){kirimSent={};}
 
 // ─── SAVE ──────────────────────────────────────────────
 function sl(){try{localStorage.setItem('sk_o',JSON.stringify(orders));localStorage.setItem('sk_k',JSON.stringify(kloters));}catch(e){}}
 function slKirim(){try{localStorage.setItem('sk_packed',JSON.stringify(kirimPacked));localStorage.setItem('sk_sent',JSON.stringify(kirimSent));}catch(e){}}
-async function syncKirimStatus(cust){try{await apiCall({action:'saveKirimStatus',data:{custName:cust,packed:!!kirimPacked[cust],sent:!!kirimSent[cust]}});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
+async function syncKirimStatus(cust){
+  // Cari semua kloter yang dimiliki customer ini (mungkin lebih dari satu)
+  const custKloters=[...new Set(orders.filter(o=>o.cust===cust&&o.ostatus!=='CANCELLED').map(o=>o.batch).filter(Boolean))];
+  const kloter=custKloters.join(',');
+  try{
+    await apiCall({action:'saveKirimStatus',data:{custName:cust,kloter:kloter,packed:!!kirimPacked[cust],sent:!!kirimSent[cust]}});
+    setSS('ok');
+  }catch(e){setSS('err','Sync gagal');}
+}
 
 
 // ─── HELPERS ───────────────────────────────────────────
@@ -1779,7 +1880,20 @@ async function syncNow(){
         }
       },1500);
     }
-    if(d.kirimStatus){Object.entries(d.kirimStatus).forEach(([cust,s])=>{kirimPacked[cust]=!!s.packed;kirimSent[cust]=!!s.sent;});}
+    if(d.kirimStatus){
+      Object.entries(d.kirimStatus).forEach(([rawKey,s])=>{
+        // Server key bisa "custName||kloter" atau hanya "custName"
+        // Frontend pakai custName saja sebagai key
+        const cust=rawKey.split('||')[0];
+        if(!cust)return;
+        // Prefer "sent=true" jika ada beberapa entri untuk customer yang sama
+        if(s.packed) kirimPacked[cust]=true;
+        if(s.sent)   kirimSent[cust]=true;
+        if(!s.packed && !kirimPacked[cust]) kirimPacked[cust]=false;
+        if(!s.sent   && !kirimSent[cust])   kirimSent[cust]=false;
+      });
+      slKirim(); // persist ke localStorage setelah load dari server
+    }
     // Load addresses from Sheets into localStorage
     if(d.addresses&&d.addresses.length){
       d.addresses.forEach(addr=>{
@@ -1827,8 +1941,14 @@ async function syncNow(){
       saveStok();
       if(document.getElementById('stoklist')) renderStok();
     }
+    // Load todos from Sheets
+    if(d.todos && d.todos.length) {
+      loadTodosFromServer(d.todos);
+    }
     setSS('ok',`${orders.length} pesanan · ${kloters.length} kloter`);
     refreshAll();
+    // Also fetch todos separately (lightweight)
+    try{const td=await apiCall({action:'getTodos'});if(td&&td.length)loadTodosFromServer(td);}catch(e){}
   }catch(e){setSS('err',e.name==='AbortError'?'Timeout':'Offline');}
 }
 
@@ -1845,23 +1965,23 @@ function updateBadge(){
 // ─── REFRESH ───────────────────────────────────────────
 function refreshAll(){
   refreshDD();
-  renderKloter();renderBeli();renderLap();renderKirim();updateBadge();
+  renderKloter();renderBeli();renderLap();renderKirim();updateBadge();updateTodoBadge();
 }
 
 // ═══════════════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════════════
-const TITLES={kloter:'Kloter Pengiriman',beli:'Daftar Beli',kirim:'Kirim & Resi',lap:'Laporan Keuangan',katalog:'Katalog Barang',stok:'Stok Barang'};
-const LABELS={kloter:'Manajemen',beli:'Shopping List',stok:'Inventori',kirim:'Pengiriman',lap:'Finansial',katalog:'Harga & Produk'};
+const TITLES={kloter:'Kloter Pengiriman',beli:'Daftar Beli',kirim:'Kirim & Resi',lap:'Laporan Keuangan',katalog:'Katalog Barang',stok:'Stok Barang',todo:'To Do List'};
+const LABELS={kloter:'Manajemen',beli:'Shopping List',stok:'Inventori',kirim:'Pengiriman',lap:'Finansial',katalog:'Harga & Produk',todo:'Tasks & Reminders'};
 
 function sw(t){
-  ['kloter','beli','kirim','lap','katalog','stok'].forEach(s=>{
+  ['kloter','beli','kirim','lap','katalog','stok','todo'].forEach(s=>{
     document.getElementById('sec-'+s)?.classList.toggle('on',s===t);
     const nb=document.getElementById('nb-'+s);if(nb)nb.className='nb'+(s===t?' on':'');
   });
   const title=document.getElementById('topbar-title');if(title)title.textContent=TITLES[t]||t;
   const lbl=document.getElementById('page-lbl');if(lbl)lbl.textContent=LABELS[t]||'';
-  const renderers={kloter:renderKloter,beli:renderBeli,kirim:renderKirim,lap:renderLap,katalog:renderKatalog,stok:renderStok};
+  const renderers={kloter:renderKloter,beli:renderBeli,kirim:renderKirim,lap:renderLap,katalog:renderKatalog,stok:renderStok,todo:renderTodo};
   renderers[t]?.();
   closeSidebar();
 }
@@ -2050,7 +2170,18 @@ function closePreview(){_pendingOrder=null;document.getElementById('previewmod')
 async function confirmSave(){
   if(!_pendingOrder){closePreview();return;}
   const o=_pendingOrder;_pendingOrder=null;closePreview();
-  if(_pickedStokId){const s=stokList.find(x=>String(x.id)===_pickedStokId);if(s&&s.qty>0){s.qty=Math.max(0,s.qty-(o.qty||1));saveStok();saveStokToSheets();}_pickedStokId=null;}
+  if(_pickedStokId){
+    const s=stokList.find(x=>String(x.id)===_pickedStokId);
+    if(s&&s.qty>0){
+      s.qty=Math.max(0,s.qty-(o.qty||1));
+      if(s.qty===0){
+        stokList=stokList.filter(x=>String(x.id)!==_pickedStokId);
+        toast('📦 Stok '+s.nama+' habis — otomatis dihapus dari list');
+      }
+      saveStok();saveStokToSheets();
+    }
+    _pickedStokId=null;
+  }
   // Stok Kloter decrement
   if(window._skpPickedKid&&window._skpPickedId){
     const sk=findK(window._skpPickedKid);
@@ -2133,7 +2264,7 @@ async function saveCustPay(cust,kloterName){
   if(activeKid)renderKloterDetail(activeKid);else renderKloter();renderLap();toast('✅ Status bayar disimpan!');
   for(const o of cos){try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
 }
-function setBayarOngkir(key,val,totalJual){
+async function setBayarOngkir(key,val,totalJual,cust,kloterName){
   const hi=document.getElementById('cb-payer-'+key);if(hi)hi.value=val;
   const SELLER_ON='flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:rgba(91,94,244,.12);border:2px solid var(--acc);color:var(--acc)';
   const SELLER_OFF='flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:var(--bg);border:1.5px solid var(--bor);color:var(--t3)';
@@ -2146,6 +2277,15 @@ function setBayarOngkir(key,val,totalJual){
   const bc=document.getElementById('cb-payer-btn-customer-'+key);
   if(bc){bc.style.cssText=val==='customer'?CUST_ON:CUST_OFF;bc.innerHTML=(val==='customer'?CHK:CIR)+' \uD83D\uDC64 Customer';}
   calcSisa(key,totalJual);
+  // AUTO-SAVE ongkirPayer langsung ke order + API tanpa perlu klik Simpan
+  if(cust&&kloterName){
+    const cos=orders.filter(o=>o.cust===cust&&o.batch===kloterName&&o.ostatus!=='CANCELLED');
+    if(cos.length){
+      cos.forEach(o=>{o.ongkirPayer=val;});
+      sl();
+      for(const o of cos){try{await apiCall({action:'updateOrder',data:o});setSS('ok');}catch(e){setSS('err','Sync gagal');}}
+    }
+  }
 }
 function calcSisa(key,totalJual){
   const bayar=+document.getElementById('cb-pay-'+key)?.value||0;
@@ -2297,7 +2437,7 @@ function custCard(cust,custOrders,kloterName){
             <input type="number" id="cb-adm-${key}" value="${curAdmin||''}" placeholder="0" class="pay-inp" oninput="calcSisa('${key}',${totalJual})"/>
             <div style="display:flex;gap:8px;margin-top:8px">
               <button type="button" id="cb-payer-btn-seller-${key}"
-                onclick="setBayarOngkir('${key}','seller',${totalJual})"
+                onclick="setBayarOngkir('${key}','seller',${totalJual},'${esc(cust)}','${esc(kloterName)}')"
                 style="${(ref.ongkirPayer||'seller')==='seller'
                   ?'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:rgba(91,94,244,.12);border:2px solid var(--acc);color:var(--acc)'
                   :'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:var(--bg);border:1.5px solid var(--bor);color:var(--t3)'}">
@@ -2307,7 +2447,7 @@ function custCard(cust,custOrders,kloterName){
                 🏪 Seller
               </button>
               <button type="button" id="cb-payer-btn-customer-${key}"
-                onclick="setBayarOngkir('${key}','customer',${totalJual})"
+                onclick="setBayarOngkir('${key}','customer',${totalJual},'${esc(cust)}','${esc(kloterName)}')"
                 style="${(ref.ongkirPayer||'seller')==='customer'
                   ?'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:rgba(239,68,68,.1);border:2px solid var(--red);color:var(--red)'
                   :'flex:1;padding:9px 10px;border-radius:10px;font-family:var(--fn);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;background:var(--bg);border:1.5px solid var(--bor);color:var(--t3)'}">
@@ -3005,38 +3145,123 @@ function generateLaporan(kn,from,to){
   kn=kn||'';from=from||'';to=to||'';
   const f=orders.filter(o=>(!kn||o.batch===kn)&&(!from||o.date>=from)&&(!to||o.date<=to));
   const act=f.filter(o=>o.ostatus!=='CANCELLED');
-  const tOm=act.reduce((s,o)=>s+o.jual*o.qty,0),tMo=act.reduce((s,o)=>s+o.jpy*o.qty*(o.rate||109),0);
+  const tOm=act.reduce((s,o)=>s+o.jual*o.qty,0);
+  const tMo=act.reduce((s,o)=>s+o.jpy*o.qty*(o.rate||109),0);
   const fKl=kn?kloters.filter(k=>k.name===kn):kloters;
   const tPg=fKl.reduce((s,k)=>{const r=kr(k);return s+(k.pengeluaran||[]).reduce((ss,p)=>ss+pgidr(p,r),0);},0);
   const tUnt=act.reduce((s,o)=>s+unt(o),0)-tPg,mg=tOm>0?tUnt/tOm*100:0;
-  const tPaid=f.filter(o=>o.sbayar==='Paid').reduce((s,o)=>s+o.jual*o.qty,0);
-  const _pg={};f.filter(o=>o.ostatus!=='CANCELLED').forEach(o=>{if(!_pg[o.cust])_pg[o.cust]={tj:0,dp:0};_pg[o.cust].tj+=o.jual*o.qty;if(o.dp>0)_pg[o.cust].dp=o.dp;});
-  const tUnp=Object.values(_pg).reduce((s,g)=>s+Math.max(0,g.tj-g.dp),0);
+  const tPaid=act.filter(o=>o.sbayar==='Paid').reduce((s,o)=>s+o.jual*o.qty,0);
+  const tUnp=tOm-tPaid;
   const now=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   const filterDesc=kn?`Kloter: ${kn}`:from&&to?`${from} s/d ${to}`:from?`Dari ${from}`:to?`S/d ${to}`:'Semua Data';
-  const bns=[...new Set([...fKl.map(k=>k.name),...f.filter(o=>o.batch).map(o=>o.batch)])];
-  const kloterRows=bns.map(n=>{
-    const bo=f.filter(o=>o.batch===n&&o.ostatus!=='CANCELLED');if(!bo.length)return'';
-    const k=kloters.find(k=>k.name===n),r=k?kr(k):109;
-    const btj=bo.reduce((s,o)=>s+o.jual*o.qty,0),btm=bo.reduce((s,o)=>s+o.jpy*o.qty*(o.rate||109),0);
-    const bpg=(k?.pengeluaran||[]).reduce((s,p)=>s+pgidr(p,r),0),btu=bo.reduce((s,o)=>s+unt(o),0)-bpg;
-    const bmg=btj>0?btu/btj*100:0,ks=k?k.status:'';
-    const KC={open:'#22c55e',closed:'#ef4444',transit:'#f59e0b',arrived:'#3b82f6'};
-    const KB={open:'#dcfce7',closed:'#fee2e2',transit:'#fef9c3',arrived:'#dbeafe'};
-    const KN={open:'Open',closed:'Closed',transit:'Transit',arrived:'Tiba'};
-    return`<tr><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-weight:600">${n}${k?.bagasi?'<br><small style="color:#94a3b8">'+k.bagasi+'</small>':''}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(btj)}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;color:#ef4444">${fr(btm+bpg)}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;color:${btu>=0?'#8b5cf6':'#ef4444'};font-weight:700">${btu>=0?'+':''}${fr(btu)}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:center;font-family:monospace">${bmg.toFixed(1)}%</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:center">${bo.filter(o=>o.sbayar==='Paid').length}/${bo.length}</td><td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:center"><span style="background:${KB[ks]||'#f1f5f9'};color:${KC[ks]||'#64748b'};border-radius:5px;padding:2px 9px;font-size:11px;font-weight:700">${KN[ks]||'—'}</span></td></tr>`;
-  }).filter(Boolean).join('');
-  const piGroups2={};f.filter(o=>o.sbayar!=='Paid'&&o.ostatus!=='CANCELLED').forEach(o=>{if(!piGroups2[o.cust])piGroups2[o.cust]={items:[],totalJual:0,dp:0,sbayar:o.sbayar,batch:o.batch};piGroups2[o.cust].items.push(o);piGroups2[o.cust].totalJual+=o.jual*o.qty;if(o.dp>0)piGroups2[o.cust].dp=o.dp;});
-  const piRows=Object.entries(piGroups2).map(([cust,g])=>{const sisa=Math.max(0,g.totalJual-g.dp);return`<tr><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;font-weight:600">${cust}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9">${g.items.length} item</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9">${g.batch||'—'}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(g.totalJual)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace">${fr(g.dp)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;color:#f59e0b;font-weight:700">${fr(sisa)}</td><td style="padding:9px 12px;border-bottom:1px solid #f1f5f9"><span style="background:#fef9c3;color:#854d0e;border-radius:5px;padding:2px 9px;font-size:11px;font-weight:700">${g.sbayar}</span></td></tr>`;}).join('');
-  const w=window.open('','_blank','width=1000,height=800');
-  w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"/><title>Laporan Sukido Jastip${kn?' — '+kn:''}</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Segoe UI',sans-serif;color:#1a1d4e;background:#fff;}.page{max-width:960px;margin:0 auto;padding:32px;}@media print{.page{padding:14px;max-width:100%;}.np{display:none!important;}}.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #5b5ef4;}.bn{font-size:20px;font-weight:800;background:linear-gradient(135deg,#5b5ef4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}.sc{border-radius:12px;padding:16px;border:1px solid;}.scg{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0;}.scr{background:linear-gradient(135deg,#fff1f2,#fee2e2);border-color:#fecaca;}.scp{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:#ddd6fe;}.scy{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a;}.scb{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;}.sv{font-size:19px;font-weight:800;font-family:monospace;}.sl{font-size:10px;font-weight:700;color:#6b7a99;margin-top:5px;text-transform:uppercase;}.ss{font-size:11px;color:#a8b4cc;margin-top:2px;}.tb{width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e5f5;margin-bottom:22px;}.tb th{padding:10px 12px;background:#f4f5fd;text-align:left;font-size:10px;color:#a8b4cc;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-bottom:1.5px solid #e2e5f5;}.tr-tot td{background:#f4f5fd;font-weight:800;padding:11px 12px;border-top:2px solid #e2e5f5;}.div{height:1px;background:linear-gradient(to right,#5b5ef4,#8b5cf6,transparent);margin:22px 0;opacity:.3;}.stit{font-size:13px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}.stit::before{content:'';width:4px;height:16px;background:linear-gradient(135deg,#5b5ef4,#8b5cf6);border-radius:2px;}.ft{margin-top:24px;padding-top:12px;border-top:1px solid #e2e5f5;display:flex;justify-content:space-between;font-size:11px;color:#a8b4cc;}</style></head><body><div class="page">
-<div class="np" style="position:fixed;top:14px;right:14px;display:flex;gap:8px;z-index:99"><button onclick="window.print()" style="background:linear-gradient(135deg,#5b5ef4,#8b5cf6);border:none;border-radius:9px;padding:10px 20px;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">🖨️ Print PDF</button><button onclick="window.close()" style="background:#f4f5fd;border:1px solid #e2e5f5;border-radius:9px;padding:10px 16px;color:#6b7a99;font-family:inherit;font-size:13px;cursor:pointer;">✕</button></div>
-<div class="hdr"><div><div class="bn">Sukido Jastip</div><div style="font-size:11px;color:#a8b4cc;margin-top:3px">Business Manager Report</div></div><div style="text-align:right"><div style="font-size:17px;font-weight:800">Laporan Keuangan</div><div style="font-size:11px;color:#a8b4cc;margin-top:3px">${now} · ${filterDesc}</div></div></div>
-<div class="stit">Ringkasan</div>
-<div class="sg"><div class="sc scg"><div class="sv" style="color:#22c55e">${fr(tOm)}</div><div class="sl">Total Omzet</div><div class="ss">${act.length} pesanan</div></div><div class="sc scr"><div class="sv" style="color:#ef4444">${fr(tMo+tPg)}</div><div class="sl">Total Pengeluaran</div></div><div class="sc scp"><div class="sv" style="color:#8b5cf6">${fr(tUnt)}</div><div class="sl">Untung Bersih</div><div class="ss">Margin ${mg.toFixed(1)}%</div></div><div class="sc scg"><div class="sv" style="color:#22c55e">${fr(tPaid)}</div><div class="sl">Sudah Diterima</div></div><div class="sc scy"><div class="sv" style="color:#f59e0b">${fr(tUnp)}</div><div class="sl">Piutang</div></div><div class="sc scb"><div class="sv" style="color:#3b82f6">${act.filter(o=>o.sudahBeli).length}/${act.length}</div><div class="sl">Sudah Dibeli</div></div></div>
-${kloterRows?`<div class="div"></div><div class="stit">Rekap Per Kloter</div><table class="tb"><thead><tr><th>Kloter</th><th style="text-align:right">Omzet</th><th style="text-align:right">Modal+Biaya</th><th style="text-align:right">Untung</th><th style="text-align:center">Margin</th><th style="text-align:center">Lunas</th><th style="text-align:center">Status</th></tr></thead><tbody>${kloterRows}</tbody><tfoot><tr class="tr-tot"><td>TOTAL</td><td style="text-align:right;font-family:monospace;color:#22c55e">${fr(tOm)}</td><td style="text-align:right;font-family:monospace;color:#ef4444">${fr(tMo+tPg)}</td><td style="text-align:right;font-family:monospace;color:${tUnt>=0?'#8b5cf6':'#ef4444'}">${fr(tUnt)}</td><td style="text-align:center;font-family:monospace">${mg.toFixed(1)}%</td><td style="text-align:center">${f.filter(o=>o.sbayar==='Paid').length}/${f.length}</td><td></td></tr></tfoot></table>`:''}
-${piRows?`<div class="div"></div><div class="stit" style="color:#f59e0b">⚠️ Piutang</div><table class="tb"><thead><tr><th>Customer</th><th>Item</th><th>Kloter</th><th style="text-align:right">Total</th><th style="text-align:right">Sudah Bayar</th><th style="text-align:right">Sisa</th><th>Status</th></tr></thead><tbody>${piRows}</tbody></table>`:''}
-<div class="ft"><span>Sukido Jastip Manager</span><span>${now}</span></div></div></body></html>`);
+
+  /* ── Per-customer rows ── */
+  const custMap={};
+  act.forEach(o=>{
+    if(!custMap[o.cust])custMap[o.cust]={cust:o.cust,batch:o.batch,orders:[],totalJual:0,totalModal:0,totalUnt:0,dp:o.dp||0,sbayar:o.sbayar,ongkirPayer:o.ongkirPayer};
+    custMap[o.cust].orders.push(o);
+    custMap[o.cust].totalJual+=o.jual*o.qty;
+    custMap[o.cust].totalModal+=o.jpy*o.qty*(o.rate||109);
+    custMap[o.cust].totalUnt+=unt(o);
+    if(o.dp>0)custMap[o.cust].dp=o.dp;
+    if(o.sbayar==='Paid')custMap[o.cust].sbayar='Paid';
+    if(o.ongkirPayer)custMap[o.cust].ongkirPayer=o.ongkirPayer;
+  });
+
+  const custRows=Object.values(custMap).map(g=>{
+    const itemRows=g.orders.map((o,i)=>{
+      const modal=o.jpy*o.qty*(o.rate||109);
+      const profit=unt(o);
+      return`<tr style="background:${i%2===0?'#fafbff':'#fff'}">
+        ${i===0?`<td rowspan="${g.orders.length}" style="padding:10px 12px;border-bottom:2px solid #c7d2e8;border-right:1px solid #e2e5f5;font-weight:700;vertical-align:top;min-width:120px">${g.cust}</td>
+        <td rowspan="${g.orders.length}" style="padding:10px 12px;border-bottom:2px solid #c7d2e8;border-right:1px solid #e2e5f5;vertical-align:top;font-size:12px;color:#6b7a99">${g.batch||'—'}</td>`:''}
+        <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;font-size:12px">${o.item}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;text-align:center;font-size:12px">${o.qty}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;font-size:12px;color:#ef4444">${fr(Math.round(modal))}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;font-size:12px;color:#1a1d4e">${fr(o.jual*o.qty)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;text-align:right;font-family:monospace;font-size:12px;color:${profit>=0?'#8b5cf6':'#ef4444'};font-weight:600">${profit>=0?'+':''}${fr(Math.round(profit))}</td>
+        ${i===0?`<td rowspan="${g.orders.length}" style="padding:10px 12px;border-bottom:2px solid #c7d2e8;border-left:1px solid #e2e5f5;text-align:center;vertical-align:middle;font-size:11px">
+          ${g.ongkirPayer==='customer'?'<span style="background:#dbeafe;color:#1d4ed8;border-radius:6px;padding:3px 9px;font-weight:700">Customer</span>':'<span style="background:#f5f3ff;color:#7c3aed;border-radius:6px;padding:3px 9px;font-weight:700">Seller</span>'}
+        </td>
+        <td rowspan="${g.orders.length}" style="padding:10px 12px;border-bottom:2px solid #c7d2e8;border-left:1px solid #e2e5f5;text-align:center;vertical-align:middle">
+          ${g.sbayar==='Paid'?'<span style="background:#dcfce7;color:#15803d;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700">✓ Lunas</span>':'<span style="background:#fef9c3;color:#92400e;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700">Belum Lunas</span>'}
+          ${g.sbayar!=='Paid'&&g.dp>0?`<br><small style="font-size:10px;color:#6b7a99;margin-top:3px;display:block">DP: ${fr(g.dp)}</small>`:''}
+        </td>`:''}
+      </tr>`;
+    }).join('');
+    return itemRows;
+  }).join('');
+
+  const w=window.open('','_blank','width=1100,height=850');
+  w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"/><title>Laporan Sukido Jastip${kn?' — '+kn:''}</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Segoe UI',sans-serif;color:#1a1d4e;background:#fff;}.page{max-width:1040px;margin:0 auto;padding:32px;}@media print{.page{padding:14px;max-width:100%;}.np{display:none!important;}}
+  .hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:3px solid #5b5ef4;}
+  .bn{font-size:22px;font-weight:800;background:linear-gradient(135deg,#5b5ef4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+  .sc{border-radius:12px;padding:16px 18px;border:1px solid;}.scg{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0;}.scr{background:linear-gradient(135deg,#fff1f2,#fee2e2);border-color:#fecaca;}.scp{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:#ddd6fe;}.scy{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a;}.scb{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe;}
+  .sv{font-size:20px;font-weight:800;font-family:monospace;}.sl{font-size:10px;font-weight:700;color:#6b7a99;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;}.ss{font-size:11px;color:#a8b4cc;margin-top:2px;}
+  .stit{font-size:13px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}.stit::before{content:'';width:4px;height:16px;background:linear-gradient(135deg,#5b5ef4,#8b5cf6);border-radius:2px;display:inline-block;}
+  .tb{width:100%;border-collapse:collapse;font-size:13px;border:1px solid #c7d2e8;margin-bottom:24px;}
+  .tb th{padding:10px 12px;background:#f4f5fd;text-align:left;font-size:10px;color:#8b9ab5;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-bottom:2px solid #c7d2e8;}
+  .tr-tot td{background:#eef1fb;font-weight:800;padding:11px 12px;border-top:2px solid #c7d2e8;}
+  .divider{height:1px;background:linear-gradient(to right,#5b5ef4,#8b5cf6,transparent);margin:22px 0;opacity:.25;}
+  .ft{margin-top:24px;padding-top:12px;border-top:1px solid #e2e5f5;display:flex;justify-content:space-between;font-size:11px;color:#a8b4cc;}
+  .sum-row{display:flex;justify-content:flex-end;gap:32px;margin-bottom:18px;padding:12px 16px;background:#f4f5fd;border-radius:10px;border:1px solid #e2e5f5;}
+  .sum-item{text-align:right;}.sum-label{font-size:10px;color:#8b9ab5;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}.sum-val{font-size:14px;font-weight:800;font-family:monospace;margin-top:2px;}
+  </style></head><body><div class="page">
+  <div class="np" style="position:fixed;top:14px;right:14px;display:flex;gap:8px;z-index:99">
+    <button onclick="window.print()" style="background:linear-gradient(135deg,#5b5ef4,#8b5cf6);border:none;border-radius:9px;padding:10px 20px;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">🖨️ Print PDF</button>
+    <button onclick="window.close()" style="background:#f4f5fd;border:1px solid #e2e5f5;border-radius:9px;padding:10px 16px;color:#6b7a99;font-family:inherit;font-size:13px;cursor:pointer;">✕</button>
+  </div>
+  <div class="hdr">
+    <div><div class="bn">Sukido Jastip</div><div style="font-size:11px;color:#a8b4cc;margin-top:3px">Business Report</div></div>
+    <div style="text-align:right"><div style="font-size:17px;font-weight:800">Laporan Keuangan</div><div style="font-size:11px;color:#a8b4cc;margin-top:3px">${now} · ${filterDesc}</div></div>
+  </div>
+
+  <div class="stit">Ringkasan Keuangan</div>
+  <div class="sg">
+    <div class="sc scg"><div class="sv" style="color:#22c55e">${fr(tOm)}</div><div class="sl">Total Omzet</div><div class="ss">${act.length} item pesanan</div></div>
+    <div class="sc scr"><div class="sv" style="color:#ef4444">${fr(Math.round(tMo+tPg))}</div><div class="sl">Total Modal + Biaya</div><div class="ss">Modal + pengeluaran kloter</div></div>
+    <div class="sc scp"><div class="sv" style="color:${tUnt>=0?'#8b5cf6':'#ef4444'}">${tUnt>=0?'+':''}${fr(Math.round(tUnt))}</div><div class="sl">Untung Bersih</div><div class="ss">Margin ${mg.toFixed(1)}%</div></div>
+    <div class="sc scg"><div class="sv" style="color:#22c55e">${fr(tPaid)}</div><div class="sl">Sudah Lunas</div><div class="ss">${act.filter(o=>o.sbayar==='Paid').length} customer lunas</div></div>
+    <div class="sc scy"><div class="sv" style="color:#f59e0b">${fr(Math.max(0,tUnp))}</div><div class="sl">Piutang (Belum Lunas)</div><div class="ss">${act.filter(o=>o.sbayar!=='Paid').length} customer belum bayar</div></div>
+    <div class="sc scb"><div class="sv" style="color:#3b82f6">${mg.toFixed(1)}%</div><div class="sl">Margin Rata-rata</div><div class="ss">Untung / Omzet × 100</div></div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="stit">Daftar Pesanan per Customer</div>
+  <div class="sum-row">
+    <div class="sum-item"><div class="sum-label">Total Omzet</div><div class="sum-val" style="color:#22c55e">${fr(tOm)}</div></div>
+    <div class="sum-item"><div class="sum-label">Total Modal</div><div class="sum-val" style="color:#ef4444">${fr(Math.round(tMo))}</div></div>
+    <div class="sum-item"><div class="sum-label">Untung</div><div class="sum-val" style="color:#8b5cf6">${tUnt>=0?'+':''}${fr(Math.round(tUnt))}</div></div>
+  </div>
+
+  <table class="tb">
+    <thead><tr>
+      <th style="min-width:110px">Customer</th>
+      <th style="min-width:80px">Kloter</th>
+      <th>Item Pesanan</th>
+      <th style="text-align:center">Qty</th>
+      <th style="text-align:right">Harga Modal</th>
+      <th style="text-align:right">Harga Jual</th>
+      <th style="text-align:right">Untung</th>
+      <th style="text-align:center">Ongkir</th>
+      <th style="text-align:center">Status Bayar</th>
+    </tr></thead>
+    <tbody>${custRows}</tbody>
+    <tfoot>
+      <tr class="tr-tot">
+        <td colspan="4">TOTAL (${Object.keys(custMap).length} Customer · ${act.length} Item)</td>
+        <td style="text-align:right;font-family:monospace;color:#ef4444">${fr(Math.round(tMo))}</td>
+        <td style="text-align:right;font-family:monospace;color:#22c55e">${fr(tOm)}</td>
+        <td style="text-align:right;font-family:monospace;color:${tUnt>=0?'#8b5cf6':'#ef4444'}">${tUnt>=0?'+':''}${fr(Math.round(tUnt))}</td>
+        <td></td>
+        <td style="text-align:center;font-size:12px">${act.filter(o=>o.sbayar==='Paid').length} Lunas · ${act.filter(o=>o.sbayar!=='Paid').length} Belum</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="ft"><span>Sukido Jastip Manager</span><span>Dicetak: ${now}</span></div>
+  </div></body></html>`);
   w.document.close();
 }
 
@@ -3683,6 +3908,15 @@ function editStokQty(id, delta){
   const s = stokList.find(x => String(x.id) === String(id));
   if(!s) return;
   s.qty = Math.max(0, (s.qty || 0) + delta);
+  if(s.qty === 0){
+    // Auto-hapus stok ketika habis
+    stokList = stokList.filter(x => String(x.id) !== String(id));
+    saveStok();
+    renderStok();
+    saveStokToSheets();
+    toast('📦 '+s.nama+' stok habis — otomatis dihapus dari list');
+    return;
+  }
   saveStok();
   renderStok();
   saveStokToSheets(); // auto-sync ke API
@@ -3920,15 +4154,304 @@ function pickStokPopup(id){
 }
 
 
+
+// ═══════════════════════════════════════════════════════
+//  TO DO LIST — with API sync
+// ═══════════════════════════════════════════════════════
+
+let todoFilter = 'all';
+let _editTodoId = null;
+
+function saveTodoLS() {
+  try { localStorage.setItem('sk_todo', JSON.stringify(todoList)); } catch(e) {}
+}
+
+// ── Todo modal state ─────────────────────────────────
+let _editTodoModalId = null;
+
+function openTodoModal(editId) {
+  _editTodoModalId = editId || null;
+  const mod = document.getElementById('todomod');
+  const title = document.getElementById('todo-modal-title');
+  const saveBtn = document.getElementById('td-save-btn');
+
+  // Populate kloter dropdown
+  const klSel = document.getElementById('td-kloter');
+  if(klSel) {
+    klSel.innerHTML = '<option value="">— Tanpa Kloter —</option>' +
+      kloters.map(k => `<option value="${k.name}">${k.name}</option>`).join('');
+  }
+
+  if(editId) {
+    const t = todoList.find(x => String(x.id) === String(editId));
+    if(!t) return;
+    title.textContent = '✏️ Edit Tugas';
+    if(saveBtn) saveBtn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Simpan Perubahan';
+    const s = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+    s('td-task',     t.text     || '');
+    s('td-pic',      t.pic      || '');
+    s('td-cust',     t.cust     || '');
+    s('td-kloter',   t.kloter   || '');
+    s('td-via',      t.via      || '');
+    s('td-priority', t.priority || 'biasa');
+    s('td-deadline', t.deadline || '');
+    s('td-note',     t.note     || '');
+  } else {
+    title.textContent = 'Tambah Tugas';
+    if(saveBtn) saveBtn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Simpan Tugas';
+    ['td-task','td-pic','td-cust','td-kloter','td-via','td-deadline','td-note'].forEach(id => {
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+    const pr = document.getElementById('td-priority'); if(pr) pr.value = 'biasa';
+  }
+
+  mod.style.display = 'flex';
+  setTimeout(() => document.getElementById('td-task')?.focus(), 80);
+}
+
+function closeTodoModal() {
+  document.getElementById('todomod').style.display = 'none';
+  _editTodoModalId = null;
+}
+
+function openTodoCustPick() {
+  document.getElementById('todo-custpickmod').style.display = 'flex';
+  const si = document.getElementById('todo-cust-search');
+  if(si) { si.value = ''; si.focus(); }
+  renderTodoCustPick();
+}
+function closeTodoCustPick() {
+  document.getElementById('todo-custpickmod').style.display = 'none';
+}
+function renderTodoCustPick() {
+  const el = document.getElementById('todo-cust-list'); if(!el) return;
+  const q = (document.getElementById('todo-cust-search')?.value || '').toLowerCase();
+  const custs = [...new Set(orders.filter(o => o.ostatus !== 'CANCELLED').map(o => o.cust))].sort();
+  const filtered = custs.filter(c => !q || c.toLowerCase().includes(q));
+  if(!filtered.length) {
+    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--t3);font-size:13px">Tidak ada customer ditemukan</div>';
+    return;
+  }
+  el.innerHTML = filtered.map(c => `
+    <div onclick="pickTodoCust('${c.replace(/'/g,"\\\'")}')"
+      style="padding:11px 18px;cursor:pointer;font-size:13px;font-weight:600;color:var(--txt);border-bottom:1px solid var(--bor);transition:background .12s"
+      onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+      👤 ${c}
+    </div>`).join('');
+}
+function pickTodoCust(name) {
+  const inp = document.getElementById('td-cust'); if(inp) inp.value = name;
+  closeTodoCustPick();
+  // Auto-detect kloter dari orders customer ini
+  const custOrders = orders.filter(o => o.cust === name && o.ostatus !== 'CANCELLED');
+  if(custOrders.length) {
+    const latestBatch = custOrders[custOrders.length - 1].batch;
+    if(latestBatch) {
+      const klSel = document.getElementById('td-kloter');
+      if(klSel) klSel.value = latestBatch;
+    }
+    const via = custOrders[custOrders.length - 1].stype;
+    if(via) {
+      const viaSel = document.getElementById('td-via');
+      if(viaSel) viaSel.value = via;
+    }
+  }
+}
+
+async function saveTodoModal() {
+  const task = (document.getElementById('td-task')?.value || '').trim();
+  if(!task) { toast('⚠️ Task tidak boleh kosong!', true); document.getElementById('td-task')?.focus(); return; }
+
+  const t = {
+    id:       _editTodoModalId || String(Date.now()),
+    text:     task,
+    pic:      document.getElementById('td-pic')?.value     || '',
+    cust:     document.getElementById('td-cust')?.value.trim() || '',
+    kloter:   document.getElementById('td-kloter')?.value  || '',
+    via:      document.getElementById('td-via')?.value     || '',
+    priority: document.getElementById('td-priority')?.value || 'biasa',
+    deadline: document.getElementById('td-deadline')?.value || '',
+    note:     document.getElementById('td-note')?.value.trim() || '',
+    done:     _editTodoModalId ? (todoList.find(x => String(x.id) === String(_editTodoModalId))?.done || false) : false,
+    createdAt: _editTodoModalId
+      ? (todoList.find(x => String(x.id) === String(_editTodoModalId))?.createdAt || new Date().toISOString().split('T')[0])
+      : new Date().toISOString().split('T')[0]
+  };
+
+  const isEdit = !!_editTodoModalId;
+  if(isEdit) {
+    todoList = todoList.map(x => String(x.id) === String(t.id) ? t : x);
+  } else {
+    todoList.unshift(t);
+  }
+
+  saveTodoLS();
+  closeTodoModal();
+  renderTodo();
+  toast(isEdit ? '✅ Tugas diupdate!' : '✅ Tugas ditambahkan!');
+
+  try {
+    const ind = document.getElementById('todo-sync-dot');
+    if(ind) ind.textContent = '⏳';
+    await apiCall({ action: isEdit ? 'updateTodo' : 'saveTodo', data: t });
+    if(ind) ind.textContent = '✓';
+    setTimeout(() => { if(ind) ind.textContent = ''; }, 2000);
+    setSS('ok');
+  } catch(e) { setSS('err', 'Todo sync gagal'); }
+}
+
+function updateTodoBadge() {
+  const active = todoList.filter(t => !t.done).length;
+  const el = document.getElementById('todo-badge');
+  if(!el) return;
+  if(active > 0) { el.style.display = 'inline-flex'; el.textContent = active; }
+  else { el.style.display = 'none'; }
+}
+
+function setTodoFilter(f) {
+  todoFilter = f;
+  ['all','active','done'].forEach(id => {
+    const btn = document.getElementById('todo-f-'+id); if(!btn) return;
+    const on = id === f;
+    btn.style.background   = on ? 'var(--acc)' : 'var(--sur)';
+    btn.style.color        = on ? '#fff' : 'var(--t2)';
+    btn.style.borderColor  = on ? 'var(--acc)' : 'var(--bor2)';
+    btn.style.fontWeight   = on ? '700' : '600';
+  });
+  renderTodo();
+}
+
+function renderTodo() {
+  const el = document.getElementById('todo-list'); if(!el) return;
+  const q = (document.getElementById('todo-search')?.value || '').toLowerCase();
+
+  const prioRank = { mendesak: 0, penting: 1, biasa: 2 };
+  const today = new Date().toISOString().split('T')[0];
+
+  let list = [...todoList].sort((a, b) => {
+    if(a.done !== b.done) return a.done ? 1 : -1;
+    // Deadline overdue → top of active
+    const aOver = !a.done && a.deadline && a.deadline < today;
+    const bOver = !b.done && b.deadline && b.deadline < today;
+    if(aOver !== bOver) return aOver ? -1 : 1;
+    return (prioRank[a.priority]||2) - (prioRank[b.priority]||2);
+  });
+
+  if(todoFilter === 'active') list = list.filter(t => !t.done);
+  if(todoFilter === 'done')   list = list.filter(t => t.done);
+  if(q) list = list.filter(t =>
+    (t.text||'').toLowerCase().includes(q) ||
+    (t.cust||'').toLowerCase().includes(q) ||
+    (t.kloter||'').toLowerCase().includes(q) ||
+    (t.pic||'').toLowerCase().includes(q) ||
+    (t.note||'').toLowerCase().includes(q)
+  );
+
+  if(!list.length) {
+    const msgs = {
+      all:    ['📋','Belum ada tugas','Klik "+ Tambah Tugas" untuk mulai!'],
+      active: ['✅','Semua tugas selesai!','Tidak ada tugas aktif.'],
+      done:   ['🎉','Belum ada yang diselesaikan','Selesaikan beberapa tugas dulu!']
+    };
+    const [ico,txt,sub] = msgs[todoFilter] || msgs.all;
+    el.innerHTML = `<div class="todo-empty"><div class="te-ico">${ico}</div><div class="te-txt">${txt}</div><div class="te-sub">${sub}</div></div>`;
+    return;
+  }
+
+  const prioBg    = { mendesak:'rgba(239,68,68,.07)', penting:'rgba(245,158,11,.07)', biasa:'' };
+  const prioLabel = { mendesak:'🔴 Mendesak', penting:'🟡 Penting', biasa:'🔵 Biasa' };
+  const viaIco    = { WhatsApp:'💬', Threads:'🧵', Instagram:'📷', Shopee:'🟠', Tokopedia:'🟢', Toco:'🔴', Direct:'🤝', COD:'💵' };
+
+  el.innerHTML = list.map(t => {
+    const bg = prioBg[t.priority] || '';
+    const overdue = !t.done && t.deadline && t.deadline < today;
+    const deadlineStr = t.deadline
+      ? `<span style="background:${overdue?'#fee2e2':'var(--bg)'};color:${overdue?'var(--red)':'var(--t2)'};border:1px solid ${overdue?'#fecaca':'var(--bor)'};border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700">${overdue?'⚠️ ':'📅 '}${t.deadline}</span>`
+      : '';
+    const custChip  = t.cust   ? `<span style="background:rgba(91,94,244,.08);color:var(--acc);border:1px solid rgba(91,94,244,.18);border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700">👤 ${t.cust}</span>` : '';
+    const kloterChip= t.kloter ? `<span style="background:rgba(34,197,94,.08);color:#166534;border:1px solid rgba(34,197,94,.2);border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700">📦 ${t.kloter}</span>` : '';
+    const viaChip   = t.via    ? `<span style="background:var(--bg);color:var(--t2);border:1px solid var(--bor);border-radius:5px;padding:1px 7px;font-size:10px;font-weight:600">${viaIco[t.via]||'📡'} ${t.via}</span>` : '';
+    const picChip   = t.pic    ? `<span style="background:var(--bg);color:var(--t2);border:1px solid var(--bor);border-radius:5px;padding:1px 7px;font-size:10px;font-weight:600">🙋 ${t.pic}</span>` : '';
+    const chips = [custChip, kloterChip, viaChip, picChip, deadlineStr].filter(Boolean).join(' ');
+
+    return `<div class="todo-item ${t.done?'done-item':''}" id="titem-${t.id}"
+      style="${bg?'background:'+bg+';':''}${overdue?'border-left:3px solid var(--red);':''}">
+      <div class="todo-cb ${t.done?'checked':''}" onclick="toggleTodo('${t.id}')">
+        ${t.done?'<svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>':''}
+      </div>
+      <div class="prio-${t.priority||'biasa'}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="todo-text ${t.done?'done-text':''}" style="margin-bottom:${chips||t.note?'5px':'0'}">${t.text||''}</div>
+        ${chips ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:${t.note?'5px':'0'}">${chips}</div>` : ''}
+        ${t.note ? `<div style="font-size:11px;color:var(--t2);background:var(--bg);border-radius:6px;padding:5px 9px;border-left:2px solid var(--bor2)">📝 ${t.note}</div>` : ''}
+        <div class="todo-meta" style="margin-top:4px">${prioLabel[t.priority||'biasa']} · ${t.createdAt||''}</div>
+      </div>
+      <div class="todo-actions">
+        <button class="todo-act-btn" onclick="openTodoModal('${t.id}')" title="Edit">✏️</button>
+        <button class="todo-act-btn" onclick="deleteTodoItem('${t.id}')" title="Hapus"
+          style="border-color:rgba(239,68,68,.25)" onmouseover="this.style.background='rgba(239,68,68,.07)';this.style.borderColor='var(--red)'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(239,68,68,.25)'">
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateTodoBadge();
+}
+
+async function toggleTodo(id) {
+  const t = todoList.find(x => String(x.id) === String(id)); if(!t) return;
+  t.done = !t.done;
+  saveTodoLS(); renderTodo();
+  try { await apiCall({ action:'updateTodo', data:t }); setSS('ok'); } catch(e) { setSS('err','Todo sync gagal'); }
+}
+
+async function deleteTodoItem(id) {
+  if(!confirm('Hapus tugas ini?')) return;
+  todoList = todoList.filter(x => String(x.id) !== String(id));
+  saveTodoLS(); renderTodo();
+  toast('🗑️ Tugas dihapus');
+  try { await apiCall({ action:'deleteTodo', id:String(id) }); setSS('ok'); } catch(e) { setSS('err','Todo sync gagal'); }
+}
+
+async function clearDoneTodosUI() {
+  const doneCnt = todoList.filter(t => t.done).length;
+  if(!doneCnt) { toast('Tidak ada tugas selesai', true); return; }
+  if(!confirm(`Hapus ${doneCnt} tugas yang sudah selesai?`)) return;
+  todoList = todoList.filter(t => !t.done);
+  saveTodoLS(); renderTodo();
+  toast('✅ Tugas selesai dihapus!');
+  try { await apiCall({ action:'clearDoneTodos' }); setSS('ok'); } catch(e) { setSS('err','Todo sync gagal'); }
+}
+
+function loadTodosFromServer(serverTodos) {
+  if(!serverTodos || !serverTodos.length) return;
+  const serverIds = new Set(serverTodos.map(t => String(t.id)));
+  const localOnly = todoList.filter(t => !serverIds.has(String(t.id)));
+  todoList = [
+    ...serverTodos.map(t => ({
+      id:       String(t.id),
+      text:     t.text     || '',
+      pic:      t.pic      || '',
+      cust:     t.cust     || '',
+      kloter:   t.kloter   || '',
+      via:      t.via      || '',
+      priority: t.priority || 'biasa',
+      deadline: t.deadline || '',
+      note:     t.note     || '',
+      done:     t.done === true || String(t.done).toLowerCase() === 'true',
+      createdAt:t.createdAt|| ''
+    })),
+    ...localOnly
+  ];
+  saveTodoLS(); renderTodo(); updateTodoBadge();
+}
+
 // ═══════════════════════════════════════════════════════
 //  KATALOG BARANG
 // ═══════════════════════════════════════════════════════
 
-let katalogList = [];
 let _editKatalogId = null;
-
-// Load from localStorage
-try { katalogList = JSON.parse(localStorage.getItem('sk_katalog') || '[]'); } catch(e) { katalogList = []; }
 
 function saveKatalogLS() {
   try { localStorage.setItem('sk_katalog', JSON.stringify(katalogList)); } catch(e) {}
@@ -4082,6 +4605,8 @@ function pickKatalogIntoForm(id) {
 
 </script>
 
+
+
 <!-- TAMBAH PESANAN MODAL -->
 <div class="mov" id="tambahmod" style="display:none" onclick="if(event.target===this)closeTambahModal()">
   <div class="mbox" onclick="event.stopPropagation()" style="max-width:600px;max-height:92vh;overflow-y:auto">
@@ -4214,6 +4739,132 @@ function pickKatalogIntoForm(id) {
         ✏️ Kelola Katalog →
       </button>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TODO MODAL — form lengkap
+     ═══════════════════════════════════════════ -->
+<div class="mov" id="todomod" style="display:none" onclick="if(event.target===this)closeTodoModal()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:520px">
+    <div class="mhdr" style="position:sticky;top:0;background:var(--sur);z-index:1">
+      <div>
+        <div class="mtit" id="todo-modal-title">Tambah Tugas</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">Isi detail tugas yang perlu dilakukan</div>
+      </div>
+      <button class="mclose" onclick="closeTodoModal()">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:13px">
+
+      <!-- Task -->
+      <div class="fl">
+        <label>📋 Task / Tugas <span style="color:var(--red)">*</span></label>
+        <input id="td-task" placeholder="e.g. Konfirmasi ukuran sepatu ke customer" maxlength="200"
+          style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;transition:all .18s"
+          onfocus="this.style.borderColor='var(--acc)';this.style.background='#fff'" onblur="this.style.borderColor='var(--bor)';this.style.background='var(--s2)'"/>
+      </div>
+
+      <!-- Buat siapa + Customer -->
+      <div class="g2" style="margin-bottom:0">
+        <div class="fl">
+          <label>👤 Buat Siapa (PIC)</label>
+          <select id="td-pic" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
+            <option value="">— Pilih PIC —</option>
+            <option value="Sukido">Sukido</option>
+            <option value="Dodo">Dodo</option>
+            <option value="Sukhita">Sukhita</option>
+          </select>
+        </div>
+        <div class="fl">
+          <label>🛍️ Customer</label>
+          <div style="display:flex;gap:5px">
+            <input id="td-cust" placeholder="Nama customer..." maxlength="80"
+              style="flex:1;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;transition:all .18s"
+              onfocus="this.style.borderColor='var(--acc)';this.style.background='#fff'" onblur="this.style.borderColor='var(--bor)';this.style.background='var(--s2)'"/>
+            <button onclick="openTodoCustPick()" title="Pilih dari daftar customer"
+              style="padding:0 10px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-size:13px;cursor:pointer;flex-shrink:0">👥</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kloter + Via -->
+      <div class="g2" style="margin-bottom:0">
+        <div class="fl">
+          <label>📦 Kloter</label>
+          <select id="td-kloter" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
+            <option value="">— Tanpa Kloter —</option>
+          </select>
+        </div>
+        <div class="fl">
+          <label>📡 Order / Kontak Via</label>
+          <select id="td-via" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
+            <option value="">— Platform —</option>
+            <option value="WhatsApp">💬 WhatsApp</option>
+            <option value="Threads">🧵 Threads</option>
+            <option value="Instagram">📷 Instagram</option>
+            <option value="Shopee">🟠 Shopee</option>
+            <option value="Tokopedia">🟢 Tokopedia</option>
+            <option value="Toco">🔴 Toco</option>
+            <option value="Direct">🤝 Direct</option>
+            <option value="COD">💵 COD</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Prioritas + Tanggal deadline -->
+      <div class="g2" style="margin-bottom:0">
+        <div class="fl">
+          <label>⚡ Prioritas</label>
+          <select id="td-priority" style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;-webkit-appearance:none;cursor:pointer">
+            <option value="biasa">🔵 Biasa</option>
+            <option value="penting">🟡 Penting</option>
+            <option value="mendesak">🔴 Mendesak</option>
+          </select>
+        </div>
+        <div class="fl">
+          <label>📅 Deadline (opsional)</label>
+          <input type="date" id="td-deadline"
+            style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;transition:all .18s"
+            onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+        </div>
+      </div>
+
+      <!-- Catatan -->
+      <div class="fl">
+        <label>📝 Catatan (opsional)</label>
+        <textarea id="td-note" placeholder="Detail tambahan..." maxlength="300" rows="2"
+          style="width:100%;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:10px 13px;color:var(--txt);font-family:var(--fn);font-size:13px;outline:none;resize:vertical;transition:all .18s"
+          onfocus="this.style.borderColor='var(--acc)';this.style.background='#fff'" onblur="this.style.borderColor='var(--bor)';this.style.background='var(--s2)'"></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:9px;padding-top:4px">
+        <button onclick="closeTodoModal()"
+          style="flex:1;padding:12px;background:var(--bg);border:1.5px solid var(--bor2);border-radius:var(--rs);color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:600;cursor:pointer">
+          Batal
+        </button>
+        <button id="td-save-btn" onclick="saveTodoModal()"
+          style="flex:2.5;padding:12px;background:var(--g1);border:none;border-radius:var(--rs);color:#fff;font-family:var(--fn);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(91,94,244,.3);display:flex;align-items:center;justify-content:center;gap:7px">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
+          Simpan Tugas
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TODO CUSTOMER PICKER (simple dropdown list) -->
+<div class="mov" id="todo-custpickmod" style="display:none;z-index:320" onclick="if(event.target===this)closeTodoCustPick()">
+  <div class="mbox" onclick="event.stopPropagation()" style="max-width:380px;max-height:70vh;display:flex;flex-direction:column">
+    <div class="mhdr">
+      <span class="mtit">👥 Pilih Customer</span>
+      <button class="mclose" onclick="closeTodoCustPick()">✕</button>
+    </div>
+    <input id="todo-cust-search" placeholder="🔍 Cari nama customer..."
+      oninput="renderTodoCustPick()"
+      style="margin:10px 16px 0;background:var(--s2);border:1.5px solid var(--bor);border-radius:var(--rs);padding:9px 12px;font-family:var(--fn);font-size:13px;outline:none;transition:border .15s"
+      onfocus="this.style.borderColor='var(--acc)'" onblur="this.style.borderColor='var(--bor)'"/>
+    <div id="todo-cust-list" style="flex:1;overflow-y:auto;padding:8px 0;margin-top:8px"></div>
   </div>
 </div>
 </body>

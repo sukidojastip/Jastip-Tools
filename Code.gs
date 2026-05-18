@@ -9,6 +9,7 @@ const SHEET_NAME_KIRIM     = "KirimStatus";
 const SHEET_NAME_KATALOG   = "Katalog";
 const SHEET_NAME_STOK      = "StokBarang";
 const SHEET_NAME_STOK_LIST = "StokList";   // ← NEW: untuk stok mandiri
+const SHEET_NAME_TODO      = "TodoList";   // ← To Do List
 
 function doGet(e)  { return handleRequest(e); }
 function doPost(e) { return handleRequest(e); }
@@ -53,6 +54,11 @@ function handleRequest(e) {
       case "updateStokBarang": result = updateStokBarang(params.id, JSON.parse(params.stok)); break;
       case "saveStok":         result = saveStokList(JSON.parse(params.stok));    break; // ← NEW
       case "getPin":           result = getPin();                                 break;
+      case "getTodos":         result = getTodos();                               break;
+      case "saveTodo":         result = saveTodo(JSON.parse(params.data));        break;
+      case "updateTodo":       result = updateTodo(JSON.parse(params.data));      break;
+      case "deleteTodo":       result = deleteTodo(params.id);                   break;
+      case "clearDoneTodos":   result = clearDoneTodos();                        break;
       case "setPin":           result = setPin(params.hash);                      break;
       default:
         result = { ping: "ok", message: "Sukido Jastip API v5 running!" };
@@ -102,6 +108,13 @@ function setupSheets() {
     const s = ss.insertSheet(SHEET_NAME_STOK);
     s.appendRow(["kloter_id","kloter_name","item_id","nama","hargaModal","hargaJual","qty","hargaModalJpy","updatedAt"]);
     s.getRange(1,1,1,8).setFontWeight("bold").setBackground("#059669").setFontColor("#ffffff");
+  }
+
+  // ── TodoList sheet ───────────────────────────────────────
+  if (!ss.getSheetByName(SHEET_NAME_TODO)) {
+    const s = ss.insertSheet(SHEET_NAME_TODO);
+    s.appendRow(["id","text","done","priority","pic","cust","kloter","via","deadline","note","createdAt","updatedAt"]);
+    s.getRange(1,1,1,12).setFontWeight("bold").setBackground("#ef4444").setFontColor("#ffffff");
   }
 
   // ── NEW: StokList sheet ──────────────────────────────────
@@ -470,6 +483,92 @@ function getStokList() {
     obj.jual     = Number(obj.jual)     || 0;
     return obj;
   }).filter(s => s.id && s.id !== '' && s.nama);
+}
+
+// ── TODO LIST ────────────────────────────────────────────
+function getTodos() {
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_TODO);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  const headers = data[0];
+  return data.slice(1).map(row => {
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = row[i]; });
+    obj.id       = String(obj.id);
+    obj.done     = (obj.done === true || String(obj.done).toLowerCase() === "true");
+    obj.pic      = String(obj.pic      || "");
+    obj.cust     = String(obj.cust     || "");
+    obj.kloter   = String(obj.kloter   || "");
+    obj.via      = String(obj.via      || "");
+    obj.deadline = String(obj.deadline || "");
+    obj.note     = String(obj.note     || "");
+    return obj;
+  }).filter(t => t.id && t.id !== '' && t.text);
+}
+
+function saveTodo(todo) {
+  setupSheets();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_TODO);
+  const now = new Date().toISOString();
+  sheet.appendRow([
+    String(todo.id), todo.text, todo.done || false,
+    todo.priority || "biasa",
+    todo.pic      || "",
+    todo.cust     || "",
+    todo.kloter   || "",
+    todo.via      || "",
+    todo.deadline || "",
+    todo.note     || "",
+    todo.createdAt || now, now
+  ]);
+  return { saved: todo.id };
+}
+
+function updateTodo(todo) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_TODO);
+  const data = sheet.getDataRange().getValues();
+  const now = new Date().toISOString();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(todo.id)) {
+      sheet.getRange(i+1,1,1,12).setValues([[
+        String(todo.id), todo.text, todo.done || false,
+        todo.priority || "biasa",
+        todo.pic      || "",
+        todo.cust     || "",
+        todo.kloter   || "",
+        todo.via      || "",
+        todo.deadline || "",
+        todo.note     || "",
+        data[i][10] || now, now
+      ]]);
+      return { updated: todo.id };
+    }
+  }
+  return saveTodo(todo);
+}
+
+function deleteTodo(id) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_TODO);
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][0]) === String(id)) {
+      sheet.deleteRow(i + 1);
+      return { deleted: id };
+    }
+  }
+  return { notFound: id };
+}
+
+function clearDoneTodos() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_TODO);
+  const data = sheet.getDataRange().getValues();
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][2]).toLowerCase() === "true") {
+      sheet.deleteRow(i + 1);
+    }
+  }
+  return { cleared: true };
 }
 
 // ── TEST ──────────────────────────────────────────────────
